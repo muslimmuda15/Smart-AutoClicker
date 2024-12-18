@@ -106,7 +106,7 @@ class DumbScenarioDataSource @Inject constructor(
     suspend fun updateDumbScenario(scenario: DumbScenario) {
         Log.d(TAG, "Update dumb scenario data source line 107 : $scenario")
         val scenarioEntity = scenario.toEntity()
-
+        Log.d(TAG, "Update dumb scenario entity data source line 109 : $scenarioEntity")
         dumbScenarioDao.updateDumbScenario(scenarioEntity)
         updateDumbScenarioActions(scenarioEntity.id, scenario.dumbActions)
     }
@@ -120,6 +120,7 @@ class DumbScenarioDataSource @Inject constructor(
         )
 
         Log.d(TAG, "Dumb actions updater: $dumbActionsUpdater")
+        Log.d(TAG, "Dumb actions is: $actions")
 
         updater.executeUpdate(
             addList = dumbScenarioDao::addDumbActions,

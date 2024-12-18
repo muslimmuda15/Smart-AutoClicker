@@ -69,7 +69,6 @@ data class DumbActionEntity(
     @ColumnInfo(name = "pause_duration") val pauseDuration: Long? = null,
 
     // ActionType.API
-    @ColumnInfo(name = "url_name") val urlName: String? = null,
     @ColumnInfo(name = "url_value") val urlValue: String? = null
 ) : EntityWithId
 

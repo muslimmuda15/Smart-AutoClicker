@@ -16,6 +16,7 @@
  */
 package com.buzbuz.smartautoclicker.core.dumb.domain
 
+import android.util.Log
 import com.buzbuz.smartautoclicker.core.dumb.data.DumbScenarioDataSource
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
@@ -52,6 +53,7 @@ class DumbRepository @Inject constructor(
         dumbScenarioDataSource.addDumbScenarioCopy(scenarioId, copyName)
 
     override suspend fun updateDumbScenario(scenario: DumbScenario) {
+        Log.d("DumbEditionRepository", "PROGRESS OF SAVING : $scenario")
         dumbScenarioDataSource.updateDumbScenario(scenario)
     }
 

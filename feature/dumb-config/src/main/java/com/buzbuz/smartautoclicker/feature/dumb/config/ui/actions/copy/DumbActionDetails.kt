@@ -16,7 +16,9 @@
  */
 package com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.copy
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 
 import androidx.annotation.DrawableRes
 
@@ -105,10 +107,11 @@ private fun DumbAction.DumbSwipe.toSwipeDetails(
         action = this,
     )
 
-private fun DumbAction.DumbApi.toApiDetails(context: Context, inError: Boolean): DumbActionDetails =
-    DumbActionDetails(
+private fun DumbAction.DumbApi.toApiDetails(context: Context, inError: Boolean): DumbActionDetails {
+    Log.d(TAG, "API LIST : ${this}")
+    return DumbActionDetails(
         icon = R.drawable.ic_api,
-        name = urlName,
+        name = name,
         detailsText = if (inError) {
             context.getString(R.string.item_error_action_invalid_generic)
         } else "Setup API : $urlValue",
@@ -116,6 +119,7 @@ private fun DumbAction.DumbApi.toApiDetails(context: Context, inError: Boolean):
         haveError = inError,
         action = this,
     )
+}
 
 private fun DumbAction.DumbPause.toPauseDetails(
     context: Context,

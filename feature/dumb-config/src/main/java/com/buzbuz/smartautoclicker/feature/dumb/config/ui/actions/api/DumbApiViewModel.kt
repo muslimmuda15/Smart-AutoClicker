@@ -21,7 +21,7 @@ class DumbApiViewModel @Inject constructor() : ViewModel() {
     }
 
     fun setName(newName: String) {
-        _editedDumbApi.value = _editedDumbApi.value?.copy(urlName = newName)
+        _editedDumbApi.value = _editedDumbApi.value?.copy(name = newName)
     }
     fun setUrl(newUrl: String){
         _editedDumbApi.value = _editedDumbApi.value?.copy(urlValue = newUrl)
@@ -40,7 +40,7 @@ class DumbApiViewModel @Inject constructor() : ViewModel() {
     }
 
     val name: Flow<String> = editedDumbApi
-        .map { it.urlName }
+        .map { it.name }
         .take(1)
 
     val url: Flow<String> = editedDumbApi

@@ -36,7 +36,7 @@ internal fun DumbAction.toEntity(scenarioDbId: Long = DATABASE_ID_INSERTION): Du
     is DumbAction.DumbApi -> toApiEntity(scenarioDbId)
 }
 
-private fun DumbAction.toApiEntity(scenarioDbId: Long): DumbActionEntity {
+private fun DumbAction.DumbApi.toApiEntity(scenarioDbId: Long): DumbActionEntity {
     if (!isValid()) throw IllegalStateException("Can't transform to entity, Pause is incomplete.")
 
     return DumbActionEntity(
@@ -45,8 +45,7 @@ private fun DumbAction.toApiEntity(scenarioDbId: Long): DumbActionEntity {
         name = name ?: "",
         priority = priority,
         type = DumbActionType.API,
-        urlName = "oleh-oleh-id",
-        urlValue = "https://oleholeh.id/final.json"
+        urlValue = urlValue
     )
 }
 
@@ -82,9 +81,8 @@ private fun DumbActionEntity.toDomainAPI(asDomain: Boolean): DumbAction.DumbApi 
         id = Identifier(id = id, asTemporary = asDomain),
         scenarioId = Identifier(id = dumbScenarioId, asTemporary = asDomain),
         priority = priority,
-        name = "Default API",
-        urlName = "Default API",
-        urlValue = "https://oleholeh.id/final.json",
+        name = name,
+        urlValue = urlValue ?: "",
     )
 
 private fun DumbActionEntity.toDomainPause(asDomain: Boolean): DumbAction.DumbPause =

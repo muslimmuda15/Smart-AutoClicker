@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "5fe244d34a8da4aacab4064fcf32fd86",
+    "version": 3,
+    "identityHash": "f8341074d54bb988659cc57956c15003",
     "entities": [
       {
         "tableName": "dumb_scenario_table",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "dumb_action_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dumb_scenario_id` INTEGER NOT NULL, `priority` INTEGER NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `repeat_count` INTEGER, `is_repeat_infinite` INTEGER, `repeat_delay` INTEGER, `press_duration` INTEGER, `x` INTEGER, `y` INTEGER, `swipe_duration` INTEGER, `fromX` INTEGER, `fromY` INTEGER, `toX` INTEGER, `toY` INTEGER, `pause_duration` INTEGER, `url_value` TEXT, FOREIGN KEY(`dumb_scenario_id`) REFERENCES `dumb_scenario_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dumb_scenario_id` INTEGER NOT NULL, `priority` INTEGER NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `repeat_count` INTEGER, `is_repeat_infinite` INTEGER, `repeat_delay` INTEGER, `press_duration` INTEGER, `x` INTEGER, `y` INTEGER, `swipe_duration` INTEGER, `fromX` INTEGER, `fromY` INTEGER, `toX` INTEGER, `toY` INTEGER, `pause_duration` INTEGER, `url_name` TEXT, `url_value` TEXT, FOREIGN KEY(`dumb_scenario_id`) REFERENCES `dumb_scenario_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -167,6 +167,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "urlName",
+            "columnName": "url_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "urlValue",
             "columnName": "url_value",
             "affinity": "TEXT",
@@ -208,7 +214,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5fe244d34a8da4aacab4064fcf32fd86')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f8341074d54bb988659cc57956c15003')"
     ]
   }
 }

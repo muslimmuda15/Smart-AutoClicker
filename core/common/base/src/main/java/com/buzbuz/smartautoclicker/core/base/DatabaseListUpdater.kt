@@ -16,6 +16,7 @@
  */
 package com.buzbuz.smartautoclicker.core.base
 
+import android.util.Log
 import com.buzbuz.smartautoclicker.core.base.identifier.DATABASE_ID_INSERTION
 import com.buzbuz.smartautoclicker.core.base.interfaces.EntityWithId
 import com.buzbuz.smartautoclicker.core.base.interfaces.Identifiable
@@ -63,6 +64,8 @@ class DatabaseListUpdater<Item : Identifiable, Entity : EntityWithId> {
                 if (oldItemIndex != -1) {
                     toBeUpdated.add(newItem, newEntity)
                     toBeRemoved.removeAt(oldItemIndex)
+
+                    Log.d("DumbScenarioDataSource", "inserting toBeUpdated data : $newItem, $newEntity")
                 }
             }
         }
@@ -82,6 +85,7 @@ class DatabaseListUpdater<Item : Identifiable, Entity : EntityWithId> {
         }
 
         updateList(toBeUpdated.entities)
+        Log.d("DumbScenarioDataSource", "toBeUpdate Entities : ${toBeUpdated.entities}")
         removeList(toBeRemoved)
 
         onSuccess?.invoke(newIdsMapping, toBeAdded.items, toBeUpdated.items, toBeRemoved)

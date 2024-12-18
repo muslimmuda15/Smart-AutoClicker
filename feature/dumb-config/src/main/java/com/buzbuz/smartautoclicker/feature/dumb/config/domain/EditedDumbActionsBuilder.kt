@@ -76,7 +76,7 @@ class EditedDumbActionsBuilder {
         DumbAction.DumbApi(
             id = dumbActionsIdCreator.generateNewIdentifier(),
             scenarioId = getEditedScenarioIdOrThrow(),
-            name = context.getDefaultDumbPauseName(),
+            name = "Default API",
             urlValue = "https://oleholeh.id/final.json",
         )
 

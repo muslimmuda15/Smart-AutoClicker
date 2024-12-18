@@ -86,9 +86,8 @@ sealed class DumbAction : Identifiable {
         override val scenarioId: Identifier,
         override val priority: Int = 0,
         override val name: String,
-        val urlName: String = "Default API",
-        val urlValue: String = "https://oleholeh.id/final.json",
+        val urlValue: String,
     ) : DumbAction() {
-        override fun isValid(): Boolean = urlName.isNotEmpty()
+        override fun isValid(): Boolean = name.isNotEmpty()
     }
 }

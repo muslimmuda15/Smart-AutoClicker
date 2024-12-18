@@ -80,7 +80,7 @@ class DumbEditionRepository @Inject constructor(
     /** Save editions changes in the database. */
     suspend fun saveEditions() {
         val scenarioToSave = _editedDumbScenario.value ?: return
-        Log.d(TAG, "Save editions  in dumb edition repository line 83 : $scenarioToSave")
+        Log.d("DumbScenarioDataSource", "Save editions  in dumb edition repository line 83 : $scenarioToSave")
 
         dumbRepository.updateDumbScenario(scenarioToSave)
         stopEdition()
