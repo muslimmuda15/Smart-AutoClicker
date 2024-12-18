@@ -102,7 +102,7 @@ internal fun BaseOverlay.showActionConfigDialog(configurator: ActionConfigurator
             if (PermissionPostNotification().checkIfGranted(context)) NotificationDialog(actionConfigDialogListener)
             else newNotificationPermissionStarterOverlay(context)
         }
-        else -> throw IllegalArgumentException("Not yet supported")
+        else -> throw IllegalArgumentException("Not yet supported in base smart action ui flow")
     }
 
 

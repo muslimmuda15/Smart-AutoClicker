@@ -85,6 +85,8 @@ internal fun SharedPreferences.getPauseDurationConfig(default: Long) : Long =
 internal fun SharedPreferences.Editor.putPauseDurationConfig(durationMs: Long) : SharedPreferences.Editor =
     putLong(PREF_LAST_PAUSE_DURATION, durationMs)
 
+internal fun SharedPreferences.Editor.putURLConfig(url: String): SharedPreferences.Editor =
+    putString(PREF_LAST_URL, url)
 
 /** Name of the preference file. */
 private const val DUMB_CONFIG_PREFERENCES_NAME = "DumbConfigPreferences"
@@ -102,3 +104,5 @@ private const val PREF_LAST_SWIPE_REPEAT_COUNT = "Last_Swipe_Repeat_Count"
 private const val PREF_LAST_SWIPE_REPEAT_DELAY = "Last_Swipe_Repeat_Delay"
 /** User last pause press duration key in the SharedPreferences. */
 private const val PREF_LAST_PAUSE_DURATION = "Last_Pause_Duration"
+/** User change url key in SharedPreferences */
+private const val PREF_LAST_URL = "Last_Url"

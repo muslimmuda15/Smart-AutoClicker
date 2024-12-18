@@ -32,7 +32,7 @@ import com.buzbuz.smartautoclicker.feature.dumb.config.R
  * @param detailsText the details for the action.
  * @param action the action represented by this item.
  */
-data class DumbActionDetails (
+data class DumbActionDetails(
     @DrawableRes val icon: Int,
     val name: String,
     val detailsText: String,
@@ -51,10 +51,15 @@ fun DumbAction.toDumbActionDetails(
         is DumbAction.DumbClick -> toClickDetails(context, withPositions, inError)
         is DumbAction.DumbSwipe -> toSwipeDetails(context, withPositions, inError)
         is DumbAction.DumbPause -> toPauseDetails(context, withPositions, inError)
-        else -> throw IllegalArgumentException("Not yet supported")
+        is DumbAction.DumbApi -> toApiDetails(context, inError)
+        else -> throw IllegalArgumentException("Not yet supported in dumb action details")
     }
 
-private fun DumbAction.DumbClick.toClickDetails(context: Context, withPositions: Boolean, inError: Boolean): DumbActionDetails =
+private fun DumbAction.DumbClick.toClickDetails(
+    context: Context,
+    withPositions: Boolean,
+    inError: Boolean
+): DumbActionDetails =
     DumbActionDetails(
         icon = R.drawable.ic_click,
         name = name,
@@ -64,6 +69,7 @@ private fun DumbAction.DumbClick.toClickDetails(context: Context, withPositions:
                 R.string.item_desc_dumb_click_details,
                 formatDuration(pressDurationMs), position.x, position.y,
             )
+
             else -> context.getString(
                 R.string.item_desc_dumb_action_duration,
                 formatDuration(pressDurationMs),
@@ -74,7 +80,11 @@ private fun DumbAction.DumbClick.toClickDetails(context: Context, withPositions:
         action = this,
     )
 
-private fun DumbAction.DumbSwipe.toSwipeDetails(context: Context, withPositions: Boolean, inError: Boolean): DumbActionDetails =
+private fun DumbAction.DumbSwipe.toSwipeDetails(
+    context: Context,
+    withPositions: Boolean,
+    inError: Boolean
+): DumbActionDetails =
     DumbActionDetails(
         icon = R.drawable.ic_swipe,
         name = name,
@@ -84,6 +94,7 @@ private fun DumbAction.DumbSwipe.toSwipeDetails(context: Context, withPositions:
                 R.string.item_desc_dumb_swipe_details,
                 formatDuration(swipeDurationMs), fromPosition.x, fromPosition.y, toPosition.x, toPosition.y
             )
+
             else -> context.getString(
                 R.string.item_desc_dumb_action_duration,
                 formatDuration(swipeDurationMs),
@@ -94,7 +105,23 @@ private fun DumbAction.DumbSwipe.toSwipeDetails(context: Context, withPositions:
         action = this,
     )
 
-private fun DumbAction.DumbPause.toPauseDetails(context: Context, withPositions: Boolean, inError: Boolean): DumbActionDetails =
+private fun DumbAction.DumbApi.toApiDetails(context: Context, inError: Boolean): DumbActionDetails =
+    DumbActionDetails(
+        icon = R.drawable.ic_api,
+        name = urlName,
+        detailsText = if (inError) {
+            context.getString(R.string.item_error_action_invalid_generic)
+        } else "Setup API : $urlValue",
+        repeatCountText = null,
+        haveError = inError,
+        action = this,
+    )
+
+private fun DumbAction.DumbPause.toPauseDetails(
+    context: Context,
+    withPositions: Boolean,
+    inError: Boolean
+): DumbActionDetails =
     DumbActionDetails(
         icon = R.drawable.ic_wait,
         name = name,
@@ -104,6 +131,7 @@ private fun DumbAction.DumbPause.toPauseDetails(context: Context, withPositions:
                 R.string.item_desc_dumb_pause_details,
                 formatDuration(pauseDurationMs)
             )
+
             else -> context.getString(
                 R.string.item_desc_dumb_action_duration,
                 formatDuration(pauseDurationMs),

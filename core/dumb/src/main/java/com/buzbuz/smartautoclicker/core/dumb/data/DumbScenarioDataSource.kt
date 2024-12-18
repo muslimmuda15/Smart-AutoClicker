@@ -104,7 +104,7 @@ class DumbScenarioDataSource @Inject constructor(
     }
 
     suspend fun updateDumbScenario(scenario: DumbScenario) {
-        Log.d(TAG, "Update dumb scenario $scenario")
+        Log.d(TAG, "Update dumb scenario data source line 107 : $scenario")
         val scenarioEntity = scenario.toEntity()
 
         dumbScenarioDao.updateDumbScenario(scenarioEntity)

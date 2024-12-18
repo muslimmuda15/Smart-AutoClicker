@@ -44,6 +44,7 @@ internal class DumbActionExecutor(private val androidExecutor: AndroidExecutor) 
             is DumbAction.DumbClick -> executeDumbClick(action)
             is DumbAction.DumbSwipe -> executeDumbSwipe(action)
             is DumbAction.DumbPause -> executeDumbPause(action)
+            is DumbAction.DumbApi -> executeDumbApi(action)
         }
     }
 
@@ -70,6 +71,10 @@ internal class DumbActionExecutor(private val androidExecutor: AndroidExecutor) 
 
     private suspend fun executeDumbPause(dumbPause: DumbAction.DumbPause) {
         delay(dumbPause.pauseDurationMs.randomizeDurationIfNeeded())
+    }
+
+    private suspend fun executeDumbApi(dumbApi: DumbAction.DumbApi){
+
     }
 
     private suspend fun executeRepeatableGesture(gesture: GestureDescription, repeatable: Repeatable) {

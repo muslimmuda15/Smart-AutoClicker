@@ -119,6 +119,10 @@ data class PauseDescription(
     val pauseDurationMs: Long = MINIMAL_ANIMATION_DURATION_MS,
 ) : ItemBriefDescription
 
+data class ApiDescription(
+    val url: String = "https://oleholeh.id/final.json",
+) : ItemBriefDescription
+
 internal data class PauseBriefRendererStyle(
     @ColorInt val backgroundColor: Int,
     val outerPaint: Paint,

@@ -55,6 +55,12 @@ sealed class DumbActionTypeChoice(
         R.string.item_desc_dumb_pause,
         R.drawable.ic_wait,
     )
+    /** API Action choice. */
+    data object API : DumbActionTypeChoice(
+        R.string.item_title_dumb_api,
+        R.string.item_desc_dumb_pause,
+        R.drawable.ic_api,
+    )
 }
 
 fun allDumbActionChoices() = listOf(
@@ -62,4 +68,5 @@ fun allDumbActionChoices() = listOf(
     DumbActionTypeChoice.Click,
     DumbActionTypeChoice.Swipe,
     DumbActionTypeChoice.Pause,
+    DumbActionTypeChoice.API
 )

@@ -36,6 +36,7 @@ sealed class DumbAction : Identifiable {
             is DumbClick -> copy(scenarioId = scenarioId)
             is DumbPause -> copy(scenarioId = scenarioId)
             is DumbSwipe -> copy(scenarioId = scenarioId)
+            is DumbApi -> copy(scenarioId = scenarioId)
         }
 
     data class DumbClick(
@@ -77,7 +78,17 @@ sealed class DumbAction : Identifiable {
         override val priority: Int = 0,
         val pauseDurationMs: Long,
     ) : DumbAction() {
-
         override fun isValid(): Boolean = name.isNotEmpty()
+    }
+
+    data class DumbApi(
+        override val id: Identifier,
+        override val scenarioId: Identifier,
+        override val priority: Int = 0,
+        override val name: String,
+        val urlName: String = "Default API",
+        val urlValue: String = "https://oleholeh.id/final.json",
+    ) : DumbAction() {
+        override fun isValid(): Boolean = urlName.isNotEmpty()
     }
 }

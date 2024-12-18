@@ -42,6 +42,8 @@
     <string name="item_desc_dumb_click_details">During %1$s at [%2$d, %3$d]</string>
     <string name="item_desc_dumb_click_on_position">Click at %1$d, %2$d</string>
     <string name="item_desc_dumb_pause">Pause the execution</string>
+    <string name="item_desc_dumb_API">Set action by API</string>
+    <string name="item_desc_dumb_API_details">Input action in APi %1$s</string>
     <string name="item_desc_dumb_pause_details">During %1$s</string>
     <string name="item_desc_dumb_repeat_count">Repeat %1$d times</string>
     <string name="item_desc_dumb_repeat_infinite">Infinite repeat</string>
@@ -51,6 +53,7 @@
     <string name="item_title_dumb_click">Click</string>
     <string name="item_title_dumb_pause">Wait</string>
     <string name="item_title_dumb_swipe">Swipe</string>
+    <string name="item_title_dumb_api">API</string>
     <string name="item_title_no_dumb_actions">No Actions</string>
     <string name="item_title_dumb_action_copy">Copy</string>
     <string name="item_desc_dumb_action_copy">Copy an existing Action from any Scenarios</string>

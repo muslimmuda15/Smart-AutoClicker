@@ -29,6 +29,7 @@ import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.ui.views.itembrief.renderers.ClickDescription
 import com.buzbuz.smartautoclicker.core.ui.views.itembrief.renderers.SwipeDescription
 import com.buzbuz.smartautoclicker.feature.dumb.config.R
+import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.api.DumbApiDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.click.DumbClickDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.copy.DumbActionCopyDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.pause.DumbPauseDialog
@@ -57,6 +58,11 @@ internal fun OverlayManager.startDumbActionCreationUiFlow(
                         creator.createNewDumbPause(),
                         listener
                     )
+                    DumbActionTypeChoice.API -> startDumbApiEditionFlow(
+                        context,
+                        creator.createNewDumbApi(),
+                        listener
+                    )
                 }
             },
             onCanceled = listener.onDumbActionCreationCancelled,
@@ -75,6 +81,7 @@ internal fun OverlayManager.startDumbActionEditionUiFlow(
         is DumbAction.DumbClick -> startDumbClickEditionUiFlow(context, dumbAction, listener)
         is DumbAction.DumbSwipe -> startDumbSwipeEditionFlow(context, dumbAction, listener)
         is DumbAction.DumbPause -> startDumbPauseEditionFlow(context, dumbAction, listener)
+        is DumbAction.DumbApi -> startDumbApiEditionFlow(context, dumbAction, listener)
     }
 }
 
@@ -228,7 +235,24 @@ private fun OverlayManager.startDumbPauseEditionFlow(
     )
 }
 
+private fun OverlayManager.startDumbApiEditionFlow(
+    context: Context,
+    dumbApi: DumbAction.DumbApi,
+    listener: DumbActionUiFlowListener,
+) {
+    Log.d(TAG, "Dumb pause creation selected: $dumbApi")
 
+    navigateTo(
+        context = context,
+        newOverlay = DumbApiDialog(
+            dumbApi = dumbApi,
+            onConfirmClicked = listener.onDumbActionSaved,
+            onDeleteClicked = listener.onDumbActionDeleted,
+            onDismissClicked = listener.onDumbActionCreationCancelled,
+        ),
+        hideCurrent = true,
+    )
+}
 
 internal class DumbActionUiFlowListener(
     val onDumbActionSaved: (dumbAction: DumbAction) -> Unit,
@@ -241,6 +265,7 @@ internal class DumbActionCreator(
     val createNewDumbSwipe: (from: Point, to: Point) -> DumbAction.DumbSwipe,
     val createNewDumbPause: () -> DumbAction.DumbPause,
     val createDumbActionCopy: ((DumbAction) -> DumbAction)? = null,
+    val createNewDumbApi: () -> DumbAction.DumbApi,
 )
 
 

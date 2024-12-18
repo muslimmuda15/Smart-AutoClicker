@@ -50,6 +50,12 @@ captures/
 # Comment next line if keeping position of elements in Navigation Editor is relevant for you
 .idea/navEditor.xml
 
+.idea/kotlinc.xml
+.idea/other.xml
+.idea/material_theme_project_new.xml
+.idea/deploymentTargetSelector.xml
+.idea/migrations.xml
+
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.
 #*.jks

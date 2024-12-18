@@ -42,6 +42,7 @@
     <string name="item_desc_dumb_click_details">在 %1$s 期间 [%2$d, %3$d]</string>
     <string name="item_desc_dumb_click_on_position">点击 %1$d, %2$d 处</string>
     <string name="item_desc_dumb_pause">暂停执行</string>
+    <string name="item_desc_dumb_API">Set action by API</string>
     <string name="item_desc_dumb_pause_details">在 %1$s 期间</string>
     <string name="item_desc_dumb_repeat_count">重复 %1$d 次</string>
     <string name="item_desc_dumb_repeat_infinite">无限重复</string>
@@ -50,6 +51,7 @@
     <string name="item_desc_dumb_swipe_positions">从 %1$d, %2$d 扫到 %3$d, %4$d</string>
     <string name="item_title_dumb_click">点击</string>
     <string name="item_title_dumb_pause">等待</string>
+    <string name="item_title_dumb_api">API</string>
     <string name="item_title_dumb_swipe">刷卡</string>
     <string name="item_title_no_dumb_actions">无行动</string>
     <string name="item_title_dumb_action_copy">复制</string>

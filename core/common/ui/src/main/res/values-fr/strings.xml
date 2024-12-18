@@ -66,6 +66,7 @@
     <string name="input_field_label_name">Nom</string>
     <string name="input_field_label_pause_duration">Durée de la pause</string>
     <string name="input_field_label_scenario_name">Nom du scénario</string>
+    <string name="input_field_label_url">URL</string>
     <string name="input_field_label_swipe_duration">Durée du swipe (ms)</string>
     <string name="input_field_error_required">Requis</string>
 

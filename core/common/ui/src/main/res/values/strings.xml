@@ -65,6 +65,7 @@
     <string name="input_field_label_anti_detection">Anti-detection</string>
     <string name="input_field_label_click_press_duration">Press duration (ms)</string>
     <string name="input_field_label_name">Name</string>
+    <string name="input_field_label_url">URL</string>
     <string name="input_field_label_pause_duration">Pause duration</string>
     <string name="input_field_label_scenario_name">Scenario name</string>
     <string name="input_field_label_swipe_duration">Swipe duration (ms)</string>

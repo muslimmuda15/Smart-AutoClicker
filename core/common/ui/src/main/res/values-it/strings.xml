@@ -66,6 +66,7 @@
     <string name="input_field_label_name">Nome</string>
     <string name="input_field_label_pause_duration">Durata attesa</string>
     <string name="input_field_label_scenario_name">Nome scenario</string>
+    <string name="input_field_label_url">URL</string>
     <string name="input_field_label_swipe_duration">Durata scorrimento (ms)</string>
     <string name="input_field_error_required">Richiesto</string>
 

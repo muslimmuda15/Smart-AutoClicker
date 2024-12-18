@@ -27,11 +27,27 @@ internal fun DumbActionEntity.toDomain(asDomain: Boolean = false): DumbAction = 
     DumbActionType.CLICK -> toDomainClick(asDomain)
     DumbActionType.SWIPE -> toDomainSwipe(asDomain)
     DumbActionType.PAUSE -> toDomainPause(asDomain)
+    DumbActionType.API -> toDomainAPI(asDomain)
 }
 internal fun DumbAction.toEntity(scenarioDbId: Long = DATABASE_ID_INSERTION): DumbActionEntity = when (this) {
     is DumbAction.DumbClick -> toClickEntity(scenarioDbId)
     is DumbAction.DumbSwipe -> toSwipeEntity(scenarioDbId)
     is DumbAction.DumbPause -> toPauseEntity(scenarioDbId)
+    is DumbAction.DumbApi -> toApiEntity(scenarioDbId)
+}
+
+private fun DumbAction.toApiEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Pause is incomplete.")
+
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = if (scenarioDbId != DATABASE_ID_INSERTION) scenarioDbId else scenarioId.databaseId,
+        name = name ?: "",
+        priority = priority,
+        type = DumbActionType.API,
+        urlName = "oleh-oleh-id",
+        urlValue = "https://oleholeh.id/final.json"
+    )
 }
 
 private fun DumbActionEntity.toDomainClick(asDomain: Boolean): DumbAction.DumbClick =
@@ -59,6 +75,16 @@ private fun DumbActionEntity.toDomainSwipe(asDomain: Boolean): DumbAction.DumbSw
         repeatCount = repeatCount!!,
         isRepeatInfinite = isRepeatInfinite!!,
         repeatDelayMs = repeatDelay!!,
+    )
+
+private fun DumbActionEntity.toDomainAPI(asDomain: Boolean): DumbAction.DumbApi =
+    DumbAction.DumbApi(
+        id = Identifier(id = id, asTemporary = asDomain),
+        scenarioId = Identifier(id = dumbScenarioId, asTemporary = asDomain),
+        priority = priority,
+        name = "Default API",
+        urlName = "Default API",
+        urlValue = "https://oleholeh.id/final.json",
     )
 
 private fun DumbActionEntity.toDomainPause(asDomain: Boolean): DumbAction.DumbPause =

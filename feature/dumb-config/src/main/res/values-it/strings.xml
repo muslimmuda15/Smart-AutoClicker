@@ -42,6 +42,7 @@
     <string name="item_desc_dumb_click_details">Durante %1$s a [%2$d, %3$d]</string>
     <string name="item_desc_dumb_click_on_position">Fare clic in corrispondenza di %1$d, %2$d</string>
     <string name="item_desc_dumb_pause">Sospendere l\'esecuzione</string>
+    <string name="item_desc_dumb_API">Set action by API</string>
     <string name="item_desc_dumb_pause_details">Durante %1$s</string>
     <string name="item_desc_dumb_repeat_count">Ripetere %1$d volte</string>
     <string name="item_desc_dumb_repeat_infinite">Ripetizione infinita</string>
@@ -50,6 +51,7 @@
     <string name="item_desc_dumb_swipe_positions">Scorrere da %1$d, %2$d a %3$d, %4$d</string>
     <string name="item_title_dumb_click">Cliccare</string>
     <string name="item_title_dumb_pause">Attendere</string>
+    <string name="item_title_dumb_api">API</string>
     <string name="item_title_dumb_swipe">Scorrimento</string>
     <string name="item_title_no_dumb_actions">Nessuna azione</string>
     <string name="item_title_dumb_action_copy">Copia</string>

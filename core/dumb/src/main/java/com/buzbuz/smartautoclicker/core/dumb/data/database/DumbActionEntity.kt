@@ -67,6 +67,10 @@ data class DumbActionEntity(
 
     // ActionType.PAUSE
     @ColumnInfo(name = "pause_duration") val pauseDuration: Long? = null,
+
+    // ActionType.API
+    @ColumnInfo(name = "url_name") val urlName: String? = null,
+    @ColumnInfo(name = "url_value") val urlValue: String? = null
 ) : EntityWithId
 
 /**
@@ -83,6 +87,7 @@ enum class DumbActionType {
     SWIPE,
     /** A pause, waiting before the next action. */
     PAUSE,
+    API
 }
 
 /** Type converter to read/write the [DumbActionType] into the database. */

@@ -65,6 +65,9 @@ class DumbActionListViewModel @Inject constructor(
         dumbEditionRepository.addNewDumbAction(dumbAction)
     }
 
+    fun createNewDumbApi(context: Context): DumbAction.DumbApi =
+        dumbEditionRepository.dumbActionBuilder.createNewDumbApi(context)
+
     fun updateDumbAction(dumbAction: DumbAction) {
         dumbEditionRepository.updateDumbAction(dumbAction)
     }

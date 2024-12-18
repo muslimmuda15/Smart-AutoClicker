@@ -80,7 +80,7 @@ class DumbEditionRepository @Inject constructor(
     /** Save editions changes in the database. */
     suspend fun saveEditions() {
         val scenarioToSave = _editedDumbScenario.value ?: return
-        Log.d(TAG, "Save editions")
+        Log.d(TAG, "Save editions  in dumb edition repository line 83 : $scenarioToSave")
 
         dumbRepository.updateDumbScenario(scenarioToSave)
         stopEdition()
@@ -103,6 +103,7 @@ class DumbEditionRepository @Inject constructor(
 
         Log.d(TAG, "Add dumb action to edited scenario $dumbAction at position $insertionIndex")
         val previousActions = editedScenario.dumbActions
+        Log.d(TAG, "Prev action : $previousActions")
         _editedDumbScenario.value = editedScenario.copy(
             dumbActions = previousActions.toMutableList().apply {
                 if (insertionIndex == null || insertionIndex == (previousActions.lastIndex + 1)) {
@@ -119,6 +120,7 @@ class DumbEditionRepository @Inject constructor(
                 updatePriorities((insertionIndex + 1)..lastIndex)
             }
         )
+        Log.d(TAG, "Last action : ${_editedDumbScenario.value}")
     }
 
     fun updateDumbAction(dumbAction: DumbAction) {
@@ -168,6 +170,7 @@ class DumbEditionRepository @Inject constructor(
             is DumbAction.DumbClick -> copy(priority = priority)
             is DumbAction.DumbPause -> copy(priority = priority)
             is DumbAction.DumbSwipe -> copy(priority = priority)
+            is DumbAction.DumbApi -> copy(priority = priority)
         }
 
     private fun MutableList<DumbAction>.updatePriorities(range: IntRange = indices) {

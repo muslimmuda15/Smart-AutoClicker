@@ -43,7 +43,9 @@ internal object DumbDatabaseModule {
             context.applicationContext,
             DumbDatabase::class.java,
             "dumb_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 }
 
 @Module
