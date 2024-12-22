@@ -16,11 +16,13 @@
  */
 package com.buzbuz.smartautoclicker.core.dumb.engine
 
+import android.graphics.Point
 import android.util.Log
 
 import com.buzbuz.smartautoclicker.core.base.AndroidExecutor
 import com.buzbuz.smartautoclicker.core.base.Dumpable
 import com.buzbuz.smartautoclicker.core.base.addDumpTabulationLvl
+import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
 import com.buzbuz.smartautoclicker.core.dumb.domain.IDumbRepository
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
@@ -37,9 +39,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import kotlin.time.Duration.Companion.minutes
 
 import java.io.PrintWriter
+import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -71,6 +77,19 @@ class DumbEngine @Inject constructor(
     private val _isRunning: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean> = _isRunning
 
+    private fun downloadJsonTask(urlString: String): String {
+        val stringBuilder = StringBuilder()
+        URL(urlString).openStream().use {
+            BufferedReader(InputStreamReader(it)).use { reader ->
+                var line: String?
+                while (reader.readLine().also { read -> line = read } != null) {
+                    stringBuilder.append(line)
+                }
+                return stringBuilder.toString()
+            }
+        }
+    }
+
     fun init(androidExecutor: AndroidExecutor, dumbScenario: DumbScenario) {
         dumbActionExecutor = DumbActionExecutor(androidExecutor)
         dumbScenarioDbId.value = dumbScenario.id.databaseId
@@ -78,13 +97,142 @@ class DumbEngine @Inject constructor(
         processingScope = CoroutineScope(Dispatchers.IO)
     }
 
+    private fun getTypeJsonToDumbAction(
+        id: Identifier,
+        scenarioId: Identifier,
+        currentPriority: Int,
+        urlFrom: String,
+        json: String
+    ): List<DumbAction> {
+        val jsonObject = JSONObject(json)
+        val dumbActions = jsonObject.getJSONArray("actions")
+
+        val actions = ArrayList<DumbAction>()
+
+        var mainId = id.databaseId
+        var mainTempId = id.tempId
+        var priority = currentPriority
+
+        for (i in 0 until dumbActions.length()){
+            val actionObject = dumbActions.getJSONObject(i)
+            val type = actionObject.optString("type", "")
+
+            val newId = Identifier(
+                ++mainId,
+                mainTempId?.let {
+                    ++mainTempId
+                } ?: run {
+                    null
+                }
+            )
+
+            when(type) {
+                "Swipe" -> actions.add(
+                    DumbAction.DumbSwipe(
+                        id = newId,
+                        scenarioId = scenarioId,
+                        name = actionObject.optString("summary", type),
+                        priority = priority++,
+                        repeatCount = actionObject.optInt("repeat_count", 1),
+                        isRepeatInfinite = false,
+                        repeatDelayMs = actionObject.optLong("repeat_delay", 1000L),
+                        fromPosition = Point(
+                            actionObject.optInt("from_x"),
+                            actionObject.optInt("from_y"),
+                        ),
+                        toPosition = Point(
+                            actionObject.optInt("to_x"),
+                            actionObject.optInt("to_y"),
+                        ),
+                        swipeDurationMs = actionObject.optLong("swipe_duration", 500L),
+                    )
+                )
+
+                "Click" -> actions.add(
+                    DumbAction.DumbClick(
+                        id = newId,
+                        scenarioId = scenarioId,
+                        name = actionObject.optString("summary", type),
+                        priority = priority++,
+                        repeatCount = actionObject.optInt("repeat_count", 1),
+                        isRepeatInfinite = false,
+                        repeatDelayMs = actionObject.optLong("repeat_delay", 1000L),
+                        position = Point(
+                            actionObject.optInt("x"),
+                            actionObject.optInt("y"),
+                        ),
+                        pressDurationMs = actionObject.optLong("press_duration"),
+                    )
+                )
+
+                "Pause" -> actions.add(
+                    DumbAction.DumbPause(
+                        id = newId,
+                        scenarioId = scenarioId,
+                        name = actionObject.optString("summary", type),
+                        priority = priority++,
+                        pauseDurationMs = actionObject.optLong("pause_duration", 1000L),
+                    )
+                )
+
+                "Api" -> if (actionObject.optString("api_url") == urlFrom) {
+                    actions.add(
+                        DumbAction.DumbApi(
+                            id = newId,
+                            scenarioId = scenarioId,
+                            name = actionObject.optString("summary"),
+                            priority = priority++,
+                            urlValue = actionObject.optString("api_url")
+                        )
+                    )
+                } else {
+                    val anotherJson = downloadJsonTask(actionObject.optString("api_url"))
+                    actions.addAll(
+                        getTypeJsonToDumbAction(
+                            id = newId,
+                            scenarioId = scenarioId,
+                            currentPriority = priority++,
+                            urlFrom = actionObject.optString("api_url"),
+                            json = anotherJson
+                        )
+                    )
+                }
+            }
+        }
+        return actions
+    }
+
     fun startDumbScenario() {
         if (_isRunning.value) return
-
         processingScope?.launch {
             dumbScenarioDbId.value?.let { dbId ->
                 dumbRepository.getDumbScenario(dbId)?.let { scenario ->
-                    startEngine(scenario)
+                    /**
+                     * Process scenario when found API
+                     */
+                    val dumbActions = ArrayList<DumbAction>()
+                    scenario.dumbActions.forEach { dumbAction ->
+                        if(dumbAction is DumbAction.DumbApi) {
+                            Log.d(TAG, "Dumb action is API : $dumbAction")
+                            val json = downloadJsonTask(dumbAction.urlValue)
+                            Log.d(TAG, "Dumb action JSON : $json")
+                            dumbActions.addAll(
+                                getTypeJsonToDumbAction(
+                                    id = dumbAction.id,
+                                    scenarioId = dumbAction.scenarioId,
+                                    currentPriority = dumbAction.priority,
+                                    urlFrom = dumbAction.urlValue,
+                                    json = json
+                                )
+                            )
+                        } else {
+                            dumbActions.add(dumbAction.copyWithNewPriority(dumbActions.size))
+                        }
+                    }
+                    val newScenario = scenario.copy(dumbActions = dumbActions)
+                    Log.d(TAG, "Old scenario : $scenario")
+                    Log.d(TAG, "New scenario : $newScenario")
+                    startEngine(newScenario)
                 }
             }
         }

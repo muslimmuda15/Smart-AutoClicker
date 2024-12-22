@@ -1,0 +1,48 @@
+{
+  "name": "a",
+  "appVersion": "1.0.0",
+  "code": "E6D783359B458E5",
+  "codewl": "B8F130C",
+  "actions": [
+    {
+      "priority": 0,
+      "type": "Swipe",
+      "value": "",
+      "summary": "Swipe",
+      "from_x": 411,
+      "from_y": 1026,
+      "to_x": 954,
+      "to_y": 1026,
+      "press_duration": 0,
+      "repeat_delay": 0,
+      "api_url": null,
+      "pause_duration": 0,
+      "swipe_duration": 1000,
+      "swipeDuration": 1000
+    },
+    {
+      "priority": 1,
+      "type": "Click",
+      "summary": "Click BMKG--",
+      "x": 422,
+      "y": 994,
+      "press_duration": 137,
+      "repeat_delay": 672,
+      "repeat_count": 1
+    },
+    {
+      "priority": 2,
+      "type": "Pause",
+      "summary": "API",
+      "pause_duration": 0
+    },
+    {
+      "priority": 3,
+      "type": "Api",
+      "summary": "API",
+      "api_url": "https://oleholeh.id/final2.json",
+      "repeat_delay": 672,
+      "repeat_count": 1
+    }
+  ]
+}

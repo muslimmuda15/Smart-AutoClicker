@@ -39,6 +39,14 @@ sealed class DumbAction : Identifiable {
             is DumbApi -> copy(scenarioId = scenarioId)
         }
 
+    fun copyWithNewPriority(priority: Int): DumbAction =
+        when (this) {
+            is DumbClick -> copy(priority = priority)
+            is DumbPause -> copy(priority = priority)
+            is DumbSwipe -> copy(priority = priority)
+            is DumbApi -> copy(priority = priority)
+        }
+
     data class DumbClick(
         override val id: Identifier,
         override val scenarioId: Identifier,

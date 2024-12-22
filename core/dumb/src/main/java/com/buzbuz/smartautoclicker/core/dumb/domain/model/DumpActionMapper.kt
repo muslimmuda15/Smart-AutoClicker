@@ -42,7 +42,7 @@ private fun DumbAction.DumbApi.toApiEntity(scenarioDbId: Long): DumbActionEntity
     return DumbActionEntity(
         id = id.databaseId,
         dumbScenarioId = if (scenarioDbId != DATABASE_ID_INSERTION) scenarioDbId else scenarioId.databaseId,
-        name = name ?: "",
+        name = name,
         priority = priority,
         type = DumbActionType.API,
         urlValue = urlValue
