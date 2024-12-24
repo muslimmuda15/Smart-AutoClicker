@@ -88,6 +88,9 @@ internal fun SharedPreferences.Editor.putPauseDurationConfig(durationMs: Long) :
 internal fun SharedPreferences.Editor.putURLConfig(url: String): SharedPreferences.Editor =
     putString(PREF_LAST_URL, url)
 
+internal fun SharedPreferences.Editor.putTextConfig(text: String): SharedPreferences.Editor =
+    putString(PREF_LAST_URL, text)
+
 /** Name of the preference file. */
 private const val DUMB_CONFIG_PREFERENCES_NAME = "DumbConfigPreferences"
 /** User last click press duration key in the SharedPreferences. */

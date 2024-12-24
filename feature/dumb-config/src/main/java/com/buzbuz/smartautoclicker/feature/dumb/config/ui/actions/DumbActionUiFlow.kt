@@ -34,6 +34,7 @@ import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.click.DumbClic
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.copy.DumbActionCopyDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.pause.DumbPauseDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.swipe.DumbSwipeDialog
+import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.text.DumbTextCopyDialog
 
 internal fun OverlayManager.startDumbActionCreationUiFlow(
     context: Context,
@@ -63,6 +64,11 @@ internal fun OverlayManager.startDumbActionCreationUiFlow(
                         creator.createNewDumbApi(),
                         listener
                     )
+                    DumbActionTypeChoice.TextCopy -> startDumbTextCopyEditionFlow(
+                        context,
+                        creator.createNewTextCopy(),
+                        listener
+                    )
                 }
             },
             onCanceled = listener.onDumbActionCreationCancelled,
@@ -82,6 +88,7 @@ internal fun OverlayManager.startDumbActionEditionUiFlow(
         is DumbAction.DumbSwipe -> startDumbSwipeEditionFlow(context, dumbAction, listener)
         is DumbAction.DumbPause -> startDumbPauseEditionFlow(context, dumbAction, listener)
         is DumbAction.DumbApi -> startDumbApiEditionFlow(context, dumbAction, listener)
+        is DumbAction.DumbTextCopy -> startDumbTextCopyEditionFlow(context, dumbAction, listener)
     }
 }
 
@@ -240,12 +247,31 @@ private fun OverlayManager.startDumbApiEditionFlow(
     dumbApi: DumbAction.DumbApi,
     listener: DumbActionUiFlowListener,
 ) {
-    Log.d(TAG, "Dumb pause creation selected: $dumbApi")
+    Log.d(TAG, "Dumb api creation selected: $dumbApi")
 
     navigateTo(
         context = context,
         newOverlay = DumbApiDialog(
             dumbApi = dumbApi,
+            onConfirmClicked = listener.onDumbActionSaved,
+            onDeleteClicked = listener.onDumbActionDeleted,
+            onDismissClicked = listener.onDumbActionCreationCancelled,
+        ),
+        hideCurrent = true,
+    )
+}
+
+private fun OverlayManager.startDumbTextCopyEditionFlow(
+    context: Context,
+    dumbTextCopy: DumbAction.DumbTextCopy,
+    listener: DumbActionUiFlowListener,
+) {
+    Log.d(TAG, "Dumb text copy creation selected: $dumbTextCopy")
+
+    navigateTo(
+        context = context,
+        newOverlay = DumbTextCopyDialog(
+            dumbTextCopy = dumbTextCopy,
             onConfirmClicked = listener.onDumbActionSaved,
             onDeleteClicked = listener.onDumbActionDeleted,
             onDismissClicked = listener.onDumbActionCreationCancelled,
@@ -266,6 +292,7 @@ internal class DumbActionCreator(
     val createNewDumbPause: () -> DumbAction.DumbPause,
     val createDumbActionCopy: ((DumbAction) -> DumbAction)? = null,
     val createNewDumbApi: () -> DumbAction.DumbApi,
+    val createNewTextCopy: () -> DumbAction.DumbTextCopy
 )
 
 

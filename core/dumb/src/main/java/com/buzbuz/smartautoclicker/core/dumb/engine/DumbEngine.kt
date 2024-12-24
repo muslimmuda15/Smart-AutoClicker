@@ -16,6 +16,7 @@
  */
 package com.buzbuz.smartautoclicker.core.dumb.engine
 
+import android.content.Context
 import android.graphics.Point
 import android.util.Log
 
@@ -90,8 +91,8 @@ class DumbEngine @Inject constructor(
         }
     }
 
-    fun init(androidExecutor: AndroidExecutor, dumbScenario: DumbScenario) {
-        dumbActionExecutor = DumbActionExecutor(androidExecutor)
+    fun init(context: Context, androidExecutor: AndroidExecutor, dumbScenario: DumbScenario) {
+        dumbActionExecutor = DumbActionExecutor(context, androidExecutor)
         dumbScenarioDbId.value = dumbScenario.id.databaseId
 
         processingScope = CoroutineScope(Dispatchers.IO)
@@ -172,6 +173,16 @@ class DumbEngine @Inject constructor(
                         name = actionObject.optString("summary", type),
                         priority = priority++,
                         pauseDurationMs = actionObject.optLong("pause_duration", 1000L),
+                    )
+                )
+
+                "Copy" -> actions.add(
+                    DumbAction.DumbTextCopy(
+                        id = newId,
+                        scenarioId = scenarioId,
+                        name = actionObject.optString("summary"),
+                        priority = priority++,
+                        textCopy = actionObject.optString("text")
                     )
                 )
 

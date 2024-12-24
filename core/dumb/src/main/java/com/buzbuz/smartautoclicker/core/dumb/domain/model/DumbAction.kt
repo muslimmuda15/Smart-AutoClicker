@@ -37,6 +37,7 @@ sealed class DumbAction : Identifiable {
             is DumbPause -> copy(scenarioId = scenarioId)
             is DumbSwipe -> copy(scenarioId = scenarioId)
             is DumbApi -> copy(scenarioId = scenarioId)
+            is DumbTextCopy -> copy(scenarioId = scenarioId)
         }
 
     fun copyWithNewPriority(priority: Int): DumbAction =
@@ -45,6 +46,7 @@ sealed class DumbAction : Identifiable {
             is DumbPause -> copy(priority = priority)
             is DumbSwipe -> copy(priority = priority)
             is DumbApi -> copy(priority = priority)
+            is DumbTextCopy -> copy(priority = priority)
         }
 
     data class DumbClick(
@@ -95,6 +97,16 @@ sealed class DumbAction : Identifiable {
         override val priority: Int = 0,
         override val name: String,
         val urlValue: String,
+    ) : DumbAction() {
+        override fun isValid(): Boolean = name.isNotEmpty()
+    }
+
+    data class DumbTextCopy(
+        override val id: Identifier,
+        override val scenarioId: Identifier,
+        override val priority: Int = 0,
+        override val name: String,
+        val textCopy: String,
     ) : DumbAction() {
         override fun isValid(): Boolean = name.isNotEmpty()
     }

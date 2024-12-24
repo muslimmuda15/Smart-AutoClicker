@@ -66,6 +66,7 @@
     <string name="input_field_label_url">URL</string>
     <string name="input_field_label_swipe_duration">滑动持续时间 (ms)</string>
     <string name="input_field_error_required">不能为空</string>
+    <string name="input_field_label_text_copy">Text to copy</string>
 
     <!--
       - Dropdown input fields texts.

@@ -28,12 +28,14 @@ internal fun DumbActionEntity.toDomain(asDomain: Boolean = false): DumbAction = 
     DumbActionType.SWIPE -> toDomainSwipe(asDomain)
     DumbActionType.PAUSE -> toDomainPause(asDomain)
     DumbActionType.API -> toDomainAPI(asDomain)
+    DumbActionType.COPY -> toDomainCopy(asDomain)
 }
 internal fun DumbAction.toEntity(scenarioDbId: Long = DATABASE_ID_INSERTION): DumbActionEntity = when (this) {
     is DumbAction.DumbClick -> toClickEntity(scenarioDbId)
     is DumbAction.DumbSwipe -> toSwipeEntity(scenarioDbId)
     is DumbAction.DumbPause -> toPauseEntity(scenarioDbId)
     is DumbAction.DumbApi -> toApiEntity(scenarioDbId)
+    is DumbAction.DumbTextCopy -> toCopyEntity(scenarioDbId)
 }
 
 private fun DumbAction.DumbApi.toApiEntity(scenarioDbId: Long): DumbActionEntity {
@@ -46,6 +48,19 @@ private fun DumbAction.DumbApi.toApiEntity(scenarioDbId: Long): DumbActionEntity
         priority = priority,
         type = DumbActionType.API,
         urlValue = urlValue
+    )
+}
+
+private fun DumbAction.DumbTextCopy.toCopyEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Pause is incomplete.")
+
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = if (scenarioDbId != DATABASE_ID_INSERTION) scenarioDbId else scenarioId.databaseId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.COPY,
+        textCopy = textCopy
     )
 }
 
@@ -83,6 +98,15 @@ private fun DumbActionEntity.toDomainAPI(asDomain: Boolean): DumbAction.DumbApi 
         priority = priority,
         name = name,
         urlValue = urlValue ?: "",
+    )
+
+private fun DumbActionEntity.toDomainCopy(asDomain: Boolean): DumbAction.DumbTextCopy =
+    DumbAction.DumbTextCopy(
+        id = Identifier(id = id, asTemporary = asDomain),
+        scenarioId = Identifier(id = dumbScenarioId, asTemporary = asDomain),
+        priority = priority,
+        name = name,
+        textCopy = textCopy ?: "",
     )
 
 private fun DumbActionEntity.toDomainPause(asDomain: Boolean): DumbAction.DumbPause =

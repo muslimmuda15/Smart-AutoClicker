@@ -58,8 +58,16 @@ sealed class DumbActionTypeChoice(
     /** API Action choice. */
     data object API : DumbActionTypeChoice(
         R.string.item_title_dumb_api,
-        R.string.item_desc_dumb_pause,
+        R.string.item_desc_dumb_API_details,
         R.drawable.ic_api,
+    )
+    /**
+     * Text Copy Action choice
+     */
+    data object TextCopy : DumbActionTypeChoice(
+        R.string.item_title_dumb_text_copy,
+        R.string.item_desc_dumb_text_copy_details,
+        R.drawable.ic_text_fields,
     )
 }
 
@@ -68,5 +76,6 @@ fun allDumbActionChoices() = listOf(
     DumbActionTypeChoice.Click,
     DumbActionTypeChoice.Swipe,
     DumbActionTypeChoice.Pause,
-    DumbActionTypeChoice.API
+    DumbActionTypeChoice.API,
+    DumbActionTypeChoice.TextCopy
 )

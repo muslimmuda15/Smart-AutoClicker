@@ -171,6 +171,7 @@ class DumbEditionRepository @Inject constructor(
             is DumbAction.DumbPause -> copy(priority = priority)
             is DumbAction.DumbSwipe -> copy(priority = priority)
             is DumbAction.DumbApi -> copy(priority = priority)
+            is DumbAction.DumbTextCopy -> copy(priority = priority)
         }
 
     private fun MutableList<DumbAction>.updatePriorities(range: IntRange = indices) {

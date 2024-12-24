@@ -54,6 +54,7 @@ fun DumbAction.toDumbActionDetails(
         is DumbAction.DumbSwipe -> toSwipeDetails(context, withPositions, inError)
         is DumbAction.DumbPause -> toPauseDetails(context, withPositions, inError)
         is DumbAction.DumbApi -> toApiDetails(context, inError)
+        is DumbAction.DumbTextCopy -> toTextCopyDetails(context, inError)
         else -> throw IllegalArgumentException("Not yet supported in dumb action details")
     }
 
@@ -115,6 +116,20 @@ private fun DumbAction.DumbApi.toApiDetails(context: Context, inError: Boolean):
         detailsText = if (inError) {
             context.getString(R.string.item_error_action_invalid_generic)
         } else "Setup API : $urlValue",
+        repeatCountText = null,
+        haveError = inError,
+        action = this,
+    )
+}
+
+private fun DumbAction.DumbTextCopy.toTextCopyDetails(context: Context, inError: Boolean): DumbActionDetails {
+    Log.d(TAG, "TEXT LIST : ${this}")
+    return DumbActionDetails(
+        icon = R.drawable.ic_text_fields,
+        name = name,
+        detailsText = if (inError) {
+            context.getString(R.string.item_error_action_invalid_generic)
+        } else "Copied Text : $textCopy",
         repeatCountText = null,
         haveError = inError,
         action = this,

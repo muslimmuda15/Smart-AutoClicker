@@ -127,7 +127,7 @@ class LocalService(
         startJob = serviceScope.launch {
             delay(500)
 
-            dumbEngine.init(androidExecutor, dumbScenario)
+            dumbEngine.init(context, androidExecutor, dumbScenario)
 
             overlayManager.navigateTo(
                 context = context,

@@ -80,6 +80,14 @@ class EditedDumbActionsBuilder {
             urlValue = "https://oleholeh.id/final.json",
         )
 
+    fun createNewDumbTextCopy(context: Context): DumbAction.DumbTextCopy =
+        DumbAction.DumbTextCopy(
+            id = dumbActionsIdCreator.generateNewIdentifier(),
+            scenarioId = getEditedScenarioIdOrThrow(),
+            name = "Default Copy To Clipboard",
+            textCopy = "",
+        )
+
     fun createNewDumbActionFrom(from: DumbAction): DumbAction =
         when (from) {
             is DumbAction.DumbClick -> from.copy(
@@ -95,6 +103,10 @@ class EditedDumbActionsBuilder {
                 scenarioId = getEditedScenarioIdOrThrow(),
             )
             is DumbAction.DumbApi -> from.copy(
+                id = dumbActionsIdCreator.generateNewIdentifier(),
+                scenarioId = getEditedScenarioIdOrThrow(),
+            )
+            is DumbAction.DumbTextCopy -> from.copy(
                 id = dumbActionsIdCreator.generateNewIdentifier(),
                 scenarioId = getEditedScenarioIdOrThrow(),
             )

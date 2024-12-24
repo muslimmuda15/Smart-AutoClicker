@@ -32,6 +32,7 @@ import com.buzbuz.smartautoclicker.core.dumb.engine.DumbEngine
 import com.buzbuz.smartautoclicker.core.ui.views.itembrief.ItemBriefDescription
 import com.buzbuz.smartautoclicker.core.ui.views.itembrief.renderers.ApiDescription
 import com.buzbuz.smartautoclicker.core.ui.views.itembrief.renderers.ClickDescription
+import com.buzbuz.smartautoclicker.core.ui.views.itembrief.renderers.CopyDescription
 import com.buzbuz.smartautoclicker.core.ui.views.itembrief.renderers.PauseDescription
 import com.buzbuz.smartautoclicker.core.ui.views.itembrief.renderers.SwipeDescription
 import com.buzbuz.smartautoclicker.feature.dumb.config.domain.DumbEditionRepository
@@ -153,6 +154,8 @@ class DumbScenarioBriefViewModel @Inject constructor(
 
     fun createNewDumbApi(context: Context): DumbAction.DumbApi = dumbEditionRepository.dumbActionBuilder.createNewDumbApi(context)
 
+    fun createNewDumbTextCopy(context: Context): DumbAction.DumbTextCopy = dumbEditionRepository.dumbActionBuilder.createNewDumbTextCopy(context)
+
     fun addNewDumbAction(dumbAction: DumbAction, index: Int) {
         dumbEditionRepository.addNewDumbAction(
             dumbAction = dumbAction,
@@ -225,6 +228,10 @@ class DumbScenarioBriefViewModel @Inject constructor(
 
             is DumbAction.DumbApi -> ApiDescription(
                 url = urlValue
+            )
+
+            is DumbAction.DumbTextCopy -> CopyDescription(
+                text = textCopy
             )
         }
 }

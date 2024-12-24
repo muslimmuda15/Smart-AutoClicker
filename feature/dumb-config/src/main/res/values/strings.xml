@@ -54,6 +54,8 @@
     <string name="item_title_dumb_pause">Wait</string>
     <string name="item_title_dumb_swipe">Swipe</string>
     <string name="item_title_dumb_api">API</string>
+    <string name="item_title_dumb_text_copy">Copy Text</string>
+    <string name="item_desc_dumb_text_copy_details">Input action in copy text</string>
     <string name="item_title_no_dumb_actions">No Actions</string>
     <string name="item_title_dumb_action_copy">Copy</string>
     <string name="item_desc_dumb_action_copy">Copy an existing Action from any Scenarios</string>

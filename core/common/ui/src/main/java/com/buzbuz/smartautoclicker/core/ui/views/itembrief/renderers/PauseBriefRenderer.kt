@@ -123,6 +123,10 @@ data class ApiDescription(
     val url: String = "https://oleholeh.id/final.json",
 ) : ItemBriefDescription
 
+data class CopyDescription(
+    val text: String = "",
+) : ItemBriefDescription
+
 internal data class PauseBriefRendererStyle(
     @ColorInt val backgroundColor: Int,
     val outerPaint: Paint,

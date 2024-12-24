@@ -17,7 +17,11 @@
 package com.buzbuz.smartautoclicker.core.dumb.engine
 
 import android.accessibilityservice.GestureDescription
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Path
+import android.widget.Toast
 
 import com.buzbuz.smartautoclicker.core.base.AndroidExecutor
 import com.buzbuz.smartautoclicker.core.base.extensions.buildSingleStroke
@@ -33,7 +37,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
-internal class DumbActionExecutor(private val androidExecutor: AndroidExecutor) {
+internal class DumbActionExecutor(private val context: Context, private val androidExecutor: AndroidExecutor) {
 
     private val random: Random = Random(System.currentTimeMillis())
     private var randomize: Boolean = false
@@ -45,6 +49,7 @@ internal class DumbActionExecutor(private val androidExecutor: AndroidExecutor) 
             is DumbAction.DumbSwipe -> executeDumbSwipe(action)
             is DumbAction.DumbPause -> executeDumbPause(action)
             is DumbAction.DumbApi -> executeDumbApi(action)
+            is DumbAction.DumbTextCopy -> executeDumbCopy(action)
         }
     }
 
@@ -75,6 +80,15 @@ internal class DumbActionExecutor(private val androidExecutor: AndroidExecutor) 
 
     private suspend fun executeDumbApi(dumbApi: DumbAction.DumbApi){
 
+    }
+
+    private suspend fun executeDumbCopy(dumbCopy: DumbAction.DumbTextCopy){
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(dumbCopy.name, dumbCopy.textCopy)
+        clipboard.setPrimaryClip(clip)
+//        withContext(Dispatchers.Main) {
+//            Toast.makeText(context, "Text of ${dumbCopy.name} has been copied", Toast.LENGTH_SHORT).show()
+//        }
     }
 
     private suspend fun executeRepeatableGesture(gesture: GestureDescription, repeatable: Repeatable) {

@@ -69,6 +69,7 @@
     <string name="input_field_label_url">URL</string>
     <string name="input_field_label_swipe_duration">Durée du swipe (ms)</string>
     <string name="input_field_error_required">Requis</string>
+    <string name="input_field_label_text_copy">Text to copy</string>
 
     <!--
       - Dropdown input fields texts.

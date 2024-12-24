@@ -86,7 +86,8 @@ class DumbScenarioBriefMenu(
             createNewDumbSwipe = { from, to -> viewModel.createNewDumbSwipe(context, from, to) },
             createNewDumbPause = { viewModel.createNewDumbPause(context) },
             createDumbActionCopy = viewModel::createDumbActionCopy,
-            createNewDumbApi = { viewModel.createNewDumbApi(context) }
+            createNewDumbApi = { viewModel.createNewDumbApi(context) },
+            createNewTextCopy = { viewModel.createNewDumbTextCopy(context) }
         )
         createCopyActionUiFlowListener = DumbActionUiFlowListener(
             onDumbActionSaved = { action -> viewModel.addNewDumbAction(action, getFocusedItemIndex() + 1) },
