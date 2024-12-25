@@ -16,11 +16,13 @@
  */
 package com.buzbuz.smartautoclicker.core.dumb.engine
 
+import ToastManager
 import android.accessibilityservice.GestureDescription
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Path
+import android.util.Log
 import android.widget.Toast
 
 import com.buzbuz.smartautoclicker.core.base.AndroidExecutor
@@ -42,6 +44,12 @@ internal class DumbActionExecutor(private val context: Context, private val andr
     private val random: Random = Random(System.currentTimeMillis())
     private var randomize: Boolean = false
 
+    var toast = ToastManager()
+
+    private fun showToast(context: Context, dumbName: String) {
+        toast.showToast(context, dumbName)
+    }
+
     suspend fun executeDumbAction(action: DumbAction, randomize: Boolean) {
         this.randomize = randomize
         when (action) {
@@ -59,6 +67,11 @@ internal class DumbActionExecutor(private val context: Context, private val andr
             durationMs = dumbClick.pressDurationMs.randomizeDurationIfNeeded(),
         )
 
+        withContext(Dispatchers.Main) {
+            showToast(context, dumbClick.name)
+        }
+        Log.d("action", "Click : ${dumbClick.name}")
+
         executeRepeatableGesture(clickGesture, dumbClick)
     }
 
@@ -71,10 +84,19 @@ internal class DumbActionExecutor(private val context: Context, private val andr
             durationMs = dumbSwipe.swipeDurationMs.randomizeDurationIfNeeded(),
         )
 
+        withContext(Dispatchers.Main) {
+            showToast(context, dumbSwipe.name)
+        }
+        Log.d("action", "Swipe : ${dumbSwipe.name}")
+
         executeRepeatableGesture(swipeGesture, dumbSwipe)
     }
 
     private suspend fun executeDumbPause(dumbPause: DumbAction.DumbPause) {
+        withContext(Dispatchers.Main) {
+            showToast(context, dumbPause.name)
+        }
+        Log.d("action", "Pause : ${dumbPause.name}")
         delay(dumbPause.pauseDurationMs.randomizeDurationIfNeeded())
     }
 
@@ -86,9 +108,10 @@ internal class DumbActionExecutor(private val context: Context, private val andr
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(dumbCopy.name, dumbCopy.textCopy)
         clipboard.setPrimaryClip(clip)
-//        withContext(Dispatchers.Main) {
-//            Toast.makeText(context, "Text of ${dumbCopy.name} has been copied", Toast.LENGTH_SHORT).show()
-//        }
+        withContext(Dispatchers.Main) {
+            showToast(context, dumbCopy.name)
+        }
+        Log.d("action", "Copy : ${dumbCopy.name}")
     }
 
     private suspend fun executeRepeatableGesture(gesture: GestureDescription, repeatable: Repeatable) {
