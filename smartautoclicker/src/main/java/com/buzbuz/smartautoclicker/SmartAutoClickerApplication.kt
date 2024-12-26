@@ -26,5 +26,6 @@ class SmartAutoClickerApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         DynamicColors.applyToActivitiesIfAvailable(this)
+        globalExceptionHandler()
     }
 }

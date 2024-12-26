@@ -23,7 +23,10 @@ plugins {
 
 android {
     namespace = "com.buzbuz.smartautoclicker"
-    buildFeatures.viewBinding = true
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.buzbuz.smartautoclicker"
