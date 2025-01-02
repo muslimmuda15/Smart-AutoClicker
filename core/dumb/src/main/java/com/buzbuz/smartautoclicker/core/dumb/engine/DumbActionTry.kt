@@ -22,6 +22,7 @@ import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction.DumbClick
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction.DumbPause
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction.DumbSwipe
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction.DumbApi
+import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction.DumbLink
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction.DumbTextCopy
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
 
@@ -57,6 +58,9 @@ private fun DumbAction.toFiniteDumbAction(scenarioId: Identifier): DumbAction =
             scenarioId = scenarioId
         )
         is DumbTextCopy -> copy(
+            scenarioId = scenarioId
+        )
+        is DumbLink -> copy(
             scenarioId = scenarioId
         )
     }

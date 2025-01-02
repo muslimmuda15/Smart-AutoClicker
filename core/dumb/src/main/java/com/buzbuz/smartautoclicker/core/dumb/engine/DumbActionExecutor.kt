@@ -21,10 +21,12 @@ import android.accessibilityservice.GestureDescription
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Path
+import android.net.Uri
 import android.util.Log
-import android.widget.Toast
-
+import androidx.core.content.ContextCompat.startActivity
 import com.buzbuz.smartautoclicker.core.base.AndroidExecutor
 import com.buzbuz.smartautoclicker.core.base.extensions.buildSingleStroke
 import com.buzbuz.smartautoclicker.core.base.extensions.nextIntInOffset
@@ -33,11 +35,11 @@ import com.buzbuz.smartautoclicker.core.base.extensions.safeLineTo
 import com.buzbuz.smartautoclicker.core.base.extensions.safeMoveTo
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.Repeatable
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
+
 
 internal class DumbActionExecutor(private val context: Context, private val androidExecutor: AndroidExecutor) {
 
@@ -58,6 +60,7 @@ internal class DumbActionExecutor(private val context: Context, private val andr
             is DumbAction.DumbPause -> executeDumbPause(action)
             is DumbAction.DumbApi -> executeDumbApi(action)
             is DumbAction.DumbTextCopy -> executeDumbCopy(action)
+            is DumbAction.DumbLink -> executeDumbLink(action)
         }
     }
 
@@ -112,6 +115,48 @@ internal class DumbActionExecutor(private val context: Context, private val andr
             showToast(context, dumbCopy.name)
         }
         Log.d("action", "Copy : ${dumbCopy.name}")
+    }
+
+    private suspend fun executeDumbLink(dumbLink: DumbAction.DumbLink) {
+        withContext(Dispatchers.Main) {
+            when (dumbLink.name) {
+                "Whatsapp" -> {
+                    if (isWhatsappInstalled()) {
+                        val formattedNumber = dumbLink.linkNumber
+                        val encodedMessage = Uri.encode(dumbLink.linkDescription)
+
+                        // Create the WhatsApp URI
+                        val uri = Uri.parse("https://api.whatsapp.com/send?phone=$formattedNumber&text=$encodedMessage")
+
+                        // Initialize the Intent
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        intent.setPackage("com.whatsapp") // Specify WhatsApp as the target app
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                        // Launch the Intent
+                        context.startActivity(intent)
+                    } else {
+                        showToast(context, "Whatsapp not installed")
+                        val uri = Uri.parse("market://details?id=com.whatsapp")
+                        val goToMarket = Intent(Intent.ACTION_VIEW, uri)
+                        context.startActivity(goToMarket)
+                    }
+                }
+            }
+            delay(dumbLink.linkDurationMs.randomizeDurationIfNeeded())
+        }
+    }
+
+    private fun isWhatsappInstalled(): Boolean {
+        val pm: PackageManager = context.packageManager
+        var appInstalled = false
+        try {
+            pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+            appInstalled = true
+        } catch (e: PackageManager.NameNotFoundException) {
+            appInstalled = false
+        }
+        return appInstalled
     }
 
     private suspend fun executeRepeatableGesture(gesture: GestureDescription, repeatable: Repeatable) {

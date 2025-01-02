@@ -1,6 +1,9 @@
 package com.buzbuz.smartautoclicker
 
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -15,12 +18,18 @@ private fun errorMessage(writer: StringWriter): String {
     val title = "Fatal error :\n"
     val begin = "```\n"
     val end = "\n```"
-//
-    return message + device + androidVersion  + appVersion + title + begin + writer + end
+
+    val limitLineWriter = writer.toString()
+        .lineSequence()
+        .take(30)
+        .joinToString("\n")
+
+    return message + device + androidVersion  + appVersion + title + begin + limitLineWriter + end
 }
 
 private fun sendToSlack(ex: Throwable) {
-    val url = URL("https://hooks.slack.com/services/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")
+    Log.d("exception", "Send to slack")
+    val url = URL("https://hooks.slack.com/services/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")
     val connection = (url.openConnection() as HttpURLConnection).apply {
         requestMethod = "POST"
         doOutput = true
@@ -41,16 +50,22 @@ private fun sendToSlack(ex: Throwable) {
     if (responseCode == HttpURLConnection.HTTP_OK) {
         Log.i("slack", "Success send to slack")
     } else {
-        Log.i("slack", "Failed send to slack")
+        Log.i("slack", "Failed send to slack : ${connection.responseMessage}")
     }
 }
 
 fun globalExceptionHandler() {
     Thread.setDefaultUncaughtExceptionHandler { _, ex ->
-        sendToSlack(ex)
+        Log.d("exception", "Get global exception")
+        CoroutineScope(Dispatchers.Default).launch {
+            sendToSlack(ex)
+        }
+        Log.e("exception", "Global exception", ex)
     }
 }
 
 fun Exception.sendError(){
-    sendToSlack(this)
+    CoroutineScope(Dispatchers.Default).launch {
+        sendToSlack(this@sendError)
+    }
 }

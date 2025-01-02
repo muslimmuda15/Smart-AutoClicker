@@ -24,4 +24,7 @@
 
     <string name="default_dumb_pause_name" translatable="false">Wait</string>
     <integer name="default_dumb_pause_duration">50</integer>
+
+    <string name="default_dumb_link_name" translatable="false">Whatsapp</string>
+    <integer name="default_dumb_link_duration">3000</integer>
 </resources>

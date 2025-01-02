@@ -81,9 +81,21 @@ internal fun SharedPreferences.Editor.putSwipeRepeatDelayConfig(durationMs: Long
 internal fun SharedPreferences.getPauseDurationConfig(default: Long) : Long =
     getLong(PREF_LAST_PAUSE_DURATION, default)
 
+internal fun SharedPreferences.getLinkDurationConfig(default: Long) : Long =
+    getLong(PREF_LAST_LINK_DURATION, default)
+
 /** Save a new default duration for the pause. */
 internal fun SharedPreferences.Editor.putPauseDurationConfig(durationMs: Long) : SharedPreferences.Editor =
     putLong(PREF_LAST_PAUSE_DURATION, durationMs)
+
+internal fun SharedPreferences.Editor.putLinkDurationConfig(durationMs: Long) : SharedPreferences.Editor =
+    putLong(PREF_LAST_LINK_DURATION, durationMs)
+
+internal fun SharedPreferences.Editor.putLinkNumberConfig(number: String) : SharedPreferences.Editor =
+    putString(PREF_LAST_LINK_NUMBER, number)
+
+internal fun SharedPreferences.Editor.putLinkDescriptionConfig(desc: String) : SharedPreferences.Editor =
+    putString(PREF_LAST_LINK_DESCRIPTION, desc)
 
 internal fun SharedPreferences.Editor.putURLConfig(url: String): SharedPreferences.Editor =
     putString(PREF_LAST_URL, url)
@@ -109,3 +121,6 @@ private const val PREF_LAST_SWIPE_REPEAT_DELAY = "Last_Swipe_Repeat_Delay"
 private const val PREF_LAST_PAUSE_DURATION = "Last_Pause_Duration"
 /** User change url key in SharedPreferences */
 private const val PREF_LAST_URL = "Last_Url"
+private const val PREF_LAST_LINK_DURATION = "Last_Link_Duration"
+private const val PREF_LAST_LINK_NUMBER = "Last_Link_Number"
+private const val PREF_LAST_LINK_DESCRIPTION = "Last_Link_Description"

@@ -52,13 +52,17 @@
     <string name="item_desc_dumb_swipe_positions">Swipe from %1$d, %2$d to %3$d, %4$d</string>
     <string name="item_title_dumb_click">Click</string>
     <string name="item_title_dumb_pause">Wait</string>
+    <string name="item_title_dumb_link">Link</string>
     <string name="item_title_dumb_swipe">Swipe</string>
     <string name="item_title_dumb_api">API</string>
     <string name="item_title_dumb_text_copy">Copy Text</string>
     <string name="item_desc_dumb_text_copy_details">Input action in copy text</string>
+    <string name="item_desc_dumb_link_details">Link action to open another app</string>
     <string name="item_title_no_dumb_actions">No Actions</string>
     <string name="item_title_dumb_action_copy">Copy</string>
     <string name="item_desc_dumb_action_copy">Copy an existing Action from any Scenarios</string>
+    <string name="item_title_dumb_action_number">Number</string>
+    <string name="item_title_dumb_action_description">Description</string>
 
     <!--
       - Empty list messages.

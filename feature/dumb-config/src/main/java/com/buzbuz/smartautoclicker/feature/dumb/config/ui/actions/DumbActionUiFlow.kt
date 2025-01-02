@@ -32,6 +32,7 @@ import com.buzbuz.smartautoclicker.feature.dumb.config.R
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.api.DumbApiDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.click.DumbClickDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.copy.DumbActionCopyDialog
+import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.link.DumbLinkDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.pause.DumbPauseDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.swipe.DumbSwipeDialog
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.text.DumbTextCopyDialog
@@ -69,6 +70,11 @@ internal fun OverlayManager.startDumbActionCreationUiFlow(
                         creator.createNewTextCopy(),
                         listener
                     )
+                    DumbActionTypeChoice.Link -> startDumbLinkEditionFlow(
+                        context,
+                        creator.createLinkCopy(),
+                        listener
+                    )
                 }
             },
             onCanceled = listener.onDumbActionCreationCancelled,
@@ -89,6 +95,7 @@ internal fun OverlayManager.startDumbActionEditionUiFlow(
         is DumbAction.DumbPause -> startDumbPauseEditionFlow(context, dumbAction, listener)
         is DumbAction.DumbApi -> startDumbApiEditionFlow(context, dumbAction, listener)
         is DumbAction.DumbTextCopy -> startDumbTextCopyEditionFlow(context, dumbAction, listener)
+        is DumbAction.DumbLink -> startDumbLinkEditionFlow(context, dumbAction, listener)
     }
 }
 
@@ -242,6 +249,25 @@ private fun OverlayManager.startDumbPauseEditionFlow(
     )
 }
 
+private fun OverlayManager.startDumbLinkEditionFlow(
+    context: Context,
+    dumbLink: DumbAction.DumbLink,
+    listener: DumbActionUiFlowListener,
+) {
+    Log.d(TAG, "Dumb link creation selected: $dumbLink")
+
+    navigateTo(
+        context = context,
+        newOverlay = DumbLinkDialog(
+            dumbLink = dumbLink,
+            onConfirmClicked = listener.onDumbActionSaved,
+            onDeleteClicked = listener.onDumbActionDeleted,
+            onDismissClicked = listener.onDumbActionCreationCancelled,
+        ),
+        hideCurrent = true,
+    )
+}
+
 private fun OverlayManager.startDumbApiEditionFlow(
     context: Context,
     dumbApi: DumbAction.DumbApi,
@@ -292,7 +318,8 @@ internal class DumbActionCreator(
     val createNewDumbPause: () -> DumbAction.DumbPause,
     val createDumbActionCopy: ((DumbAction) -> DumbAction)? = null,
     val createNewDumbApi: () -> DumbAction.DumbApi,
-    val createNewTextCopy: () -> DumbAction.DumbTextCopy
+    val createNewTextCopy: () -> DumbAction.DumbTextCopy,
+    val createLinkCopy: () -> DumbAction.DumbLink
 )
 
 

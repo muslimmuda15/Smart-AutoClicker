@@ -67,6 +67,7 @@
     <string name="input_field_label_name">Name</string>
     <string name="input_field_label_url">URL</string>
     <string name="input_field_label_pause_duration">Pause duration</string>
+    <string name="input_field_label_link_duration">Link duration</string>
     <string name="input_field_label_scenario_name">Scenario name</string>
     <string name="input_field_label_swipe_duration">Swipe duration (ms)</string>
     <string name="input_field_error_required">Required</string>
@@ -92,6 +93,9 @@
     <string name="dropdown_label_time_unit_min">min</string>
     <string name="dropdown_label_time_unit_h">h</string>
     <string name="dropdown_label_time_unit">Time Unit</string>
+
+    <string name="dropdown_label_app_whatsapp" translatable="false">Whatsapp</string>
+    <string name="dropdown_label_app_telegram" translatable="false">Telegram</string>
 
     <!--
       - Toast messages.

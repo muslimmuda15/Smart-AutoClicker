@@ -68,6 +68,7 @@
     <string name="input_field_label_scenario_name">Nome do cenário</string>
     <string name="input_field_label_url">URL</string>
     <string name="input_field_label_swipe_duration">Duração do swipe (ms)</string>
+    <string name="input_field_label_link_duration">Link duration</string>
     <string name="input_field_error_required">Obrigatório</string>
     <string name="input_field_label_text_copy">Text to copy</string>
 

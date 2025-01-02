@@ -92,7 +92,8 @@ class DumbActionListContent(appContext: Context) : NavBarDialogContent(appContex
             createNewDumbPause = { viewModel.createNewDumbPause(context) },
             createDumbActionCopy = viewModel::createDumbActionCopy,
             createNewDumbApi = { viewModel.createNewDumbApi(context) },
-            createNewTextCopy = { viewModel.createNewDumbTextCopy(context) }
+            createNewTextCopy = { viewModel.createNewDumbTextCopy(context) },
+            createLinkCopy = { viewModel.createNewDumbLink(context) }
         )
         createCopyActionUiFlowListener = DumbActionUiFlowListener(
             onDumbActionSaved = viewModel::addNewDumbAction,

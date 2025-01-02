@@ -88,6 +88,16 @@ class EditedDumbActionsBuilder {
             textCopy = "",
         )
 
+    fun createNewDumbLink(context: Context): DumbAction.DumbLink =
+        DumbAction.DumbLink(
+            id = dumbActionsIdCreator.generateNewIdentifier(),
+            scenarioId = getEditedScenarioIdOrThrow(),
+            name = "Whatsapp",
+            linkNumber = "628123456789",
+            linkDescription = "Lorem ipsum dolor sit amet",
+            linkDurationMs = context.getDefaultDumbLinkDurationMs(),
+        )
+
     fun createNewDumbActionFrom(from: DumbAction): DumbAction =
         when (from) {
             is DumbAction.DumbClick -> from.copy(
@@ -107,6 +117,10 @@ class EditedDumbActionsBuilder {
                 scenarioId = getEditedScenarioIdOrThrow(),
             )
             is DumbAction.DumbTextCopy -> from.copy(
+                id = dumbActionsIdCreator.generateNewIdentifier(),
+                scenarioId = getEditedScenarioIdOrThrow(),
+            )
+            is DumbAction.DumbLink -> from.copy(
                 id = dumbActionsIdCreator.generateNewIdentifier(),
                 scenarioId = getEditedScenarioIdOrThrow(),
             )

@@ -29,6 +29,7 @@ internal fun DumbActionEntity.toDomain(asDomain: Boolean = false): DumbAction = 
     DumbActionType.PAUSE -> toDomainPause(asDomain)
     DumbActionType.API -> toDomainAPI(asDomain)
     DumbActionType.COPY -> toDomainCopy(asDomain)
+    DumbActionType.LINK -> toDomainLink(asDomain)
 }
 internal fun DumbAction.toEntity(scenarioDbId: Long = DATABASE_ID_INSERTION): DumbActionEntity = when (this) {
     is DumbAction.DumbClick -> toClickEntity(scenarioDbId)
@@ -36,10 +37,11 @@ internal fun DumbAction.toEntity(scenarioDbId: Long = DATABASE_ID_INSERTION): Du
     is DumbAction.DumbPause -> toPauseEntity(scenarioDbId)
     is DumbAction.DumbApi -> toApiEntity(scenarioDbId)
     is DumbAction.DumbTextCopy -> toCopyEntity(scenarioDbId)
+    is DumbAction.DumbLink -> toLinkEntity(scenarioDbId)
 }
 
 private fun DumbAction.DumbApi.toApiEntity(scenarioDbId: Long): DumbActionEntity {
-    if (!isValid()) throw IllegalStateException("Can't transform to entity, Pause is incomplete.")
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Api is incomplete.")
 
     return DumbActionEntity(
         id = id.databaseId,
@@ -51,8 +53,23 @@ private fun DumbAction.DumbApi.toApiEntity(scenarioDbId: Long): DumbActionEntity
     )
 }
 
+private fun DumbAction.DumbLink.toLinkEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Link is incomplete.")
+
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = if (scenarioDbId != DATABASE_ID_INSERTION) scenarioDbId else scenarioId.databaseId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.LINK,
+        linkNumber = linkNumber,
+        linkDescription = linkDescription,
+        pauseDuration = linkDurationMs
+    )
+}
+
 private fun DumbAction.DumbTextCopy.toCopyEntity(scenarioDbId: Long): DumbActionEntity {
-    if (!isValid()) throw IllegalStateException("Can't transform to entity, Pause is incomplete.")
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Copy is incomplete.")
 
     return DumbActionEntity(
         id = id.databaseId,
@@ -98,6 +115,17 @@ private fun DumbActionEntity.toDomainAPI(asDomain: Boolean): DumbAction.DumbApi 
         priority = priority,
         name = name,
         urlValue = urlValue ?: "",
+    )
+
+private fun DumbActionEntity.toDomainLink(asDomain: Boolean): DumbAction.DumbLink =
+    DumbAction.DumbLink(
+        id = Identifier(id = id, asTemporary = asDomain),
+        scenarioId = Identifier(id = dumbScenarioId, asTemporary = asDomain),
+        priority = priority,
+        name = name,
+        linkNumber = linkNumber ?: "",
+        linkDescription = linkDescription ?: "",
+        linkDurationMs = pauseDuration ?: 1000L
     )
 
 private fun DumbActionEntity.toDomainCopy(asDomain: Boolean): DumbAction.DumbTextCopy =

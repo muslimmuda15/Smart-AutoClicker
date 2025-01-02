@@ -55,6 +55,7 @@ fun DumbAction.toDumbActionDetails(
         is DumbAction.DumbPause -> toPauseDetails(context, withPositions, inError)
         is DumbAction.DumbApi -> toApiDetails(context, inError)
         is DumbAction.DumbTextCopy -> toTextCopyDetails(context, inError)
+        is DumbAction.DumbLink -> toLinkDetails(context, inError)
         else -> throw IllegalArgumentException("Not yet supported in dumb action details")
     }
 
@@ -154,6 +155,26 @@ private fun DumbAction.DumbPause.toPauseDetails(
             else -> context.getString(
                 R.string.item_desc_dumb_action_duration,
                 formatDuration(pauseDurationMs),
+            )
+        },
+        repeatCountText = null,
+        haveError = inError,
+        action = this,
+    )
+
+private fun DumbAction.DumbLink.toLinkDetails(
+    context: Context,
+    inError: Boolean
+): DumbActionDetails =
+    DumbActionDetails(
+        icon = R.drawable.ic_dataset_linked,
+        name = name,
+        detailsText = if (inError) {
+            context.getString(R.string.item_error_action_invalid_generic)
+        } else {
+            context.getString(
+                R.string.item_desc_dumb_pause_details,
+                formatDuration(linkDurationMs)
             )
         },
         repeatCountText = null,

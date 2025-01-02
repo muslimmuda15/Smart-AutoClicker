@@ -119,6 +119,12 @@ data class PauseDescription(
     val pauseDurationMs: Long = MINIMAL_ANIMATION_DURATION_MS,
 ) : ItemBriefDescription
 
+data class LinkDescription(
+    val linkNumber: String = "628123456789",
+    val linkDescription: String = "Test description",
+    val linkDurationMs: Long = MINIMAL_ANIMATION_DURATION_MS
+) : ItemBriefDescription
+
 data class ApiDescription(
     val url: String = "https://oleholeh.id/final.json",
 ) : ItemBriefDescription

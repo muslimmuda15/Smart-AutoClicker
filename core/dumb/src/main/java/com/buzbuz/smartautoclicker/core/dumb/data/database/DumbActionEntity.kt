@@ -72,7 +72,11 @@ data class DumbActionEntity(
     @ColumnInfo(name = "url_value") val urlValue: String? = null,
 
     // ActionType.COPY
-    @ColumnInfo(name = "text_copy") val textCopy: String? = null
+    @ColumnInfo(name = "text_copy") val textCopy: String? = null,
+
+    // ActionType.LINK
+    @ColumnInfo(name = "link_number") val linkNumber: String? = null,
+    @ColumnInfo(name = "link_description") val linkDescription: String? = null
 ) : EntityWithId
 
 /**
@@ -92,7 +96,9 @@ enum class DumbActionType {
     /** A api, load action by API */
     API,
     /** A copy, copy text */
-    COPY
+    COPY,
+    /** A link, run another app */
+    LINK
 }
 
 /** Type converter to read/write the [DumbActionType] into the database. */

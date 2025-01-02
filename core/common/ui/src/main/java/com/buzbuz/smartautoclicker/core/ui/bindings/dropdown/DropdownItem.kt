@@ -21,6 +21,17 @@ sealed class TimeUnitDropDownItem(@StringRes title: Int) : DropdownItem(title) {
     data object Hours : TimeUnitDropDownItem(R.string.dropdown_label_time_unit_h)
 }
 
+sealed class AppTypeDropDownItem(@StringRes title: Int): DropdownItem(title) {
+    data object Whatsapp : AppTypeDropDownItem(R.string.dropdown_label_app_whatsapp)
+    data object Telegram : AppTypeDropDownItem(R.string.dropdown_label_app_telegram)
+}
+
+val appTypeDropDownItem: List<AppTypeDropDownItem>
+    get() = listOf(
+        AppTypeDropDownItem.Whatsapp,
+        AppTypeDropDownItem.Telegram
+    )
+
 val timeUnitDropdownItems: List<TimeUnitDropDownItem>
     get() = listOf(
         TimeUnitDropDownItem.Milliseconds,
@@ -36,6 +47,20 @@ fun Long?.toDurationMs(unit: TimeUnitDropDownItem): Long =
         unit == TimeUnitDropDownItem.Minutes -> this * 1.minutes.inWholeMilliseconds
         unit == TimeUnitDropDownItem.Hours -> this * 1.hours.inWholeMilliseconds
         else -> this
+    }
+
+fun AppTypeDropDownItem.toAppTypeString(): String =
+    when(this) {
+        AppTypeDropDownItem.Whatsapp -> "Whatsapp"
+        AppTypeDropDownItem.Telegram -> "Telegram"
+        else -> ""
+    }
+
+fun String.toAppTypeDropDown(): AppTypeDropDownItem =
+    when(this){
+        "Whatsapp" -> AppTypeDropDownItem.Whatsapp
+        "Telegram" -> AppTypeDropDownItem.Telegram
+        else -> AppTypeDropDownItem.Whatsapp
     }
 
 fun Long?.findAppropriateTimeUnit(): TimeUnitDropDownItem =

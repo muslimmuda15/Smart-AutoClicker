@@ -69,6 +69,14 @@ sealed class DumbActionTypeChoice(
         R.string.item_desc_dumb_text_copy_details,
         R.drawable.ic_text_fields,
     )
+    /**
+     * Link action choice
+     */
+    data object Link : DumbActionTypeChoice(
+        R.string.item_title_dumb_link,
+        R.string.item_desc_dumb_link_details,
+        R.drawable.ic_dataset_linked,
+    )
 }
 
 fun allDumbActionChoices() = listOf(
@@ -77,5 +85,6 @@ fun allDumbActionChoices() = listOf(
     DumbActionTypeChoice.Swipe,
     DumbActionTypeChoice.Pause,
     DumbActionTypeChoice.API,
-    DumbActionTypeChoice.TextCopy
+    DumbActionTypeChoice.TextCopy,
+    DumbActionTypeChoice.Link
 )

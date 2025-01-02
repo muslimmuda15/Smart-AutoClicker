@@ -22,6 +22,7 @@ import com.buzbuz.smartautoclicker.feature.dumb.config.data.getClickPressDuratio
 import com.buzbuz.smartautoclicker.feature.dumb.config.data.getClickRepeatCountConfig
 import com.buzbuz.smartautoclicker.feature.dumb.config.data.getClickRepeatDelayConfig
 import com.buzbuz.smartautoclicker.feature.dumb.config.data.getDumbConfigPreferences
+import com.buzbuz.smartautoclicker.feature.dumb.config.data.getLinkDurationConfig
 import com.buzbuz.smartautoclicker.feature.dumb.config.data.getPauseDurationConfig
 import com.buzbuz.smartautoclicker.feature.dumb.config.data.getSwipeDurationConfig
 import com.buzbuz.smartautoclicker.feature.dumb.config.data.getSwipeRepeatCountConfig
@@ -56,3 +57,6 @@ internal fun Context.getDefaultDumbPauseName(): String =
 
 internal fun Context.getDefaultDumbPauseDurationMs(): Long = getDumbConfigPreferences()
     .getPauseDurationConfig(resources.getInteger(R.integer.default_dumb_pause_duration).toLong())
+
+internal fun Context.getDefaultDumbLinkDurationMs(): Long = getDumbConfigPreferences()
+    .getLinkDurationConfig(resources.getInteger(R.integer.default_dumb_link_duration).toLong())
