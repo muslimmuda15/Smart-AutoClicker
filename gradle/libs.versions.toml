@@ -51,6 +51,7 @@ mockitoCore = "5.6.0"
 mockitoKotlin = "5.1.0"
 mockk = "1.13.10"
 robolectric = "4.11.1"
+material = "1.12.0"
 
 
 [libraries]
@@ -117,6 +118,7 @@ google-gms-ads = { group = "com.google.android.gms", name = "play-services-ads",
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCoreTesting" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "androidxRoom" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 [plugins]

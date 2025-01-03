@@ -39,6 +39,12 @@ fun IncludeFieldTextInputBinding.setText(text: String?, type: Int = InputType.TY
     }
 }
 
+fun IncludeFieldTextInputBinding.setInputType(inputType: Int){
+    textField.inputType = inputType
+}
+
+fun IncludeFieldTextInputBinding.getText(): String = textField.text.toString()
+
 fun IncludeFieldTextInputBinding.setError(isError: Boolean) {
     setError(R.string.input_field_error_required, isError)
 }

@@ -38,7 +38,12 @@ import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setOnTextChangedListe
 import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setText
 import com.buzbuz.smartautoclicker.core.common.overlays.base.viewModels
 import com.buzbuz.smartautoclicker.core.common.overlays.dialog.OverlayDialog
+import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.AppTypeDropDownItem
 import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.appTypeDropDownItem
+import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.getSelectedItem
+import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.toAppTypeDropDown
+import com.buzbuz.smartautoclicker.core.ui.bindings.fields.getText
+import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setInputType
 import com.buzbuz.smartautoclicker.core.ui.utils.MinMaxInputFilter
 import com.buzbuz.smartautoclicker.feature.dumb.config.R
 import com.buzbuz.smartautoclicker.feature.dumb.config.databinding.DialogConfigDumbActionLinkBinding
@@ -54,6 +59,7 @@ class DumbLinkDialog(
     private val onDeleteClicked: (DumbAction.DumbLink) -> Unit,
     private val onDismissClicked: () -> Unit,
 ) : OverlayDialog(R.style.AppTheme) {
+    val waPattern = Regex("^[1-9]\\d{6,14}\$")
 
     /** The view model for this dialog. */
     private val viewModel: DumbLinkViewModel by viewModels(
@@ -91,13 +97,18 @@ class DumbLinkDialog(
             editNameLayout.setItems(
                 label = context.getString(R.string.input_field_label_name),
                 items = appTypeDropDownItem,
-                onItemSelected = viewModel::setAppType,
+                onItemSelected = ::onItemSelected,
             )
             hideSoftInputOnFocusLoss(editNameLayout.textField)
 
             editLinkNumberLayout.apply {
                 setLabel(R.string.item_title_dumb_action_number)
-                setOnTextChangedListener { viewModel.setLinkNumber(it.toString()) }
+                setOnTextChangedListener {
+                    viewModel.setLinkNumber(it.toString())
+                    if(viewBinding.editNameLayout.getSelectedItem().toAppTypeDropDown() == AppTypeDropDownItem.Whatsapp) {
+                        validateWhatsappNumber()
+                    }
+                }
                 textField.filters = arrayOf<InputFilter>(
                     InputFilter.LengthFilter(context.resources.getInteger(R.integer.name_max_length))
                 )
@@ -165,6 +176,33 @@ class DumbLinkDialog(
     private fun onDismissButtonClicked() {
         onDismissClicked()
         back()
+    }
+
+    private fun validateWhatsappNumber() {
+        if(!waPattern.matches(viewBinding.editLinkNumberLayout.getText())){
+            viewBinding.editLinkNumberLayout.setError(R.string.message_whatsapp_error, true)
+        } else {
+            viewBinding.editLinkNumberLayout.setError(false)
+        }
+    }
+
+    private fun onItemSelected(app: AppTypeDropDownItem){
+        viewModel.setAppType(app)
+        when(app){
+            is AppTypeDropDownItem.Whatsapp -> {
+                viewBinding.editLinkNumberLayout.apply {
+                    setLabel(R.string.item_title_dumb_action_number)
+                    setInputType(InputType.TYPE_CLASS_NUMBER)
+                }
+                validateWhatsappNumber()
+            }
+            is AppTypeDropDownItem.Telegram -> {
+                viewBinding.editLinkNumberLayout.apply {
+                    setLabel(R.string.item_title_dumb_action_user_id)
+                    setInputType(InputType.TYPE_CLASS_TEXT)
+                }
+            }
+        }
     }
 
     private fun updateDumbLinkNumber(number: String){

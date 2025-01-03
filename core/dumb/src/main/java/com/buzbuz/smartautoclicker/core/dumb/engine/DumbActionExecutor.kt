@@ -18,6 +18,7 @@ package com.buzbuz.smartautoclicker.core.dumb.engine
 
 import ToastManager
 import android.accessibilityservice.GestureDescription
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -26,7 +27,6 @@ import android.content.pm.PackageManager
 import android.graphics.Path
 import android.net.Uri
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import com.buzbuz.smartautoclicker.core.base.AndroidExecutor
 import com.buzbuz.smartautoclicker.core.base.extensions.buildSingleStroke
 import com.buzbuz.smartautoclicker.core.base.extensions.nextIntInOffset
@@ -48,7 +48,7 @@ internal class DumbActionExecutor(private val context: Context, private val andr
 
     var toast = ToastManager()
 
-    private fun showToast(context: Context, dumbName: String) {
+    private fun showToast(dumbName: String) {
         toast.showToast(context, dumbName)
     }
 
@@ -70,9 +70,9 @@ internal class DumbActionExecutor(private val context: Context, private val andr
             durationMs = dumbClick.pressDurationMs.randomizeDurationIfNeeded(),
         )
 
-        withContext(Dispatchers.Main) {
-            showToast(context, dumbClick.name)
-        }
+//        withContext(Dispatchers.Main) {
+//            showToast(dumbClick.name)
+//        }
         Log.d("action", "Click : ${dumbClick.name}")
 
         executeRepeatableGesture(clickGesture, dumbClick)
@@ -87,23 +87,23 @@ internal class DumbActionExecutor(private val context: Context, private val andr
             durationMs = dumbSwipe.swipeDurationMs.randomizeDurationIfNeeded(),
         )
 
-        withContext(Dispatchers.Main) {
-            showToast(context, dumbSwipe.name)
-        }
+//        withContext(Dispatchers.Main) {
+//            showToast(dumbSwipe.name)
+//        }
         Log.d("action", "Swipe : ${dumbSwipe.name}")
 
         executeRepeatableGesture(swipeGesture, dumbSwipe)
     }
 
     private suspend fun executeDumbPause(dumbPause: DumbAction.DumbPause) {
-        withContext(Dispatchers.Main) {
-            showToast(context, dumbPause.name)
-        }
+//        withContext(Dispatchers.Main) {
+//            showToast(dumbPause.name)
+//        }
         Log.d("action", "Pause : ${dumbPause.name}")
         delay(dumbPause.pauseDurationMs.randomizeDurationIfNeeded())
     }
 
-    private suspend fun executeDumbApi(dumbApi: DumbAction.DumbApi){
+    private suspend fun executeDumbApi(dumbApi: DumbAction.DumbApi) {
 
     }
 
@@ -111,9 +111,9 @@ internal class DumbActionExecutor(private val context: Context, private val andr
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(dumbCopy.name, dumbCopy.textCopy)
         clipboard.setPrimaryClip(clip)
-        withContext(Dispatchers.Main) {
-            showToast(context, dumbCopy.name)
-        }
+//        withContext(Dispatchers.Main) {
+//            showToast(dumbCopy.name)
+//        }
         Log.d("action", "Copy : ${dumbCopy.name}")
     }
 
@@ -121,7 +121,7 @@ internal class DumbActionExecutor(private val context: Context, private val andr
         withContext(Dispatchers.Main) {
             when (dumbLink.name) {
                 "Whatsapp" -> {
-                    if (isWhatsappInstalled()) {
+                    if (isAppInstalled("com.whatsapp")) {
                         val formattedNumber = dumbLink.linkNumber
                         val encodedMessage = Uri.encode(dumbLink.linkDescription)
 
@@ -129,16 +129,49 @@ internal class DumbActionExecutor(private val context: Context, private val andr
                         val uri = Uri.parse("https://api.whatsapp.com/send?phone=$formattedNumber&text=$encodedMessage")
 
                         // Initialize the Intent
-                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                        intent.setPackage("com.whatsapp") // Specify WhatsApp as the target app
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                            setPackage("com.whatsapp")
+                            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
 
                         // Launch the Intent
                         context.startActivity(intent)
                     } else {
-                        showToast(context, "Whatsapp not installed")
+                        showToast("Whatsapp not installed")
                         val uri = Uri.parse("market://details?id=com.whatsapp")
-                        val goToMarket = Intent(Intent.ACTION_VIEW, uri)
+                        val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
+                            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        context.startActivity(goToMarket)
+                    }
+                }
+                "Telegram" -> {
+                    if (isAppInstalled("org.telegram.messenger")) {
+                        try {
+                            val userId = dumbLink.linkNumber
+                            val encodedMessage = Uri.encode(dumbLink.linkDescription)
+                            val uri = Uri.parse("https://t.me/$userId")
+
+                            val telegramIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+                                setPackage("org.telegram.messenger");
+                                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(telegramIntent)
+                        } catch (e: Exception) {
+                            showToast("Telegram not installed")
+                            val uri = Uri.parse("market://details?id=org.telegram.messenger")
+                            val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
+                                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(goToMarket)
+                            Log.e("telegram", "Error when open telegram", e)
+                        }
+                    } else {
+                        showToast("Telegram not installed")
+                        val uri = Uri.parse("market://details?id=com.whatsapp")
+                        val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
+                            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
                         context.startActivity(goToMarket)
                     }
                 }
@@ -147,11 +180,11 @@ internal class DumbActionExecutor(private val context: Context, private val andr
         }
     }
 
-    private fun isWhatsappInstalled(): Boolean {
+    private fun isAppInstalled(packageName: String): Boolean {
         val pm: PackageManager = context.packageManager
         var appInstalled = false
         try {
-            pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
             appInstalled = true
         } catch (e: PackageManager.NameNotFoundException) {
             appInstalled = false

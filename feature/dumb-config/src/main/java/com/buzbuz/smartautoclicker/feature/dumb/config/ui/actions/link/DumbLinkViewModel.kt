@@ -17,7 +17,6 @@
 package com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.link
 
 import android.content.Context
-import android.util.Log
 
 import androidx.lifecycle.ViewModel
 
@@ -36,7 +35,6 @@ import com.buzbuz.smartautoclicker.feature.dumb.config.data.putLinkNumberConfig
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -75,10 +73,6 @@ class DumbLinkViewModel @Inject constructor() : ViewModel() {
     private val _selectedUnitItem: MutableStateFlow<TimeUnitDropDownItem> =
         MutableStateFlow(TimeUnitDropDownItem.Milliseconds)
     val selectedUnitItem: Flow<TimeUnitDropDownItem> = _selectedUnitItem
-
-    private val _selectedAppType: MutableStateFlow<AppTypeDropDownItem> =
-        MutableStateFlow(AppTypeDropDownItem.Whatsapp)
-    val selectedAppType: Flow<AppTypeDropDownItem> = _selectedAppType
 
     /** The duration of the link. */
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -122,8 +116,6 @@ class DumbLinkViewModel @Inject constructor() : ViewModel() {
     }
 
     fun setAppType(app: AppTypeDropDownItem) {
-        Log.d("selected", "App : ${app.toAppTypeString()}")
-//        _selectedAppType.value = app
         _editedDumbLink.value = _editedDumbLink.value?.copy(name = app.toAppTypeString())
     }
 

@@ -80,6 +80,8 @@ fun <T: DropdownItem> IncludeInputFieldDropdownBinding.setItems(
     }
 }
 
+fun IncludeInputFieldDropdownBinding.getSelectedItem(): String = textField.text.toString()
+
 fun IncludeInputFieldDropdownBinding.setSelectedItem(item: DropdownItem) {
     textField.setText(textField.resources.getString(item.title), false)
 
