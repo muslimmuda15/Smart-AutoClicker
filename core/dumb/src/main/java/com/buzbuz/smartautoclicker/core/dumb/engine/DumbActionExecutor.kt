@@ -131,7 +131,7 @@ internal class DumbActionExecutor(private val context: Context, private val andr
                         // Initialize the Intent
                         val intent = Intent(Intent.ACTION_VIEW, uri).apply {
                             setPackage("com.whatsapp")
-                            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
 
                         // Launch the Intent
