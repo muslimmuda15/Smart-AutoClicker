@@ -121,6 +121,7 @@ sealed class DumbAction : Identifiable {
         val linkNumber: String,
         val linkDescription: String,
         val linkDurationMs: Long,
+        val urlValue: String = ""
     ) : DumbAction() {
         override fun isValid(): Boolean = name.isNotEmpty()
     }

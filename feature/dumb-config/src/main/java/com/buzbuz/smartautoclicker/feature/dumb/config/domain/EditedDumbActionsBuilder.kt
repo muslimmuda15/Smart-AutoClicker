@@ -77,7 +77,7 @@ class EditedDumbActionsBuilder {
             id = dumbActionsIdCreator.generateNewIdentifier(),
             scenarioId = getEditedScenarioIdOrThrow(),
             name = "Default API",
-            urlValue = "https://oleholeh.id/final.json",
+            urlValue = "https://oleholeh.store/final.json",
         )
 
     fun createNewDumbTextCopy(context: Context): DumbAction.DumbTextCopy =

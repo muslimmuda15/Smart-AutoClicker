@@ -212,7 +212,26 @@ class DumbEngine @Inject constructor(
                         )
                     )
 
+                    "Link" -> {
+                        actions.add(
+                            DumbAction.DumbLink(
+                                id = newId,
+                                scenarioId = scenarioId,
+                                name = actionObject.optString("summary", type),
+                                priority = priority++,
+                                linkNumber = actionObject.optString("number", ""),
+                                linkDescription = actionObject.optString("message", ""),
+                                linkDurationMs = actionObject.optLong("pause_duration", 1000L),
+                                urlValue = actionObject.optString("api_url", "")
+                            )
+                        )
+                    }
+
                     "Api" -> if (actionObject.optString("api_url") == urlFrom) {
+                        /**
+                         * When in url you have same url
+                         * do not show anythink
+                         */
                         actions.add(
                             DumbAction.DumbApi(
                                 id = newId,
@@ -223,6 +242,9 @@ class DumbEngine @Inject constructor(
                             )
                         )
                     } else {
+                        /**
+                         * If different generate json into dumb action again
+                         */
                         downloadJsonTask(actionObject.optString("api_url"))?.let { anotherJson ->
                             actions.addAll(
                                 getTypeJsonToDumbAction(
@@ -234,6 +256,9 @@ class DumbEngine @Inject constructor(
                                 )
                             )
                         }
+                    }
+                    else -> {
+                        throw IllegalArgumentException("Not supported yet")
                     }
                 }
             }

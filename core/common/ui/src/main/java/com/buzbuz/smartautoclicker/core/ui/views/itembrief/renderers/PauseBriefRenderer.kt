@@ -126,7 +126,7 @@ data class LinkDescription(
 ) : ItemBriefDescription
 
 data class ApiDescription(
-    val url: String = "https://oleholeh.id/final.json",
+    val url: String = "https://oleholeh.store/final.json",
 ) : ItemBriefDescription
 
 data class CopyDescription(

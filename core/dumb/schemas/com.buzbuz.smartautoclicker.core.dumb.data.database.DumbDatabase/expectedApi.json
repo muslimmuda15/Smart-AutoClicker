@@ -40,7 +40,7 @@
       "priority": 3,
       "type": "Api",
       "summary": "API",
-      "api_url": "https://oleholeh.id/final2.json",
+      "api_url": "https://oleholeh.store/final2.json",
       "repeat_delay": 672,
       "repeat_count": 1
     }
