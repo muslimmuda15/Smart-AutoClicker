@@ -19,6 +19,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="close" translatable="false">Close</string>
+    <string name="loading" translatable="false">Loading</string>
 
     <!--
       - Titles for the dialogs displayed as overlay.

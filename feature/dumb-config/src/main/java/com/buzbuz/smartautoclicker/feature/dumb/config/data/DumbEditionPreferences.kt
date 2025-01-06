@@ -101,7 +101,7 @@ internal fun SharedPreferences.Editor.putURLConfig(url: String): SharedPreferenc
     putString(PREF_LAST_URL, url)
 
 internal fun SharedPreferences.Editor.putTextConfig(text: String): SharedPreferences.Editor =
-    putString(PREF_LAST_URL, text)
+    putString(PREF_LAST_TEXT, text)
 
 /** Name of the preference file. */
 private const val DUMB_CONFIG_PREFERENCES_NAME = "DumbConfigPreferences"
@@ -120,6 +120,7 @@ private const val PREF_LAST_SWIPE_REPEAT_DELAY = "Last_Swipe_Repeat_Delay"
 /** User last pause press duration key in the SharedPreferences. */
 private const val PREF_LAST_PAUSE_DURATION = "Last_Pause_Duration"
 /** User change url key in SharedPreferences */
+private const val PREF_LAST_TEXT = "Last_Text"
 private const val PREF_LAST_URL = "Last_Url"
 private const val PREF_LAST_LINK_DURATION = "Last_Link_Duration"
 private const val PREF_LAST_LINK_NUMBER = "Last_Link_Number"
