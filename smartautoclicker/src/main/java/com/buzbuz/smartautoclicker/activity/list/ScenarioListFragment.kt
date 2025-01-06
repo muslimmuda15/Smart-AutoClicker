@@ -40,6 +40,7 @@ import com.buzbuz.smartautoclicker.activity.list.adapter.ScenarioAdapter
 import com.buzbuz.smartautoclicker.activity.list.copy.ScenarioCopyDialog
 import com.buzbuz.smartautoclicker.activity.list.copy.ScenarioCopyDialog.Companion.FRAGMENT_TAG_COPY_DIALOG
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioListUiState
+import com.buzbuz.smartautoclicker.activity.list.upload.UploadDialog
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment.Companion.FRAGMENT_TAG_BACKUP_DIALOG
 import com.buzbuz.smartautoclicker.databinding.FragmentScenariosBinding
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment
@@ -123,7 +124,10 @@ class ScenarioListFragment : Fragment() {
                 )
                 else -> scenarioListViewModel.setUiState(ScenarioListUiState.Type.EXPORT)
             }
-
+            R.id.action_upload -> when {
+                uiState.type == ScenarioListUiState.Type.UPLOAD -> showUploadDialog()
+                else -> scenarioListViewModel.setUiState(ScenarioListUiState.Type.UPLOAD)
+            }
             R.id.action_import -> showBackupDialog(true)
             R.id.action_cancel -> scenarioListViewModel.setUiState(ScenarioListUiState.Type.SELECTION)
             R.id.action_search -> scenarioListViewModel.setUiState(ScenarioListUiState.Type.SEARCH)
@@ -154,6 +158,7 @@ class ScenarioListFragment : Fragment() {
             findItem(R.id.action_cancel)?.bind(menuState.cancelItemState)
             findItem(R.id.action_import)?.bind(menuState.importItemState)
             findItem(R.id.action_export)?.bind(menuState.exportItemState)
+            findItem(R.id.action_upload)?.bind(menuState.uploadItemState)
             findItem(R.id.action_search)?.apply {
                 bind(menuState.searchItemState)
                 actionView?.let { actionView ->
@@ -282,6 +287,12 @@ class ScenarioListFragment : Fragment() {
             .newInstance(isImport, smartScenariosToBackup, dumbScenariosToBackup)
             .show(requireActivity().supportFragmentManager, FRAGMENT_TAG_BACKUP_DIALOG)
         scenarioListViewModel.setUiState(ScenarioListUiState.Type.SELECTION)
+    }
+
+    private fun showUploadDialog() {
+        UploadDialog
+            .newInstance()
+            .show(requireActivity().supportFragmentManager, null)
     }
 
     private fun showCopyScenarioDialog(scenarioItem: ScenarioListUiState.Item.Valid) {

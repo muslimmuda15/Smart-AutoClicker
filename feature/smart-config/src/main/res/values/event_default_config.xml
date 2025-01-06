@@ -29,6 +29,8 @@
     <string name="default_pause_name">Wait</string>
     <integer name="default_pause_duration">50</integer>
 
+    <string name="default_upload_url_server" translatable="false">http://localhost</string>
+
     <string name="default_intent_name">Intent</string>
     <bool name="default_intent_isAdvanced">false</bool>
 

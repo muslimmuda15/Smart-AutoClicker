@@ -45,6 +45,7 @@
       - Text for menu items.
       - Should be short and concise.
       -->
+    <string name="menu_item_title_upload" translatable="false">Upload</string>
     <string name="menu_item_title_export">Export</string>
     <string name="menu_item_title_import">Import</string>
     <string name="menu_item_title_select_all">Select all</string>

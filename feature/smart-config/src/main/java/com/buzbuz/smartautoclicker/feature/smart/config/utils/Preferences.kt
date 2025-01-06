@@ -69,7 +69,12 @@ fun SharedPreferences.getIntentIsAdvancedConfig(context: Context) : Boolean = ge
 fun SharedPreferences.Editor.putIntentIsAdvancedConfig(isAdvanced: Boolean) : SharedPreferences.Editor =
     putBoolean(PREF_LAST_INTENT_IS_ADVANCED, isAdvanced)
 
+fun SharedPreferences.Editor.putUploadUrlConfig(url: String): SharedPreferences.Editor =
+    putString(PREF_LAST_UPLOAD_URL, url)
 
+fun SharedPreferences.getLastUploadUrl(context: Context) : String? = getString(
+    PREF_LAST_UPLOAD_URL,
+    context.resources.getString(R.string.default_upload_url_server))
 
 /** Event default configuration SharedPreference name. */
 private const val EVENT_CONFIG_PREFERENCES_NAME = "EventConfigPreferences"
@@ -81,3 +86,5 @@ private const val PREF_LAST_SWIPE_DURATION = "Last_Swipe_Duration"
 private const val PREF_LAST_PAUSE_DURATION = "Last_Pause_Duration"
 /** User last pause press duration key in the SharedPreferences. */
 private const val PREF_LAST_INTENT_IS_ADVANCED = "Last_Intent_IsAdvanced"
+/** Upload url key in SharedPreferences */
+private const val PREF_LAST_UPLOAD_URL = "Last_Upload_Url"

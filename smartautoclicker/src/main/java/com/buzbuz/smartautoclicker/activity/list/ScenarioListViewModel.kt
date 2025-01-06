@@ -104,7 +104,7 @@ class ScenarioListViewModel @Inject constructor(
             type = stateType,
             menuUiState = stateType.toMenuUiState(scenarios, backupSelection, billingState, privacyRequired),
             listContent =
-                if (stateType != ScenarioListUiState.Type.EXPORT) scenarios.updateExpanded(expanded)
+                if (stateType != ScenarioListUiState.Type.EXPORT && stateType != ScenarioListUiState.Type.UPLOAD) scenarios.updateExpanded(expanded)
                 else scenarios.filterForBackupSelection(backupSelection),
         )
     }.stateIn(
@@ -235,6 +235,9 @@ class ScenarioListViewModel @Inject constructor(
             exportEnabled = scenarioItems.firstOrNull { it is ScenarioListUiState.Item.Valid } != null,
             privacyRequired = isPrivacyRequired,
             canPurchase = billingState != UserBillingState.PURCHASED,
+        )
+        ScenarioListUiState.Type.UPLOAD -> ScenarioListUiState.Menu.Upload(
+            canUpload = !backupSelection.isEmpty(),
         )
     }
 

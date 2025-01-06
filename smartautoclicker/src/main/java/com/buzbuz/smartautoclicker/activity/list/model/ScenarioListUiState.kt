@@ -46,6 +46,8 @@ data class ScenarioListUiState(
         SEARCH,
         /** The user is selecting the scenarios to export. */
         EXPORT,
+        /** The user is selecting the scenario to upload. */
+        UPLOAD
     }
 
     /** Ui state of the action menu. */
@@ -58,6 +60,7 @@ data class ScenarioListUiState(
         val privacyItemState: Item = Item(false),
         val purchaseItemState: Item = Item(false),
         val troubleshootingItemState: Item = Item(false),
+        val uploadItemState: Item = Item(false)
     ) {
 
         /**
@@ -83,6 +86,18 @@ data class ScenarioListUiState(
                 enabled = canExport,
                 iconAlpha = if (canExport) ALPHA_ENABLED_ITEM_INT else ALPHA_DISABLED_ITEM_INT,
             ),
+            uploadItemState = Item(false)
+        )
+
+        data class Upload(private val canUpload: Boolean) : Menu(
+            selectAllItemState = Item(true),
+            cancelItemState = Item(true),
+            exportItemState = Item(false),
+            uploadItemState = Item(
+                visible = true,
+                enabled = canUpload,
+                iconAlpha = if (canUpload) ALPHA_ENABLED_ITEM_INT else ALPHA_DISABLED_ITEM_INT,
+            )
         )
 
         data class Selection(
@@ -97,6 +112,10 @@ data class ScenarioListUiState(
             importItemState = Item(
                 visible = true,
                 enabled = true,
+            ),
+            uploadItemState = Item(
+                visible = true,
+                enabled = true
             ),
             exportItemState = Item(
                 visible = exportEnabled,

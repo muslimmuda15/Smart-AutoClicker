@@ -18,6 +18,7 @@
 <resources>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="close" translatable="false">Close</string>
 
     <!--
       - Titles for the dialogs displayed as overlay.

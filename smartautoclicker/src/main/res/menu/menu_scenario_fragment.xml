@@ -34,6 +34,13 @@
         android:visible="false"/>
 
     <item
+        android:id="@+id/action_upload"
+        android:icon="@drawable/ic_file_upload"
+        app:showAsAction="always"
+        android:title="@string/menu_item_title_upload"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
         android:id="@+id/action_export"
         android:icon="@drawable/ic_menu_save"
         app:showAsAction="always"
