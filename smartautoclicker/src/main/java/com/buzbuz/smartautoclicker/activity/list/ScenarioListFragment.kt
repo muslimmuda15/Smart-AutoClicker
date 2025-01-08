@@ -125,7 +125,10 @@ class ScenarioListFragment : Fragment() {
                 else -> scenarioListViewModel.setUiState(ScenarioListUiState.Type.EXPORT)
             }
             R.id.action_upload -> when {
-                uiState.type == ScenarioListUiState.Type.UPLOAD -> showUploadDialog()
+                uiState.type == ScenarioListUiState.Type.UPLOAD -> showUploadDialog(
+                    smartScenariosToBackup = scenarioListViewModel.getSmartScenariosSelectedForBackup(),
+                    dumbScenariosToBackup = scenarioListViewModel.getDumbScenariosSelectedForBackup(),
+                )
                 else -> scenarioListViewModel.setUiState(ScenarioListUiState.Type.UPLOAD)
             }
             R.id.action_import -> showBackupDialog(true)
@@ -289,9 +292,12 @@ class ScenarioListFragment : Fragment() {
         scenarioListViewModel.setUiState(ScenarioListUiState.Type.SELECTION)
     }
 
-    private fun showUploadDialog() {
+    private fun showUploadDialog(
+        smartScenariosToBackup: Collection<Long>? = null,
+        dumbScenariosToBackup: Collection<Long>? = null,
+    ) {
         UploadDialog
-            .newInstance()
+            .newInstance(smartScenariosToBackup, dumbScenariosToBackup)
             .show(requireActivity().supportFragmentManager, null)
     }
 

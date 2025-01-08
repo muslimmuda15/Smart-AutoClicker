@@ -19,6 +19,7 @@ plugins {
     alias(libs.plugins.buzbuz.androidApplication)
     alias(libs.plugins.buzbuz.buildParameters)
     alias(libs.plugins.buzbuz.hilt)
+    alias(libs.plugins.buzbuz.kotlinSerialization)
 }
 
 android {
@@ -79,6 +80,9 @@ dependencies {
     implementation(libs.androidx.appCompat)
     implementation(libs.androidx.recyclerView)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.lifecycle.extensions)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

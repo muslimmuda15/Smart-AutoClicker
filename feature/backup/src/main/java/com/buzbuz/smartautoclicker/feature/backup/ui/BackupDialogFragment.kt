@@ -151,6 +151,7 @@ class BackupDialogFragment : DialogFragment() {
                 text = state.fileSelectionText
 
                 setOnClickListener {
+                    Log.d("export", "Dumb scenario is : $exportDumbScenarios")
                     if (!launchDocumentPicker()) {
                         Toast.makeText(context, R.string.message_backup_error_no_zip_app, Toast.LENGTH_LONG).show()
                     }
