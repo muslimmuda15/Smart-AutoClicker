@@ -19,6 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.OutputStreamWriter
@@ -31,11 +32,11 @@ class UploadViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: UploadRepository
 ): ViewModel() {
-    private val loading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val stateUploadUI: MutableStateFlow<BaseUploadStateUI> = MutableStateFlow(BaseUploadStateUI(loading = false, status = StatusUploadStateUI.READY))
     private val sharedPreferences: SharedPreferences = context.getEventConfigPreferences()
     private val url: MutableStateFlow<String?> = MutableStateFlow(sharedPreferences.getLastUploadUrl(context))
 
-    val getLoading: Flow<Boolean> = loading
+    val getStateUI: Flow<BaseUploadStateUI> = stateUploadUI
 
     val getLastUrl: String? = sharedPreferences.getLastUploadUrl(context)
     fun setUrl(urlName: String){
@@ -43,8 +44,8 @@ class UploadViewModel @Inject constructor(
     }
 
     fun saveLastUrl(isLoading: Boolean) {
-        loading.value = isLoading
-        Log.d("url", "Url : ${url.value}")
+        stateUploadUI.value = BaseUploadStateUI(loading = isLoading, status = StatusUploadStateUI.READY)
+//        Log.d("url", "Url : ${url.value}")
         sharedPreferences.edit().putUploadUrlConfig(url.value ?: context.resources.getString(R.string.default_upload_url_server)).apply()
     }
 
@@ -52,13 +53,27 @@ class UploadViewModel @Inject constructor(
         smartScenarios: List<Long>,
         dumbScenarios: List<Long>,
     ){
-        var scenarios = "[]"
+        stateUploadUI.value = BaseUploadStateUI(loading = true, status = StatusUploadStateUI.UPLOADING)
         viewModelScope.launch {
-            scenarios = repository.createScenarioUpload(smartScenarios, dumbScenarios)
+            val scenarios = repository.createScenarioUpload(smartScenarios, dumbScenarios)
             withContext(Dispatchers.IO) {
-                repository.sendUrl(scenarios, url.value)
+                val status = repository.sendUrl(scenarios, url.value)
+                if(status){
+                    stateUploadUI.value = BaseUploadStateUI(loading = false, status = StatusUploadStateUI.COMPLETE)
+                } else {
+                    stateUploadUI.value = BaseUploadStateUI(loading = false, status = StatusUploadStateUI.FAILED)
+                }
             }
-            loading.value = false
+
         }
     }
+}
+
+data class BaseUploadStateUI (
+    val loading: Boolean,
+    val status: StatusUploadStateUI
+)
+
+enum class StatusUploadStateUI {
+    READY, UPLOADING, COMPLETE, FAILED
 }

@@ -299,6 +299,7 @@ class ScenarioListFragment : Fragment() {
         UploadDialog
             .newInstance(smartScenariosToBackup, dumbScenariosToBackup)
             .show(requireActivity().supportFragmentManager, null)
+        scenarioListViewModel.setUiState(ScenarioListUiState.Type.SELECTION)
     }
 
     private fun showCopyScenarioDialog(scenarioItem: ScenarioListUiState.Item.Valid) {

@@ -53,17 +53,23 @@
 
         </FrameLayout>
 
-        <include
-            layout="@layout/include_field_text_input"
-            android:id="@+id/field_url_name"
+        <FrameLayout
+            android:id="@+id/input_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_horizontal_default"
-            android:layout_marginVertical="@dimen/margin_vertical_extra_large"
-            android:background="@color/listBackground" />
+            android:layout_height="wrap_content">
+
+            <include
+                layout="@layout/include_field_text_input"
+                android:id="@+id/field_url_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_default"
+                android:layout_marginVertical="@dimen/margin_vertical_extra_large"
+                android:background="@color/listBackground" />
+        </FrameLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/text_file_selection"
+            android:id="@+id/button_upload"
             style="@style/AppTheme.Widget.TextButtonOutlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

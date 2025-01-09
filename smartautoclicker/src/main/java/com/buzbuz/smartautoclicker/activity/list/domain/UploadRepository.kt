@@ -92,15 +92,15 @@ class UploadRepository @Inject constructor(
 
             val responseCode = connection.responseCode
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(context, "Success send to URL", Toast.LENGTH_SHORT).show()
-                }
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    Toast.makeText(context, "Success send to URL", Toast.LENGTH_SHORT).show()
+//                }
                 return true
             } else {
                 Log.i("slack", "Failed send to webhook : ${connection.responseMessage}")
-                CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(context, "Failed send to URL", Toast.LENGTH_SHORT).show()
-                }
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    Toast.makeText(context, "Failed send to URL", Toast.LENGTH_SHORT).show()
+//                }
                 return false
             }
         } catch (e: Exception) {
