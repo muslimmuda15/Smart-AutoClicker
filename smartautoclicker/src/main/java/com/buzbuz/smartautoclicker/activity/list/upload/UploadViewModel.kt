@@ -3,6 +3,7 @@ package com.buzbuz.smartautoclicker.activity.list.upload
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.buzbuz.smartautoclicker.activity.list.domain.UploadRepository
@@ -11,11 +12,18 @@ import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPref
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getLastUploadUrl
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.putClickPressDurationConfig
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.putUploadUrlConfig
+import com.buzbuz.smartautoclicker.sendError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,8 +52,13 @@ class UploadViewModel @Inject constructor(
         smartScenarios: List<Long>,
         dumbScenarios: List<Long>,
     ){
+        var scenarios = "[]"
         viewModelScope.launch {
-            repository.createScenarioUpload(smartScenarios, dumbScenarios)
+            scenarios = repository.createScenarioUpload(smartScenarios, dumbScenarios)
+            withContext(Dispatchers.IO) {
+                repository.sendUrl(scenarios, url.value)
+            }
+            loading.value = false
         }
     }
 }

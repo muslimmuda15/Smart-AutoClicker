@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -21,15 +22,15 @@ private fun errorMessage(writer: StringWriter): String {
     val begin = "```\n"
     val end = "\n```"
 
-//    val limitLineWriter = writer.toString()
-//        .lineSequence()
-//        .take(30)
-//        .joinToString("\n")
+    val limitLineWriter = writer.toString()
+        .lineSequence()
+        .take(20)
+        .joinToString("\n")
 
 //    return message + device + androidVersion  + appVersion + title + begin + writer + end
     val embedContent = JSONObject().apply {
         put("title", title)
-        put("description", begin + writer + end)
+        put("description", begin + limitLineWriter + end)
     }
 
     val embedArray = JSONArray().apply {
@@ -37,14 +38,14 @@ private fun errorMessage(writer: StringWriter): String {
     }
 
     val mainContent = JSONObject().apply {
-        put("content", message + device + androidVersion  + appVersion + title + begin + writer + end)
+        put("content", message + device + androidVersion  + appVersion + title + begin + limitLineWriter + end)
 //        put("embeds", embedArray)
     }
     return mainContent.toString()
 }
 
 private fun sendToWebhook(ex: Throwable) {
-    Log.d("exception", "Send to webhook")
+    Log.e("exception", "Global error", ex)
     val url = URL("https://discord.com/api/webhooks/1324585939674075176/O2779-c3CFfH_M9oQf_NAz94Z1BplVKGxdYwPHh5YNeFSaMmUEZiecF_OoKQTBTtObeZ")
     val connection = (url.openConnection() as HttpURLConnection).apply {
         requestMethod = "POST"
@@ -57,6 +58,8 @@ private fun sendToWebhook(ex: Throwable) {
 //    val json = "{\"text\":\"${errorMessage(writer)}\"}"
     val json = errorMessage(writer)
 
+    Log.i("slack", "Json : $json")
+
     OutputStreamWriter(connection.outputStream).apply {
         write(json)
         flush()
@@ -68,6 +71,7 @@ private fun sendToWebhook(ex: Throwable) {
         Log.i("slack", "Success send to webhook")
     } else {
         Log.i("slack", "Failed send to webhook : ${connection.responseMessage}")
+//        Log.e("slack", "Error discord : ${connection.errorStream.bufferedReader().use(BufferedReader::readText)}")
     }
 }
 

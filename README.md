@@ -2,7 +2,7 @@
   <img src="https://github.com/Nain57/SmartAutoClicker/blob/master/smartautoclicker/src/main/ic_smart_auto_clicker-playstore.png?raw=true" height="64">  
   <h3 align="center">Klick'r - Smart AutoClicker</h3>  
   <p align="center">An Autoclicker Based On Image Detection  
-  </p>  
+  </p>
 </p>  
 
 <br>  
@@ -16,14 +16,14 @@
   </a>  
 </p>  
 
-</br>  
+<br>  
 
 <p>Klick'r is an open-source Android application designed to automate repetitive tasks effortlessly. Formerly known as Smart AutoClicker, Klick'r offers unique image detection capabilities alongside traditional auto-clicking functionalities, providing a versatile solution for all your automation needs.  
 </p>  
 <p>Whether you’re a gamer automating in-game actions, a tester simulating user interactions, or anyone performing repetitive clicking tasks, Klick'r offers both image detection for sophisticated automation and a Regular Mode for straightforward auto-clicking.  
 </p>  
 
-</br>  
+<br>  
 
 ## Key Features:
 * **Click and Swipes**: Automate clicks and swipes with precision by configuring press durations, swipe durations, and positions. Trigger actions on detected images to interact seamlessly with dynamic elements.
@@ -43,67 +43,121 @@ When you like to using API to load the actions, you need to create a scenario by
    "name": "Scenario",
    "appVersion": "1.0.0",
    "actions": [
-       // the action lists here
+       {}
    ]
 }
 ```
+
+### Detail key
+| **Key**       | **Type Data** | **Status** | **Description**     | **Default value** |
+|---------------|---------------|------------|---------------------|-------------------| 
+| `name`        | String        | Required   | Scenario name       |                   |
+| `appVersion`  | String        | Required   | Application version |                   |
+| `mobileBrand` | String        | Required   | Device brand        |                   |
+| `mobileType`  | String        | Required   | Device brand type   |                   |
+| `actions`     | Array<Action> | Required   | Action list         | []                |
+
 ### Actions
 The actions should be like this
 * **Swipe**
 ```json
 {
-    "summary": "Swipe name", // (optional)
-    "type": "Swipe", // (required)
-    "priority": 1, // (optional) sort the action by priority
-    "repeat_count": 2, // (optional default 1) repeat the action
-    "repeat_delay": 1000, // (optional default 1000) a time for waiting to next action in milliseconds
-    "from_x": 100, // (required) first x point to swipe position
-    "from_y": 300, // (required) first y point to swipe position
-    "to_x": 400, // (required) second x point to swipe position
-    "to_y": 600, // (required) second y point to swipe position
-    "swipe_duration": 500 // (optional default 500) duration of swipe in milliseconds
+    "summary": "Swipe name",
+    "type": "Swipe",
+    "priority": 1,
+    "repeat_count": 2,
+    "repeat_delay": 1000,
+    "from_x": 100,
+    "from_y": 300,
+    "to_x": 400,
+    "to_y": 600,
+    "swipe_duration": 500
 }
 ```
+#### Detail key
+| **Key**          | **Type Data** | **Status** | **Description**                                   | **Default value** |
+|------------------|---------------|------------|---------------------------------------------------|-------------------| 
+| `summary`        | String        | Optional   | Swipe action name                                 |                   |
+| `type`           | String        | Required   | Action type                                       |                   |
+| `priority`       | Integer       | Required   | Sort the action by priority                       | `null`            |
+| `repeat_count`   | Integer       | Optional   | Count of execute action                           | 1                 |
+| `repeat_delay`   | Integer       | Optional   | A time for waiting to next action in milliseconds | 1000              |
+| `from_x`         | Integer       | Required   | First x point to swipe position                   |                   |
+| `from_y`         | Integer       | Required   | First y point to swipe position                   |                   |
+| `to_x`           | Integer       | Required   | Second x point to swipe position                  |                   |
+| `to_y`           | Integer       | Required   | Second y point to swipe position                  |                   |
+| `swipe_duration` | Integer       | Optional   | Duration of swipe in milliseconds                 | 500               |
 * **Click**
 ```json
 {
-    "summary": "Click name", // (optional)
-    "type": "Click", // (required)
-    "priority": 1, // (optional) sort the action by priority
-    "repeat_count": 2, // (optional default 1) repeat the action
-    "repeat_delay": 1000, // (optional default 1000) a time for waiting to next action in milliseconds
-    "x": 100, // (required) click x point position
-    "y": 300, // (required) click y point position
-    "press_duration": 500 // (optional) duration of swipe in milliseconds
+    "summary": "Click name",
+    "type": "Click",
+    "priority": 1,
+    "repeat_count": 2,
+    "repeat_delay": 1000,
+    "x": 100,
+    "y": 300,
+    "press_duration": 500
 }
 ```
+| **Key**          | **Type Data** | **Status** | **Description**                                   | **Default value** |
+|------------------|---------------|------------|---------------------------------------------------|-------------------| 
+| `summary`        | String        | Optional   | Click action name                                 |                   |
+| `type`           | String        | Required   | Action type                                       |                   |
+| `priority`       | Integer       | Required   | Sort the action by priority                       | `null`            |
+| `repeat_count`   | Integer       | Optional   | Count of execute action                           | 1                 |
+| `repeat_delay`   | Integer       | Optional   | A time for waiting to next action in milliseconds | 1000              |
+| `x`              | Integer       | Required   | Click x point position                            |                   |
+| `y`              | Integer       | Required   | Click y point position                            |                   |
+| `press_duration` | Integer       | Optional   | Duration of click in milliseconds                 | 500               |
 * **Pause**
 ```json
 {
-    "summary": "Pause name", // (optional)
-    "type": "Wait" || "Pause", // (required)
-    "priority": 1, // (optional default null) sort the action by priority
-    "pause_duration": 1000 // (optional default 1000) duration of swipe in milliseconds
+    "summary": "Pause name",
+    "type": "Wait",
+    "priority": 1,
+    "pause_duration": 1000
 }
 ```
+| **Key**          | **Type Data** | **Status** | **Description**                   | **Default value** |
+|------------------|---------------|------------|-----------------------------------|-------------------| 
+| `summary`        | String        | Optional   | Pause action name                 |                   |
+| `type`           | String        | Required   | Action type                       | `Wait` or `Pause` |
+| `priority`       | Integer       | Optional   | Sort the action by priority       | `null`            |
+| `pause_duration` | Integer       | Optional   | Duration of pause in milliseconds | 1000              |
 * **Copy**
 ```json
 {
-    "summary": "Copy name", // (optional)
-    "type": "Copy", // (required)
-    "priority": 1, // (optional default null) sort the action by priority
-    "text": "Lorem ipsum dolor sit amet" // (required) Copy of text
+    "summary": "Copy name",
+    "type": "Copy",
+    "priority": 1,
+    "text": "Lorem ipsum dolor sit amet"
 }
 ```
+| **Key**    | **Type Data** | **Status** | **Description**             | **Default value** |
+|------------|---------------|------------|-----------------------------|-------------------| 
+| `summary`  | String        | Optional   | Copy action name            |                   |
+| `type`     | String        | Required   | Action type                 |                   |
+| `priority` | Integer       | Optional   | Sort the action by priority | `null`            |
+| `text`     | String        | Required   | Text to copy                |                   |
 * **Link**
 ```json
 {
-    "summary": "Whatsapp" || "Telegram", // (optional)
-    "type": "Link", // (required)
-    "priority": 1, // (optional default null) sort the action by priority
-    "number": "628123456789", // (required) number to send
-    "message": "Lorem ipsum dolor sit amet", // (optional) message to send
-    "pause_duration": 1000 // (optional default 1000) duration of link in milliseconds
-    "api_url": "http://localhost/another_link", // (optional) when you like using URL instead using number and message
+    "summary": "Whatsapp",
+    "type": "Link",
+    "priority": 1,
+    "number": "628123456789",
+    "message": "Lorem ipsum dolor sit amet",
+    "pause_duration": 1000,
+    "api_url": "http://localhost/another_link"
 }
 ```
+| **Key**          | **Type Data** | **Status** | **Description**                                          | **Default value**        |
+|------------------|---------------|------------|----------------------------------------------------------|--------------------------| 
+| `summary`        | String        | Required   | Link action name                                         | `Whatsapp` or `Telegram` |
+| `type`           | String        | Required   | Action type                                              |                          |
+| `priority`       | Integer       | Required   | Sort the action by priority                              | `null`                   |
+| `number`         | String        | Required   | Number of target phone to send                           |                          |
+| `message`        | String        | Optional   | Message to send                                          |                          |
+| `pause_duration` | Integer       | Optional   | Duration of swipe in milliseconds                        | 1000                     |
+| `api_url`        | String        | Optional   | When you like using URL instead using number and message |                          |
