@@ -75,8 +75,7 @@ data class DumbActionEntity(
     @ColumnInfo(name = "text_copy") val textCopy: String? = null,
 
     // ActionType.LINK
-    @ColumnInfo(name = "link_number") val linkNumber: String? = null,
-    @ColumnInfo(name = "link_description") val linkDescription: String? = null
+    @ColumnInfo(name = "link_description") val linkUrl: String? = null
 ) : EntityWithId
 
 /**

@@ -62,8 +62,7 @@ private fun DumbAction.DumbLink.toLinkEntity(scenarioDbId: Long): DumbActionEnti
         name = name,
         priority = priority,
         type = DumbActionType.LINK,
-        linkNumber = linkNumber,
-        linkDescription = linkDescription,
+        linkUrl = urlValue,
         pauseDuration = linkDurationMs
     )
 }
@@ -123,8 +122,7 @@ private fun DumbActionEntity.toDomainLink(asDomain: Boolean): DumbAction.DumbLin
         scenarioId = Identifier(id = dumbScenarioId, asTemporary = asDomain),
         priority = priority,
         name = name,
-        linkNumber = linkNumber ?: "",
-        linkDescription = linkDescription ?: "",
+        urlValue = linkUrl ?: "",
         linkDurationMs = pauseDuration ?: 1000L
     )
 

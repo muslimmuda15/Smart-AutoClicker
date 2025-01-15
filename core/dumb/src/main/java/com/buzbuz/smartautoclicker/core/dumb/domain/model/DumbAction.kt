@@ -118,8 +118,6 @@ sealed class DumbAction : Identifiable {
         override val scenarioId: Identifier,
         override val priority: Int = 0,
         override val name: String,
-        val linkNumber: String,
-        val linkDescription: String,
         val linkDurationMs: Long,
         val urlValue: String = ""
     ) : DumbAction() {

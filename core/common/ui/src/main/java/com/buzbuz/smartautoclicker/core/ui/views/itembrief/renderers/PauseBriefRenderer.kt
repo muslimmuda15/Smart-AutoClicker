@@ -120,8 +120,7 @@ data class PauseDescription(
 ) : ItemBriefDescription
 
 data class LinkDescription(
-    val linkNumber: String = "628123456789",
-    val linkDescription: String = "Test description",
+    val linkUrl: String = "https://wa.me/6281378998577?text=Hello%20can%20i%20help%20you?",
     val linkDurationMs: Long = MINIMAL_ANIMATION_DURATION_MS
 ) : ItemBriefDescription
 

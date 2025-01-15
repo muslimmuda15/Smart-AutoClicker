@@ -109,7 +109,7 @@ The actions should be like this
 | `repeat_delay`   | Integer       | Optional   | A time for waiting to next action in milliseconds | 1000              |
 | `x`              | Integer       | Required   | Click x point position                            |                   |
 | `y`              | Integer       | Required   | Click y point position                            |                   |
-| `press_duration` | Integer       | Optional   | Duration of click in milliseconds                 | 500               |
+| `press_duration` | Integer       | Optional   | Delay after click to next action                  | 500               |
 * **Pause**
 ```json
 {
@@ -119,12 +119,12 @@ The actions should be like this
     "pause_duration": 1000
 }
 ```
-| **Key**          | **Type Data** | **Status** | **Description**                   | **Default value** |
-|------------------|---------------|------------|-----------------------------------|-------------------| 
-| `summary`        | String        | Optional   | Pause action name                 |                   |
-| `type`           | String        | Required   | Action type                       | `Wait` or `Pause` |
-| `priority`       | Integer       | Optional   | Sort the action by priority       | `null`            |
-| `pause_duration` | Integer       | Optional   | Duration of pause in milliseconds | 1000              |
+| **Key**          | **Type Data** | **Status** | **Description**                                  | **Default value** |
+|------------------|---------------|------------|--------------------------------------------------|-------------------| 
+| `summary`        | String        | Optional   | Pause action name                                |                   |
+| `type`           | String        | Required   | Action type                                      | `Wait` or `Pause` |
+| `priority`       | Integer       | Optional   | Sort the action by priority                      | `null`            |
+| `pause_duration` | Integer       | Optional   | Duration of pause between action in milliseconds | 1000              |
 * **Copy**
 ```json
 {
@@ -146,10 +146,8 @@ The actions should be like this
     "summary": "Whatsapp",
     "type": "Link",
     "priority": 1,
-    "number": "628123456789",
-    "message": "Lorem ipsum dolor sit amet",
     "pause_duration": 1000,
-    "api_url": "http://localhost/another_link"
+    "link_url": "https://wa.me/628123456789?text=testing"
 }
 ```
 | **Key**          | **Type Data** | **Status** | **Description**                                          | **Default value**        |
@@ -157,7 +155,5 @@ The actions should be like this
 | `summary`        | String        | Required   | Link action name                                         | `Whatsapp` or `Telegram` |
 | `type`           | String        | Required   | Action type                                              |                          |
 | `priority`       | Integer       | Required   | Sort the action by priority                              | `null`                   |
-| `number`         | String        | Required   | Number of target phone to send                           |                          |
-| `message`        | String        | Optional   | Message to send                                          |                          |
-| `pause_duration` | Integer       | Optional   | Duration of swipe in milliseconds                        | 1000                     |
-| `api_url`        | String        | Optional   | When you like using URL instead using number and message |                          |
+| `pause_duration` | Integer       | Optional   | Duration of link in milliseconds                         | 1000                     |
+| `link_url`       | String        | Optional   | When you like using URL instead using number and message |                          |

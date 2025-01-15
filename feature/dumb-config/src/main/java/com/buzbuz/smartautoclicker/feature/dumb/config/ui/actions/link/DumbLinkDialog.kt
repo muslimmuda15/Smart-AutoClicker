@@ -87,42 +87,24 @@ class DumbLinkDialog(
                 }
             }
 
-//            editNameLayout.apply {
-//                setLabel(R.string.input_field_label_name)
-//                setOnTextChangedListener { viewModel.setName(it.toString()) }
-//                textField.filters = arrayOf<InputFilter>(
-//                    InputFilter.LengthFilter(context.resources.getInteger(R.integer.name_max_length))
-//                )
-//            }
-            editNameLayout.setItems(
-                label = context.getString(R.string.input_field_label_name),
-                items = appTypeDropDownItem,
-                onItemSelected = ::onItemSelected,
-            )
+            editNameLayout.apply {
+                setLabel(R.string.input_field_label_name)
+                setOnTextChangedListener { viewModel.setName(it.toString()) }
+                textField.filters = arrayOf<InputFilter>(
+                    InputFilter.LengthFilter(context.resources.getInteger(R.integer.name_max_length))
+                )
+            }
+
             hideSoftInputOnFocusLoss(editNameLayout.textField)
 
-            editLinkNumberLayout.apply {
-                setLabel(R.string.item_title_dumb_action_number)
-                setOnTextChangedListener {
-                    viewModel.setLinkNumber(it.toString())
-                    if(viewBinding.editNameLayout.getSelectedItem().toAppTypeDropDown() == AppTypeDropDownItem.Whatsapp) {
-                        validateWhatsappNumber()
-                    }
-                }
-                textField.filters = arrayOf<InputFilter>(
-                    InputFilter.LengthFilter(context.resources.getInteger(R.integer.name_max_length))
-                )
-            }
-            hideSoftInputOnFocusLoss(editLinkNumberLayout.textField)
-
-            editLinkDescriptionLayout.apply {
+            editLinkUrlLayout.apply {
                 setLabel(R.string.item_title_dumb_action_description)
-                setOnTextChangedListener { viewModel.setLinkDescription(it.toString()) }
+                setOnTextChangedListener { viewModel.setLinkUrl(it.toString()) }
                 textField.filters = arrayOf<InputFilter>(
-                    InputFilter.LengthFilter(context.resources.getInteger(R.integer.name_max_length))
+                    InputFilter.LengthFilter(context.resources.getInteger(R.integer.url_max_length))
                 )
             }
-            hideSoftInputOnFocusLoss(editLinkDescriptionLayout.textField)
+            hideSoftInputOnFocusLoss(editLinkUrlLayout.textField)
 
             editLinkDurationLayout.apply {
                 textField.filters = arrayOf(MinMaxInputFilter(min = 1))
@@ -147,9 +129,8 @@ class DumbLinkDialog(
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.isValidDumbLink.collect(::updateSaveButton) }
-                launch { viewModel.appType.collect(viewBinding.editNameLayout::setSelectedItem) }
-                launch { viewModel.number.collect(::updateDumbLinkNumber) }
-                launch { viewModel.description.collect(viewBinding.editLinkDescriptionLayout::setText) }
+                launch { viewModel.appName.collect(viewBinding.editNameLayout::setText) }
+                launch { viewModel.urlValue.collect(viewBinding.editLinkUrlLayout::setText) }
 //                launch { viewModel.nameError.collect(viewBinding.editNameLayout::setError)}
                 launch { viewModel.linkDuration.collect(::updateDumbLinkDuration) }
                 launch { viewModel.linkDurationError.collect(viewBinding.editLinkDurationLayout::setError)}
@@ -176,37 +157,6 @@ class DumbLinkDialog(
     private fun onDismissButtonClicked() {
         onDismissClicked()
         back()
-    }
-
-    private fun validateWhatsappNumber() {
-        if(!waPattern.matches(viewBinding.editLinkNumberLayout.getText())){
-            viewBinding.editLinkNumberLayout.setError(R.string.message_whatsapp_error, true)
-        } else {
-            viewBinding.editLinkNumberLayout.setError(false)
-        }
-    }
-
-    private fun onItemSelected(app: AppTypeDropDownItem){
-        viewModel.setAppType(app)
-        when(app){
-            is AppTypeDropDownItem.Whatsapp -> {
-                viewBinding.editLinkNumberLayout.apply {
-                    setLabel(R.string.item_title_dumb_action_number)
-                    setInputType(InputType.TYPE_CLASS_NUMBER)
-                }
-                validateWhatsappNumber()
-            }
-            is AppTypeDropDownItem.Telegram -> {
-                viewBinding.editLinkNumberLayout.apply {
-                    setLabel(R.string.item_title_dumb_action_user_id)
-                    setInputType(InputType.TYPE_CLASS_TEXT)
-                }
-            }
-        }
-    }
-
-    private fun updateDumbLinkNumber(number: String){
-        viewBinding.editLinkNumberLayout.setText(number,InputType.TYPE_CLASS_NUMBER )
     }
 
     private fun updateDumbLinkDuration(duration: String) {

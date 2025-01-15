@@ -11,9 +11,6 @@ import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbDatabase
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
 import com.buzbuz.smartautoclicker.sendError
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
@@ -66,8 +63,7 @@ class UploadRepository @Inject constructor(
                         pause_duration = action.pauseDuration,
                         url_value = action.urlValue,
                         text_copy = action.textCopy,
-                        link_number = action.linkNumber,
-                        link_description = action.linkDescription
+                        link_url = action.linkUrl
                     )
                 }
             )

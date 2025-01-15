@@ -239,8 +239,7 @@ class DumbScenarioBriefViewModel @Inject constructor(
             )
 
             is DumbAction.DumbLink -> LinkDescription(
-                linkNumber = linkNumber,
-                linkDescription = linkDescription,
+                linkUrl = urlValue,
                 linkDurationMs = linkDurationMs,
             )
         }

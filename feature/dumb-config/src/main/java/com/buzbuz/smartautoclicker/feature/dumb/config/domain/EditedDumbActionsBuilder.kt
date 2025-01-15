@@ -93,8 +93,7 @@ class EditedDumbActionsBuilder {
             id = dumbActionsIdCreator.generateNewIdentifier(),
             scenarioId = getEditedScenarioIdOrThrow(),
             name = "Whatsapp",
-            linkNumber = "628123456789",
-            linkDescription = "Lorem ipsum dolor sit amet",
+            urlValue = "https://api.whatsapp.com/send/?phone=6281378998577&text=I'm%20interested%20in%20your%20innovation%20in%20this%20year",
             linkDurationMs = context.getDefaultDumbLinkDurationMs(),
         )
 

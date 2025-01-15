@@ -33,5 +33,5 @@ data class DumbAction(
     val url_value: String? = null,
     val text_copy: String? = null,
     val link_number: String? = null,
-    val link_description: String? = null
+    val link_url: String? = null
 )

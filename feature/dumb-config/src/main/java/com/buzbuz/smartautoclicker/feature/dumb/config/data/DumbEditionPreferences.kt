@@ -84,6 +84,8 @@ internal fun SharedPreferences.getPauseDurationConfig(default: Long) : Long =
 internal fun SharedPreferences.getLinkDurationConfig(default: Long) : Long =
     getLong(PREF_LAST_LINK_DURATION, default)
 
+internal fun SharedPreferences.getLinkUrlConfig(default: String) : String = getString(PREF_LAST_LINK_URL, default)!!
+
 /** Save a new default duration for the pause. */
 internal fun SharedPreferences.Editor.putPauseDurationConfig(durationMs: Long) : SharedPreferences.Editor =
     putLong(PREF_LAST_PAUSE_DURATION, durationMs)
@@ -91,11 +93,8 @@ internal fun SharedPreferences.Editor.putPauseDurationConfig(durationMs: Long) :
 internal fun SharedPreferences.Editor.putLinkDurationConfig(durationMs: Long) : SharedPreferences.Editor =
     putLong(PREF_LAST_LINK_DURATION, durationMs)
 
-internal fun SharedPreferences.Editor.putLinkNumberConfig(number: String) : SharedPreferences.Editor =
-    putString(PREF_LAST_LINK_NUMBER, number)
-
-internal fun SharedPreferences.Editor.putLinkDescriptionConfig(desc: String) : SharedPreferences.Editor =
-    putString(PREF_LAST_LINK_DESCRIPTION, desc)
+internal fun SharedPreferences.Editor.putLinkUrlConfig(url: String) : SharedPreferences.Editor =
+    putString(PREF_LAST_LINK_URL, url)
 
 internal fun SharedPreferences.Editor.putURLConfig(url: String): SharedPreferences.Editor =
     putString(PREF_LAST_URL, url)
@@ -123,5 +122,4 @@ private const val PREF_LAST_PAUSE_DURATION = "Last_Pause_Duration"
 private const val PREF_LAST_TEXT = "Last_Text"
 private const val PREF_LAST_URL = "Last_Url"
 private const val PREF_LAST_LINK_DURATION = "Last_Link_Duration"
-private const val PREF_LAST_LINK_NUMBER = "Last_Link_Number"
-private const val PREF_LAST_LINK_DESCRIPTION = "Last_Link_Description"
+private const val PREF_LAST_LINK_URL = "Last_Link_Url"

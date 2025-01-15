@@ -138,83 +138,86 @@ internal class DumbActionExecutor(private val context: Context, private val andr
                 delay(dumbLink.linkDurationMs.randomizeDurationIfNeeded())
             } else {
                 Log.d("action", "URL is not valid")
-                when (dumbLink.name.toAppTypeDropDown()) {
-                    is AppTypeDropDownItem.Whatsapp -> {
-                        if (isAppInstalled("com.whatsapp")) {
-                            val formattedNumber = dumbLink.linkNumber
-                            val encodedMessage = Uri.encode(dumbLink.linkDescription)
-
-                            // Create the WhatsApp URI
-                            val uri =
-                                Uri.parse("https://api.whatsapp.com/send?phone=$formattedNumber&text=$encodedMessage")
-
-                            // Initialize the Intent
-                            val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-                                setPackage("com.whatsapp")
-                                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-
-                            // Launch the Intent
-                            context.startActivity(intent)
-                        } else {
-                            showToast("Whatsapp not installed")
-                            val uri = Uri.parse("market://details?id=com.whatsapp")
-                            val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
-                                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            context.startActivity(goToMarket)
-                        }
-                    }
-
-                    is AppTypeDropDownItem.Telegram -> {
-                        if (isAppInstalled("org.telegram.messenger")) {
-                            try {
-                                val userId = dumbLink.linkNumber
-                                val encodedMessage = Uri.encode(dumbLink.linkDescription)
-                                val uri = Uri.parse("https://t.me/$userId")
-
-                                val telegramIntent = Intent(Intent.ACTION_VIEW, uri).apply {
-                                    setPackage("org.telegram.messenger");
-                                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                context.startActivity(telegramIntent)
-                            } catch (e: Exception) {
-                                showToast("Telegram not installed")
-                                val uri = Uri.parse("market://details?id=org.telegram.messenger")
-                                val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
-                                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                context.startActivity(goToMarket)
-                                Log.e("telegram", "Error when open telegram", e)
-                            }
-                        } else {
-                            showToast("Telegram not installed")
-                            val uri = Uri.parse("market://details?id=com.whatsapp")
-                            val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
-                                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            context.startActivity(goToMarket)
-                        }
-                    }
-
-                    else -> throw IllegalArgumentException("Not yet supported in base smart action link app")
+//                when (dumbLink.name.toAppTypeDropDown()) {
+//                    is AppTypeDropDownItem.Whatsapp -> {
+//                        if (isAppInstalled("com.whatsapp")) {
+//                            val formattedNumber = dumbLink.linkNumber
+//                            val encodedMessage = Uri.encode(dumbLink.linkDescription)
+//
+//                            // Create the WhatsApp URI
+//                            val uri =
+//                                Uri.parse("https://api.whatsapp.com/send?phone=$formattedNumber&text=$encodedMessage")
+//
+//                            // Initialize the Intent
+//                            val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+//                                setPackage("com.whatsapp")
+//                                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                            }
+//
+//                            // Launch the Intent
+//                            context.startActivity(intent)
+//                        } else {
+//                            showToast("Whatsapp not installed")
+//                            val uri = Uri.parse("market://details?id=com.whatsapp")
+//                            val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
+//                                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                            }
+//                            context.startActivity(goToMarket)
+//                        }
+//                    }
+//
+//                    is AppTypeDropDownItem.Telegram -> {
+//                        if (isAppInstalled("org.telegram.messenger")) {
+//                            try {
+//                                val userId = dumbLink.linkNumber
+//                                val encodedMessage = Uri.encode(dumbLink.linkDescription)
+//                                val uri = Uri.parse("https://t.me/$userId")
+//
+//                                val telegramIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+//                                    setPackage("org.telegram.messenger");
+//                                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                                }
+//                                context.startActivity(telegramIntent)
+//                            } catch (e: Exception) {
+//                                showToast("Telegram not installed")
+//                                val uri = Uri.parse("market://details?id=org.telegram.messenger")
+//                                val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
+//                                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                                }
+//                                context.startActivity(goToMarket)
+//                                Log.e("telegram", "Error when open telegram", e)
+//                            }
+//                        } else {
+//                            showToast("Telegram not installed")
+//                            val uri = Uri.parse("market://details?id=com.whatsapp")
+//                            val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
+//                                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                            }
+//                            context.startActivity(goToMarket)
+//                        }
+//                    }
+//
+//                    else -> throw IllegalArgumentException("Not yet supported in base smart action link app")
+//                }
+                withContext(Dispatchers.Main) {
+                    showToast(dumbLink.name)
                 }
                 delay(dumbLink.linkDurationMs.randomizeDurationIfNeeded())
             }
         }
     }
 
-    private fun isAppInstalled(packageName: String): Boolean {
-        val pm: PackageManager = context.packageManager
-        var appInstalled = false
-        try {
-            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
-            appInstalled = true
-        } catch (e: PackageManager.NameNotFoundException) {
-            appInstalled = false
-        }
-        return appInstalled
-    }
+//    private fun isAppInstalled(packageName: String): Boolean {
+//        val pm: PackageManager = context.packageManager
+//        var appInstalled = false
+//        try {
+//            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
+//            appInstalled = true
+//        } catch (e: PackageManager.NameNotFoundException) {
+//            appInstalled = false
+//        }
+//        return appInstalled
+//    }
 
     private suspend fun executeRepeatableGesture(gesture: GestureDescription, repeatable: Repeatable) {
         repeatable.repeat {

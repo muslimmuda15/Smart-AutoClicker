@@ -29,9 +29,8 @@ import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.toAppTypeDropDown
 import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.toAppTypeString
 import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.toDurationMs
 import com.buzbuz.smartautoclicker.feature.dumb.config.data.getDumbConfigPreferences
-import com.buzbuz.smartautoclicker.feature.dumb.config.data.putLinkDescriptionConfig
 import com.buzbuz.smartautoclicker.feature.dumb.config.data.putLinkDurationConfig
-import com.buzbuz.smartautoclicker.feature.dumb.config.data.putLinkNumberConfig
+import com.buzbuz.smartautoclicker.feature.dumb.config.data.putLinkUrlConfig
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -59,16 +58,14 @@ class DumbLinkViewModel @Inject constructor() : ViewModel() {
     val nameError: Flow<Boolean> = editedDumbLink
         .map { it.name.isEmpty() }
 
-    val number: Flow<String> = editedDumbLink
-        .map { it.linkNumber }
-        .take(1)
-
-    val description: Flow<String> = editedDumbLink
-        .map { it.linkDescription }
-        .take(1)
-
     val appType: Flow<AppTypeDropDownItem> = editedDumbLink
         .map { it.name.toAppTypeDropDown() }
+
+    val appName: Flow<String> = editedDumbLink
+        .map { it.name }.take(1)
+
+    val urlValue: Flow<String> = editedDumbLink
+        .map { it.urlValue }.take(1)
 
     private val _selectedUnitItem: MutableStateFlow<TimeUnitDropDownItem> =
         MutableStateFlow(TimeUnitDropDownItem.Milliseconds)
@@ -98,12 +95,8 @@ class DumbLinkViewModel @Inject constructor() : ViewModel() {
         _editedDumbLink.value = _editedDumbLink.value?.copy(name = newName)
     }
 
-    fun setLinkNumber(newNumber: String) {
-        _editedDumbLink.value = _editedDumbLink.value?.copy(linkNumber = newNumber)
-    }
-
-    fun setLinkDescription(newDesc: String) {
-        _editedDumbLink.value = _editedDumbLink.value?.copy(linkDescription = newDesc)
+    fun setLinkUrl(newUrl: String) {
+        _editedDumbLink.value = _editedDumbLink.value?.copy(urlValue = newUrl)
     }
 
     fun setLinkDurationMs(duration: Long) {
@@ -113,10 +106,6 @@ class DumbLinkViewModel @Inject constructor() : ViewModel() {
             if (oldValue.linkDurationMs == newDurationMs) return
             oldValue.copy(linkDurationMs = newDurationMs)
         }
-    }
-
-    fun setAppType(app: AppTypeDropDownItem) {
-        _editedDumbLink.value = _editedDumbLink.value?.copy(name = app.toAppTypeString())
     }
 
     fun setTimeUnit(unit: TimeUnitDropDownItem) {
@@ -132,12 +121,7 @@ class DumbLinkViewModel @Inject constructor() : ViewModel() {
 
             context.getDumbConfigPreferences()
                 .edit()
-                .putLinkNumberConfig(link.linkNumber)
-                .apply()
-
-            context.getDumbConfigPreferences()
-                .edit()
-                .putLinkDescriptionConfig(link.linkDescription)
+                .putLinkUrlConfig(link.urlValue)
                 .apply()
         }
     }

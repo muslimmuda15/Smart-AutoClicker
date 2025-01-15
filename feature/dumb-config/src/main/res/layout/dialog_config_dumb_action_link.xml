@@ -48,18 +48,12 @@
 
                 <include
                     android:id="@+id/edit_name_layout"
-                    layout="@layout/include_input_field_dropdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <include
-                    android:id="@+id/edit_link_number_layout"
                     layout="@layout/include_field_text_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <include
-                    android:id="@+id/edit_link_description_layout"
+                    android:id="@+id/edit_link_url_layout"
                     layout="@layout/include_field_text_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

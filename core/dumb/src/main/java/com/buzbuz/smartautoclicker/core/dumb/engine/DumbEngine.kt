@@ -219,10 +219,8 @@ class DumbEngine @Inject constructor(
                                 scenarioId = scenarioId,
                                 name = actionObject.optString("summary", type),
                                 priority = priority++,
-                                linkNumber = actionObject.optString("number", ""),
-                                linkDescription = actionObject.optString("message", ""),
                                 linkDurationMs = actionObject.optLong("pause_duration", 1000L),
-                                urlValue = actionObject.optString("api_url", "")
+                                urlValue = actionObject.optString("link_url", "")
                             )
                         )
                     }
