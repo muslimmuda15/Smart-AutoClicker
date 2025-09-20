@@ -1,6 +1,58 @@
 package com.buzbuz.smartautoclicker.activity.list.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.PrimaryKey
+import androidx.room.Relation
+import com.buzbuz.smartautoclicker.core.base.interfaces.EntityWithId
+import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbActionEntity
+import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioEntity
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
+@Serializable
+data class ApiResponse<T>(
+    val success: Boolean,
+    val data: T? = null,
+    val message: String,
+    val statusCode: Int
+)
+
+@Serializable
+data class DeviceScenarioWithActions(
+    val scenario: Scenario,
+    val dumbActions: List<DumbActionEntity>
+)
+
+@Serializable
+data class DeviceInfo(
+    @SerialName("device_id")
+    val id: String,
+    @SerialName("app_version")
+    val appVersion: String,
+    @SerialName("mobile_brand")
+    val mobileBrand: String,
+    @SerialName("mobile_type")
+    val mobileType: String,
+    val scenarios: List<DeviceScenarioWithActions>
+)
+
+@Serializable
+data class Scenario(
+    val id: Long,
+    @SerialName("device_id")
+    val deviceId: String,
+    val name: String,
+    @SerialName("repeat_count")
+    val repeatCount: Int,
+    @SerialName("is_repeat_infinite")
+    val isRepeatInfinite: Boolean,
+    @SerialName("max_duration_min")
+    val maxDurationMin: Int,
+    @SerialName("is_duration_infinite")
+    val isDurationInfinite: Boolean,
+    val randomize: Boolean,
+)
 
 @Serializable
 data class ScenarioJson(

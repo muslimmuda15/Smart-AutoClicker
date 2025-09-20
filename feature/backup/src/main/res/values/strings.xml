@@ -25,6 +25,7 @@
     <string name="dialog_title_delete_scenario">Delete scenario</string>
     <string name="dialog_title_import_backup">Import backup</string>
     <string name="dialog_title_upload_backup" translatable="false">Upload scenario</string>
+    <string name="dialog_title_sync_backup" translatable="false">Synchronize scenario</string>
 
     <!--
       - Text for items in a list or vertical layout.
@@ -35,6 +36,7 @@
     <string name="item_title_backup_create_select_file">Select output file</string>
     <string name="item_title_backup_import_select_file">Select backup file</string>
     <string name="item_title_upload_scenario" translatable="false">Upload scenario</string>
+    <string name="item_title_sync_scenario" translatable="false">Synchronize scenario</string>
 
     <!--
       - Messages.
@@ -50,6 +52,7 @@
     <string name="message_backup_import_error">An error has occurred and the backup import has been cancelled</string>
     <string name="message_backup_import_compatibility">Some of the imported scenarios have been generated from a device with a different screen and this might cause issues with the detection and action coordinates.\n\nTo fix it, you need to take new screenshots for your conditions and update your click/swipe positions.</string>
     <string name="message_backup_upload_compatibility" translatable="false">Scenario will upload to the server, it might different when you load this scenario in API with different device and this might cause issues with the detection and action coordinates.\n\nTo fix it, you need to take new screenshots for your conditions and update your click/swipe positions.</string>
+    <string name="message_backup_sync_compatibility" translatable="false">Scenario will sync to the server, the scenario and action will be backup to the cloud.\n\nMake sure the URL is right to backup your scenario and action</string>
     <string name="message_backup_error_no_zip_app">No application found on the device to handle the save/load of a zip file.</string>
 
 

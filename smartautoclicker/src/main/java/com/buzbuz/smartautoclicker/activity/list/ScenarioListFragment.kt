@@ -40,6 +40,7 @@ import com.buzbuz.smartautoclicker.activity.list.adapter.ScenarioAdapter
 import com.buzbuz.smartautoclicker.activity.list.copy.ScenarioCopyDialog
 import com.buzbuz.smartautoclicker.activity.list.copy.ScenarioCopyDialog.Companion.FRAGMENT_TAG_COPY_DIALOG
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioListUiState
+import com.buzbuz.smartautoclicker.activity.list.sync.SyncDialog
 import com.buzbuz.smartautoclicker.activity.list.upload.UploadDialog
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment.Companion.FRAGMENT_TAG_BACKUP_DIALOG
 import com.buzbuz.smartautoclicker.databinding.FragmentScenariosBinding
@@ -124,6 +125,7 @@ class ScenarioListFragment : Fragment() {
                 )
                 else -> scenarioListViewModel.setUiState(ScenarioListUiState.Type.EXPORT)
             }
+            R.id.action_sync -> showSyncDialog()
             R.id.action_upload -> when {
                 uiState.type == ScenarioListUiState.Type.UPLOAD -> showUploadDialog(
                     smartScenariosToBackup = scenarioListViewModel.getSmartScenariosSelectedForBackup(),
@@ -300,6 +302,12 @@ class ScenarioListFragment : Fragment() {
             .newInstance(smartScenariosToBackup, dumbScenariosToBackup)
             .show(requireActivity().supportFragmentManager, null)
         scenarioListViewModel.setUiState(ScenarioListUiState.Type.SELECTION)
+    }
+
+    private fun showSyncDialog() {
+        SyncDialog
+            .newInstance()
+            .show(requireActivity().supportFragmentManager, null)
     }
 
     private fun showCopyScenarioDialog(scenarioItem: ScenarioListUiState.Item.Valid) {

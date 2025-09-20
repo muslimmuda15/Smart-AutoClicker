@@ -64,7 +64,6 @@ class UploadViewModel @Inject constructor(
                     stateUploadUI.value = BaseUploadStateUI(loading = false, status = StatusUploadStateUI.FAILED)
                 }
             }
-
         }
     }
 }

@@ -76,6 +76,13 @@ fun SharedPreferences.getLastUploadUrl(context: Context) : String? = getString(
     PREF_LAST_UPLOAD_URL,
     context.resources.getString(R.string.default_upload_url_server))
 
+fun SharedPreferences.Editor.putSyncUrlConfig(url: String): SharedPreferences.Editor =
+    putString(PREF_LAST_SYNC_URL, url)
+
+fun SharedPreferences.getLastSyncUrl(context: Context) : String? = getString(
+    PREF_LAST_SYNC_URL,
+    context.resources.getString(R.string.default_sync_url_server))
+
 /** Event default configuration SharedPreference name. */
 private const val EVENT_CONFIG_PREFERENCES_NAME = "EventConfigPreferences"
 /** User last click press duration key in the SharedPreferences. */
@@ -88,3 +95,5 @@ private const val PREF_LAST_PAUSE_DURATION = "Last_Pause_Duration"
 private const val PREF_LAST_INTENT_IS_ADVANCED = "Last_Intent_IsAdvanced"
 /** Upload url key in SharedPreferences */
 private const val PREF_LAST_UPLOAD_URL = "Last_Upload_Url"
+/** Sync url key in SharedPreferences */
+private const val PREF_LAST_SYNC_URL = "Last_Sync_Url"

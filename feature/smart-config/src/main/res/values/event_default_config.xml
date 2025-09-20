@@ -30,6 +30,7 @@
     <integer name="default_pause_duration">50</integer>
 
     <string name="default_upload_url_server" translatable="false">http://localhost</string>
+    <string name="default_sync_url_server" translatable="false">http://localhost:3000</string>
 
     <string name="default_intent_name">Intent</string>
     <bool name="default_intent_isAdvanced">false</bool>

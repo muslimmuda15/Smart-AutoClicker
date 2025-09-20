@@ -29,7 +29,14 @@ import kotlinx.coroutines.flow.Flow
 /** Allows to access and edit the dumb scenario in the database. */
 @Dao
 interface DumbScenarioDao {
-
+    /**
+     * Get all dumb scenario and their dumb actions.
+     *
+     * @return the list of scenarios.
+     */
+    @Transaction
+    @Query("SELECT * FROM dumb_scenario_table ORDER BY name ASC")
+    suspend fun getDumbScenariosWithActions(): List<DumbScenarioWithActions>
     /**
      * Get all dumb scenario and their dumb actions.
      *
