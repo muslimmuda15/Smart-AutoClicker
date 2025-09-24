@@ -10,6 +10,7 @@ import com.buzbuz.smartautoclicker.activity.list.model.DeviceScenarioWithActions
 import com.buzbuz.smartautoclicker.activity.list.model.DumbAction
 import com.buzbuz.smartautoclicker.activity.list.model.Scenario
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioJson
+import com.buzbuz.smartautoclicker.activity.list.sync.logFullResponse
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbDatabase
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioEntity
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
@@ -98,6 +99,7 @@ class SyncRepository @Inject constructor(
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
 
                 try {
+                    logFullResponse("API", "Response : $response")
                     val parseData = Json.decodeFromString<DumbResponse>(response)
 //                    Log.d("API", "Response : $parseData")
                     if (parseData.success) {

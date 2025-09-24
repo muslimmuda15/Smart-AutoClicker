@@ -2,6 +2,7 @@ package com.buzbuz.smartautoclicker.activity.list.sync
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.buzbuz.smartautoclicker.activity.list.domain.SyncRepository
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import android.util.Log
+import kotlin.math.min
 
 @HiltViewModel
 class SyncViewModel @Inject constructor(
@@ -46,7 +47,7 @@ class SyncViewModel @Inject constructor(
         viewModelScope.launch {
             val scenarios = repository.createScenarioSync()
             withContext(Dispatchers.IO) {
-//                Log.d("sync", "Scenario : $scenarios")
+                Log.d("sync", "Scenario : $scenarios")
                 val status = repository.sendUrl(scenarios, "${url.value}/sync")
                 if(status){
                     stateSyncUI.value = BaseSyncStateUI(loading = false, status = StatusSyncStateUI.COMPLETE)
@@ -66,4 +67,20 @@ data class BaseSyncStateUI (
 
 enum class StatusSyncStateUI {
     READY, UPLOADING, COMPLETE, FAILED
+}
+
+const val MAX_LOG_LENGTH = 4000
+
+fun logFullResponse(tag: String?, response: String) {
+    if (response.length > MAX_LOG_LENGTH) {
+        val chunkCount = response.length / MAX_LOG_LENGTH
+        for (i in 0..chunkCount) {
+            val start = i * MAX_LOG_LENGTH
+            val end =
+                min(((i + 1) * MAX_LOG_LENGTH).toDouble(), response.length.toDouble()).toInt()
+            Log.d(tag, response.substring(start, end))
+        }
+    } else {
+        Log.d(tag, response)
+    }
 }
