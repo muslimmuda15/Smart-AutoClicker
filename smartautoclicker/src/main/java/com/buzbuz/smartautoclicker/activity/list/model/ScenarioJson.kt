@@ -10,6 +10,8 @@ import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+
+
 @Serializable
 data class ApiResponse<T>(
     val success: Boolean,
@@ -22,6 +24,24 @@ data class ApiResponse<T>(
 data class DeviceScenarioWithActions(
     val scenario: Scenario,
     val dumbActions: List<DumbActionEntity>
+)
+
+@Serializable
+data class CreateScenario (
+    val device: CreateDeviceInfo,
+    val scenario: Scenario
+)
+
+@Serializable
+data class CreateDeviceInfo(
+    @SerialName("device_id")
+    val deviceId: String,
+    @SerialName("app_version")
+    val appVersion: String,
+    @SerialName("mobile_brand")
+    val mobileBrand: String,
+    @SerialName("mobile_type")
+    val mobileType: String,
 )
 
 @Serializable

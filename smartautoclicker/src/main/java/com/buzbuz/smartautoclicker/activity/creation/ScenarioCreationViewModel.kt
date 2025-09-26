@@ -17,11 +17,19 @@
 package com.buzbuz.smartautoclicker.activity.creation
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.buzbuz.smartautoclicker.BuildConfig
 
 import com.buzbuz.smartautoclicker.R
+import com.buzbuz.smartautoclicker.activity.list.domain.DumbResponse
+import com.buzbuz.smartautoclicker.activity.list.model.CreateDeviceInfo
+import com.buzbuz.smartautoclicker.activity.list.model.CreateScenario
 import com.buzbuz.smartautoclicker.core.base.identifier.DATABASE_ID_INSERTION
 import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
 import com.buzbuz.smartautoclicker.core.domain.IRepository
@@ -30,9 +38,13 @@ import com.buzbuz.smartautoclicker.core.dumb.domain.IDumbRepository
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
 import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
 import com.buzbuz.smartautoclicker.feature.revenue.UserBillingState
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPreferences
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getLastSyncUrl
+import com.buzbuz.smartautoclicker.sendError
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +53,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import org.json.JSONException
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,6 +68,8 @@ class ScenarioCreationViewModel @Inject constructor(
     private val smartRepository: IRepository,
     private val dumbRepository: IDumbRepository,
 ) : ViewModel() {
+    private val sharedPreferences: SharedPreferences = context.getEventConfigPreferences()
+    private val url: MutableStateFlow<String?> = MutableStateFlow(sharedPreferences.getLastSyncUrl(context))
 
     private val _name: MutableStateFlow<String?> =
         MutableStateFlow(context.getString(R.string.default_scenario_name))
@@ -94,27 +114,206 @@ class ScenarioCreationViewModel @Inject constructor(
         _creationState.value = CreationState.CREATING
         viewModelScope.launch(Dispatchers.IO) {
             when (_selectedType.value) {
-                ScenarioTypeSelection.DUMB -> createDumbScenario()
+                ScenarioTypeSelection.DUMB -> createDumbScenario(context)
                 ScenarioTypeSelection.SMART -> createSmartScenario(context)
             }
             _creationState.value = CreationState.SAVED
         }
     }
 
-    private suspend fun createDumbScenario() {
-        dumbRepository.addDumbScenario(
-            DumbScenario(
-                id = Identifier(databaseId = DATABASE_ID_INSERTION, tempId = 0L),
+    private suspend fun createScenarioDB(): Boolean {
+        val scenario = CreateScenario(
+            device = CreateDeviceInfo(
+                deviceId = Build.ID,
+                appVersion = BuildConfig.VERSION_NAME,
+                mobileBrand = Build.MANUFACTURER,
+                mobileType = Build.MODEL
+            ),
+            scenario = com.buzbuz.smartautoclicker.activity.list.model.Scenario(
+                id = DATABASE_ID_INSERTION,
+                deviceId = Build.ID,
                 name = _name.value!!,
-                dumbActions = emptyList(),
                 repeatCount = 1,
                 isRepeatInfinite = false,
                 maxDurationMin = 1,
                 isDurationInfinite = true,
-                randomize = false,
+                randomize = false
             )
         )
+
+        val createScenarioJSON = Json.encodeToString(
+            CreateScenario.serializer(),
+            scenario
+        )
+
+        val json = Json { ignoreUnknownKeys = true }
+
+        try {
+            val response = withContext(Dispatchers.IO) {
+                val connection = (URL("${url.value}/api/scenarios/create")
+                    .openConnection() as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    doOutput = true
+                    useCaches = false
+                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                    setRequestProperty("Cache-Control", "no-cache")
+                    setRequestProperty("Pragma", "no-cache")
+                }
+
+                Log.d("json", "SCENARIO JSON : $createScenarioJSON")
+                OutputStreamWriter(connection.outputStream).use {
+                    it.write(createScenarioJSON)
+                    it.flush()
+                }
+
+                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                    connection.inputStream.bufferedReader().use { it.readText() }
+                } else {
+                    Log.d("API", "Failed: ${connection.responseMessage}")
+                    throw Exception("Failed: ${connection.responseMessage}")
+                }
+            }
+
+            Log.d("json", "RESPONSE SCENARIO JSON : $response")
+            // parsing tetap di Main thread
+            val parseData = json.decodeFromString<DumbResponse>(response)
+            if (parseData.success) {
+                Log.d("API", "Success: $parseData")
+                return true
+            } else {
+                Log.d("API", "Failed: $parseData")
+                return false
+            }
+
+        } catch (e: Exception) {
+            Log.d("API", "Error Exception: ${e.message ?: "Unknown error"}")
+            e.sendError()
+            return false
+        } catch (e: JSONException) {
+            Log.d("API", "Error JSONException: ${e.message ?: "Unknown error"}")
+            e.sendError()
+            return false
+        }
     }
+
+    private suspend fun createDumbScenario(context: Context) {
+        val createScenarioDB = createScenarioDB()
+        if(createScenarioDB) {
+            dumbRepository.addDumbScenario(
+                DumbScenario(
+                    id = Identifier(databaseId = DATABASE_ID_INSERTION, tempId = 0L),
+                    name = _name.value!!,
+                    dumbActions = emptyList(),
+                    repeatCount = 1,
+                    isRepeatInfinite = false,
+                    maxDurationMin = 1,
+                    isDurationInfinite = true,
+                    randomize = false,
+                )
+            )
+        } else {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    context,
+                    "Error to insert scenario, check the internet",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    /*
+    private fun createDumbScenario(context: Context) {
+        val createScenario = DumbScenario(
+            id = Identifier(databaseId = DATABASE_ID_INSERTION, tempId = 0L),
+            name = _name.value!!,
+            dumbActions = emptyList(),
+            repeatCount = 1,
+            isRepeatInfinite = false,
+            maxDurationMin = 1,
+            isDurationInfinite = true,
+            randomize = false,
+        )
+
+        val scenario = CreateScenario(
+            device = CreateDeviceInfo(
+                deviceId = Build.ID,
+                appVersion = BuildConfig.VERSION_NAME,
+                mobileBrand = Build.MANUFACTURER,
+                mobileType = Build.MODEL
+            ),
+            scenario = com.buzbuz.smartautoclicker.activity.list.model.Scenario(
+                id = DATABASE_ID_INSERTION,
+                deviceId = Build.ID,
+                name = _name.value!!,
+                repeatCount = 1,
+                isRepeatInfinite = false,
+                maxDurationMin = 1,
+                isDurationInfinite = true,
+                randomize = false
+            )
+        )
+        val createScenarioJSON = Json.encodeToString(
+            CreateScenario.serializer(),
+            scenario
+        )
+
+        viewModelScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    val connection = (URL("${url.value}/api/scenarios/create")
+                        .openConnection() as HttpURLConnection).apply {
+                        requestMethod = "POST"
+                        doOutput = true
+                        useCaches = false
+                        setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                        setRequestProperty("Cache-Control", "no-cache")
+                        setRequestProperty("Pragma", "no-cache")
+                    }
+
+                    Log.d("json", "SCENARIO JSON : $createScenarioJSON")
+                    OutputStreamWriter(connection.outputStream).use {
+                        it.write(createScenarioJSON)
+                        it.flush()
+                    }
+
+                    if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                        connection.inputStream.bufferedReader().use { it.readText() }
+                    } else {
+                        Log.d("API", "Failed: ${connection.responseMessage}")
+                        throw Exception("Failed: ${connection.responseMessage}")
+                    }
+                }
+
+                // parsing tetap di Main thread
+                val parseData = Json.decodeFromString<DumbResponse>(response)
+                if (parseData.success) {
+                    Log.d("API", "Success: $parseData")
+                    dumbRepository.addDumbScenario(createScenario)
+                } else {
+                    Log.d("API", "Failed: $parseData")
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Failed to send scenario", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.d("API", "Error Exception: ${e.message ?: "Unknown error"}")
+                e.sendError()
+            } catch (e: JSONException) {
+                Log.d("API", "Error JSONException: ${e.message ?: "Unknown error"}")
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message ?: "Unknown error"}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                e.sendError()
+            }
+        }
+    }
+    */
 
     private suspend fun createSmartScenario(context: Context) {
         smartRepository.addScenario(

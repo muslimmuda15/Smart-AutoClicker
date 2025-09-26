@@ -19,7 +19,9 @@ package com.buzbuz.smartautoclicker.core.dumb.domain.model
 import android.graphics.Point
 import com.buzbuz.smartautoclicker.core.base.interfaces.Identifiable
 import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
+import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class DumbAction : Identifiable {
 
     /** The identifier of the dumb scenario for this dumb action. */

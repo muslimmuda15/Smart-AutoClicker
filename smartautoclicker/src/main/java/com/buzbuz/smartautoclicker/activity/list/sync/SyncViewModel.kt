@@ -68,19 +68,3 @@ data class BaseSyncStateUI (
 enum class StatusSyncStateUI {
     READY, UPLOADING, COMPLETE, FAILED
 }
-
-const val MAX_LOG_LENGTH = 4000
-
-fun logFullResponse(tag: String?, response: String) {
-    if (response.length > MAX_LOG_LENGTH) {
-        val chunkCount = response.length / MAX_LOG_LENGTH
-        for (i in 0..chunkCount) {
-            val start = i * MAX_LOG_LENGTH
-            val end =
-                min(((i + 1) * MAX_LOG_LENGTH).toDouble(), response.length.toDouble()).toInt()
-            Log.d(tag, response.substring(start, end))
-        }
-    } else {
-        Log.d(tag, response)
-    }
-}

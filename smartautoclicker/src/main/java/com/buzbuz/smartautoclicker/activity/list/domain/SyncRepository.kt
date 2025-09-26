@@ -7,12 +7,8 @@ import android.widget.Toast
 import com.buzbuz.smartautoclicker.BuildConfig
 import com.buzbuz.smartautoclicker.activity.list.model.DeviceInfo
 import com.buzbuz.smartautoclicker.activity.list.model.DeviceScenarioWithActions
-import com.buzbuz.smartautoclicker.activity.list.model.DumbAction
 import com.buzbuz.smartautoclicker.activity.list.model.Scenario
-import com.buzbuz.smartautoclicker.activity.list.model.ScenarioJson
-import com.buzbuz.smartautoclicker.activity.list.sync.logFullResponse
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbDatabase
-import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioEntity
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
 import com.buzbuz.smartautoclicker.sendError
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,7 +19,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.json.JSONException
-import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -99,7 +94,6 @@ class SyncRepository @Inject constructor(
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
 
                 try {
-                    logFullResponse("API", "Response : $response")
                     val parseData = Json.decodeFromString<DumbResponse>(response)
 //                    Log.d("API", "Response : $parseData")
                     if (parseData.success) {
