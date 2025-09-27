@@ -47,7 +47,7 @@ class SyncViewModel @Inject constructor(
         viewModelScope.launch {
             val scenarios = repository.createScenarioSync()
             withContext(Dispatchers.IO) {
-                Log.d("sync", "Scenario : $scenarios")
+                Log.d("sync", "Scenario Req : $scenarios")
                 val status = repository.sendUrl(scenarios, "${url.value}/sync")
                 if(status){
                     stateSyncUI.value = BaseSyncStateUI(loading = false, status = StatusSyncStateUI.COMPLETE)

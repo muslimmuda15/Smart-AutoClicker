@@ -124,6 +124,7 @@ class DumbEditionRepository @Inject constructor(
             isDurationInfinite = scenarioToSave.isDurationInfinite,
             randomize = scenarioToSave.randomize,
         ), dumbActions = scenarioToSave.dumbActions.map { action ->
+            Log.d("json", "ACTION : $action")
             when (action) {
                 is DumbAction.DumbAll -> action.toAllEntity(scenarioToSave.id.databaseId)
                 is DumbAction.DumbClick -> action.toClickEntity(scenarioToSave.id.databaseId)

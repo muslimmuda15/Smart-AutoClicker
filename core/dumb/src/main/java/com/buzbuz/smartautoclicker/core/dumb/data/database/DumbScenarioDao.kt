@@ -80,6 +80,9 @@ interface DumbScenarioDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addDumbScenario(dumbScenario: DumbScenarioEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addDumbOrReplaceScenario(dumbScenario: DumbScenarioEntity): Long
+
     /**
      * Update a dumb scenario to the database.
      *
@@ -103,6 +106,9 @@ interface DumbScenarioDao {
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addDumbActions(dumbActions: List<DumbActionEntity>): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addDumbOrReplaceActions(dumbActions: List<DumbActionEntity>): List<Long>
 
     /**
      * Update the selected dumb actions.

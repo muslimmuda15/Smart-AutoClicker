@@ -79,6 +79,7 @@ class SyncRepository @Inject constructor(
             }
 
             val responseCode = connection.responseCode
+            val json = Json { ignoreUnknownKeys = true }
             if (responseCode == HttpURLConnection.HTTP_OK) {
 //                CoroutineScope(Dispatchers.Main).launch {
 //                    Toast.makeText(context, "Success send to URL", Toast.LENGTH_SHORT).show()
@@ -86,7 +87,8 @@ class SyncRepository @Inject constructor(
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
 
                 try {
-                    val parseData = Json.decodeFromString<DumbResponse>(response)
+                    Log.d("API", "Response : $response")
+                    val parseData = json.decodeFromString<DumbResponse>(response)
 //                    Log.d("API", "Response : $parseData")
                     if (parseData.success) {
 //                        CoroutineScope(Dispatchers.Main).launch {
@@ -94,10 +96,11 @@ class SyncRepository @Inject constructor(
 //                        }
                         CoroutineScope(Dispatchers.IO).launch {
                             parseData.data.forEach { data ->
-                                dumbDatabase.dumbScenarioDao().addDumbScenario(
+                                Log.d("API", "Scenario Res : ${data.scenario.name}")
+                                dumbDatabase.dumbScenarioDao().addDumbOrReplaceScenario(
                                     data.scenario
                                 )
-                                dumbDatabase.dumbScenarioDao().addDumbActions(
+                                dumbDatabase.dumbScenarioDao().addDumbOrReplaceActions(
                                     data.dumbActions
                                 )
                             }
