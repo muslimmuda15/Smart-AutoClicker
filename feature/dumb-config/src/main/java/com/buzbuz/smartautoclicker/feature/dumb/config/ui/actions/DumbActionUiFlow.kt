@@ -96,6 +96,11 @@ internal fun OverlayManager.startDumbActionEditionUiFlow(
         is DumbAction.DumbApi -> startDumbApiEditionFlow(context, dumbAction, listener)
         is DumbAction.DumbTextCopy -> startDumbTextCopyEditionFlow(context, dumbAction, listener)
         is DumbAction.DumbLink -> startDumbLinkEditionFlow(context, dumbAction, listener)
+        is DumbAction.DumbAll -> {
+            // DumbAll is a combination of all actions, handle it appropriately
+            Log.w(TAG, "DumbAll action type not supported in UI flow")
+            listener.onDumbActionCreationCancelled()
+        }
     }
 }
 

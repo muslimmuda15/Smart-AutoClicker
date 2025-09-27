@@ -1,5 +1,4 @@
 package com.buzbuz.smartautoclicker.activity.list.domain
-
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -7,7 +6,8 @@ import android.widget.Toast
 import com.buzbuz.smartautoclicker.BuildConfig
 import com.buzbuz.smartautoclicker.activity.list.model.DeviceInfo
 import com.buzbuz.smartautoclicker.activity.list.model.DeviceScenarioWithActions
-import com.buzbuz.smartautoclicker.activity.list.model.Scenario
+import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbResponse
+import com.buzbuz.smartautoclicker.core.dumb.domain.model.Scenario
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbDatabase
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
 import com.buzbuz.smartautoclicker.sendError
@@ -24,14 +24,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
-
-@Serializable
-data class DumbResponse(
-    val success: Boolean,
-    val data: List<DumbScenarioWithActions>,
-    val message: String,
-    val statusCode: Int
-)
 
 @Singleton
 class SyncRepository @Inject constructor(

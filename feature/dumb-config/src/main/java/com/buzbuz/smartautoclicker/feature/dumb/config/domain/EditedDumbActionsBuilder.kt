@@ -123,6 +123,10 @@ class EditedDumbActionsBuilder {
                 id = dumbActionsIdCreator.generateNewIdentifier(),
                 scenarioId = getEditedScenarioIdOrThrow(),
             )
+            is DumbAction.DumbAll -> from.copy(
+                id = dumbActionsIdCreator.generateNewIdentifier(),
+                scenarioId = getEditedScenarioIdOrThrow(),
+            )
         }
 
     private fun getEditedScenarioIdOrThrow(): Identifier = dumbScenarioId

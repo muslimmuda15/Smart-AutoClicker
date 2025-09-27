@@ -38,6 +38,7 @@ internal fun DumbAction.toEntity(scenarioDbId: Long = DATABASE_ID_INSERTION): Du
     is DumbAction.DumbApi -> toApiEntity(scenarioDbId)
     is DumbAction.DumbTextCopy -> toCopyEntity(scenarioDbId)
     is DumbAction.DumbLink -> toLinkEntity(scenarioDbId)
+    is DumbAction.DumbAll -> toAllEntity(scenarioDbId)
 }
 
 private fun DumbAction.DumbApi.toApiEntity(scenarioDbId: Long): DumbActionEntity {
@@ -192,5 +193,32 @@ private fun DumbAction.DumbPause.toPauseEntity(scenarioDbId: Long): DumbActionEn
         priority = priority,
         type = DumbActionType.PAUSE,
         pauseDuration = pauseDurationMs,
+    )
+}
+
+private fun DumbAction.DumbAll.toAllEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, DumbAll is incomplete.")
+
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = if (scenarioDbId != DATABASE_ID_INSERTION) scenarioDbId else scenarioId.databaseId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.CLICK, // Default to CLICK type for DumbAll
+        repeatCount = repeatCount,
+        isRepeatInfinite = isRepeatInfinite,
+        repeatDelay = repeatDelayMs,
+        pressDuration = pressDurationMs,
+        x = position.x,
+        y = position.y,
+        swipeDuration = swipeDurationMs,
+        fromX = fromPosition.x,
+        fromY = fromPosition.y,
+        toX = toPosition.x,
+        toY = toPosition.y,
+        pauseDuration = pauseDurationMs,
+        urlValue = urlValue,
+        textCopy = textCopy,
+        linkUrl = urlValue
     )
 }

@@ -242,6 +242,11 @@ class DumbScenarioBriefViewModel @Inject constructor(
                 linkUrl = urlValue,
                 linkDurationMs = linkDurationMs,
             )
+
+            is DumbAction.DumbAll -> ClickDescription(
+                position = position.toPointF(),
+                pressDurationMs = pressDurationMs,
+            )
         }
 }
 

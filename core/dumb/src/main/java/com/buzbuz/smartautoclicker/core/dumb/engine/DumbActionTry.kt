@@ -63,4 +63,7 @@ private fun DumbAction.toFiniteDumbAction(scenarioId: Identifier): DumbAction =
         is DumbLink -> copy(
             scenarioId = scenarioId
         )
+        is DumbAction.DumbAll -> copy(
+            scenarioId = scenarioId
+        )
     }

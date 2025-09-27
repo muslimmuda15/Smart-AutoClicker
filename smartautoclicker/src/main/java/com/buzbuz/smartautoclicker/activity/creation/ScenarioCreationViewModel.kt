@@ -27,7 +27,6 @@ import androidx.lifecycle.viewModelScope
 import com.buzbuz.smartautoclicker.BuildConfig
 
 import com.buzbuz.smartautoclicker.R
-import com.buzbuz.smartautoclicker.activity.list.domain.DumbResponse
 import com.buzbuz.smartautoclicker.activity.list.model.CreateDeviceInfo
 import com.buzbuz.smartautoclicker.activity.list.model.CreateScenario
 import com.buzbuz.smartautoclicker.core.base.identifier.DATABASE_ID_INSERTION
@@ -35,6 +34,7 @@ import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
 import com.buzbuz.smartautoclicker.core.domain.IRepository
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
 import com.buzbuz.smartautoclicker.core.dumb.domain.IDumbRepository
+import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbResponse
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
 import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
 import com.buzbuz.smartautoclicker.feature.revenue.UserBillingState
@@ -129,7 +129,7 @@ class ScenarioCreationViewModel @Inject constructor(
                 mobileBrand = Build.MANUFACTURER,
                 mobileType = Build.MODEL
             ),
-            scenario = com.buzbuz.smartautoclicker.activity.list.model.Scenario(
+            scenario = com.buzbuz.smartautoclicker.core.dumb.domain.model.Scenario(
                 id = DATABASE_ID_INSERTION,
                 deviceId = Build.ID,
                 name = _name.value!!,

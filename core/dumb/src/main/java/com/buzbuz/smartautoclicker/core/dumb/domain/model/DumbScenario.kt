@@ -18,6 +18,8 @@ package com.buzbuz.smartautoclicker.core.dumb.domain.model
 
 import com.buzbuz.smartautoclicker.core.base.interfaces.Identifiable
 import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 data class DumbScenario(
     override val id: Identifier,

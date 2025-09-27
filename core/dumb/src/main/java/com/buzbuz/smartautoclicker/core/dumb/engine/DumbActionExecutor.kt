@@ -64,6 +64,7 @@ internal class DumbActionExecutor(private val context: Context, private val andr
             is DumbAction.DumbApi -> executeDumbApi(action)
             is DumbAction.DumbTextCopy -> executeDumbCopy(action)
             is DumbAction.DumbLink -> executeDumbLink(action)
+            is DumbAction.DumbAll -> executeDumbAll(action)
         }
     }
 
@@ -204,6 +205,48 @@ internal class DumbActionExecutor(private val context: Context, private val andr
                 }
                 delay(dumbLink.linkDurationMs.randomizeDurationIfNeeded())
             }
+        }
+    }
+
+    private suspend fun executeDumbAll(dumbAll: DumbAction.DumbAll) {
+        // Execute all actions in sequence: click, swipe, pause, text copy, link
+        if (dumbAll.pressDurationMs > 0) {
+            val clickGesture = GestureDescription.Builder().buildSingleStroke(
+                path = Path().apply { moveTo(dumbAll.position.x, dumbAll.position.y) },
+                durationMs = dumbAll.pressDurationMs.randomizeDurationIfNeeded()
+            )
+            executeRepeatableGesture(clickGesture, dumbAll)
+        }
+
+        if (dumbAll.swipeDurationMs > 0) {
+            val swipeGesture = GestureDescription.Builder().buildSingleStroke(
+                path = Path().apply {
+                    moveTo(dumbAll.fromPosition.x, dumbAll.fromPosition.y)
+                    lineTo(dumbAll.toPosition.x, dumbAll.toPosition.y)
+                },
+                durationMs = dumbAll.swipeDurationMs.randomizeDurationIfNeeded()
+            )
+            executeRepeatableGesture(swipeGesture, dumbAll)
+        }
+
+        if (dumbAll.pauseDurationMs > 0) {
+            delay(dumbAll.pauseDurationMs.randomizeDurationIfNeeded())
+        }
+
+        if (dumbAll.textCopy.isNotEmpty()) {
+            withContext(Dispatchers.Main) {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("Copied text", dumbAll.textCopy)
+                clipboard.setPrimaryClip(clip)
+                showToast("Text copied: ${dumbAll.textCopy}")
+            }
+        }
+
+        if (dumbAll.linkDurationMs > 0 && dumbAll.urlValue.isNotEmpty()) {
+            withContext(Dispatchers.Main) {
+                showToast(dumbAll.name)
+            }
+            delay(dumbAll.linkDurationMs.randomizeDurationIfNeeded())
         }
     }
 

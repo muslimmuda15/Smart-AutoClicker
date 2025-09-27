@@ -15,12 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.buzbuz.smartautoclicker.feature.dumb.config.domain
-
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Build
 import android.util.Log
+import android.widget.Toast
+import com.buzbuz.smartautoclicker.core.dumb.domain.model.DeviceScenarioWithActions
+import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbActionEntity
+import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbActionType
+import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbResponse
+import com.buzbuz.smartautoclicker.core.dumb.domain.model.Scenario
 
 import com.buzbuz.smartautoclicker.core.dumb.domain.IDumbRepository
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPreferences
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getLastSyncUrl
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -30,15 +42,25 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import kotlinx.serialization.json.Json
+import org.json.JSONException
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class DumbEditionRepository @Inject constructor(
+    @ApplicationContext val context: Context,
     private val dumbRepository: IDumbRepository,
 ) {
+    private val sharedPreferences: SharedPreferences = context.getEventConfigPreferences()
+    private val url: MutableStateFlow<String?> = MutableStateFlow(sharedPreferences.getLastSyncUrl(context))
 
     private val _editedDumbScenario: MutableStateFlow<DumbScenario?> = MutableStateFlow(null)
     val editedDumbScenario: StateFlow<DumbScenario?> = _editedDumbScenario
@@ -77,12 +99,108 @@ class DumbEditionRepository @Inject constructor(
         return true
     }
 
+    private suspend fun updateScenarioDB(): Boolean {
+        val scenarioToSave = _editedDumbScenario.value ?: return false
+
+//        val scenario = Scenario(
+//            id = scenarioToSave.id.databaseId,
+//            deviceId = Build.ID,
+//            name = scenarioToSave.name,
+//            repeatCount = scenarioToSave.repeatCount,
+//            isRepeatInfinite = scenarioToSave.isRepeatInfinite,
+//            maxDurationMin = scenarioToSave.maxDurationMin,
+//            isDurationInfinite = scenarioToSave.isDurationInfinite,
+//            randomize = scenarioToSave.randomize,
+//        )
+
+        val scenarioWithAction = DeviceScenarioWithActions(
+            scenario = Scenario(
+            id = scenarioToSave.id.databaseId,
+            deviceId = Build.ID,
+            name = scenarioToSave.name,
+            repeatCount = scenarioToSave.repeatCount,
+            isRepeatInfinite = scenarioToSave.isRepeatInfinite,
+            maxDurationMin = scenarioToSave.maxDurationMin,
+            isDurationInfinite = scenarioToSave.isDurationInfinite,
+            randomize = scenarioToSave.randomize,
+        ), dumbActions = scenarioToSave.dumbActions.map { action ->
+            when (action) {
+                is DumbAction.DumbAll -> action.toAllEntity(scenarioToSave.id.databaseId)
+                is DumbAction.DumbClick -> action.toClickEntity(scenarioToSave.id.databaseId)
+                is DumbAction.DumbSwipe -> action.toSwipeEntity(scenarioToSave.id.databaseId)
+                is DumbAction.DumbPause -> action.toPauseEntity(scenarioToSave.id.databaseId)
+                is DumbAction.DumbApi -> action.toApiEntity(scenarioToSave.id.databaseId)
+                is DumbAction.DumbTextCopy -> action.toCopyEntity(scenarioToSave.id.databaseId)
+                is DumbAction.DumbLink -> action.toLinkEntity(scenarioToSave.id.databaseId)
+            }
+        })
+
+        val updateScenarioJSON = Json.encodeToString(DeviceScenarioWithActions.serializer(), scenarioWithAction)
+        Log.d("json", "UPDATE SCENARIO JSON : $updateScenarioJSON")
+
+        val json = Json { ignoreUnknownKeys = true }
+
+        try {
+            val response = withContext(Dispatchers.IO) {
+                val connection = (URL("${url.value}/api/scenarios/${scenarioWithAction.scenario.id}")
+                    .openConnection() as HttpURLConnection).apply {
+                    requestMethod = "PUT"
+                    doOutput = true
+                    useCaches = false
+                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                    setRequestProperty("Cache-Control", "no-cache")
+                    setRequestProperty("Pragma", "no-cache")
+                }
+
+                Log.d("json", "SCENARIO JSON : $updateScenarioJSON")
+                OutputStreamWriter(connection.outputStream).use {
+                    it.write(updateScenarioJSON)
+                    it.flush()
+                }
+
+                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                    connection.inputStream.bufferedReader().use { it.readText() }
+                } else {
+                    Log.d("API", "Failed: ${connection.responseMessage}")
+                    throw Exception("Failed: ${connection.responseMessage}")
+                }
+            }
+
+            Log.d("json", "RESPONSE SCENARIO JSON : $response")
+            // parsing tetap di Main thread
+            val parseData = json.decodeFromString<DumbResponse>(response)
+            if (parseData.success) {
+                Log.d("API", "Success: $parseData")
+                return true
+            } else {
+                Log.d("API", "Failed: $parseData")
+                return false
+            }
+        } catch (e: Exception) {
+            Log.d("API", "Error Exception: ${e.message ?: "Unknown error"}")
+            return false
+        } catch (e: JSONException) {
+            Log.d("API", "Error JSONException: ${e.message ?: "Unknown error"}")
+            return false
+        }
+    }
+
     /** Save editions changes in the database. */
     suspend fun saveEditions() {
         val scenarioToSave = _editedDumbScenario.value ?: return
         Log.d("DumbScenarioDataSource", "Save editions  in dumb edition repository line 83 : $scenarioToSave")
 
-        dumbRepository.updateDumbScenario(scenarioToSave)
+        if(updateScenarioDB()) {
+            dumbRepository.updateDumbScenario(scenarioToSave)
+        } else {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    context,
+                    "Error to update scenario, check the internet",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
         stopEdition()
     }
 
@@ -165,16 +283,6 @@ class DumbEditionRepository @Inject constructor(
         )
     }
 
-    private fun DumbAction.copyWithNewPriority(priority: Int): DumbAction =
-        when (this) {
-            is DumbAction.DumbClick -> copy(priority = priority)
-            is DumbAction.DumbPause -> copy(priority = priority)
-            is DumbAction.DumbSwipe -> copy(priority = priority)
-            is DumbAction.DumbApi -> copy(priority = priority)
-            is DumbAction.DumbTextCopy -> copy(priority = priority)
-            is DumbAction.DumbLink -> copy(priority = priority)
-        }
-
     private fun MutableList<DumbAction>.updatePriorities(range: IntRange = indices) {
         for (index in range) {
             Log.d(TAG, "Updating priority to $index for action ${get(index)}")
@@ -185,3 +293,122 @@ class DumbEditionRepository @Inject constructor(
 
 /** Tag for logs */
 private const val TAG = "DumbEditionRepository"
+
+// Extension functions untuk konversi DumbAction ke DumbActionEntity
+private fun DumbAction.DumbAll.toAllEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, DumbAll is incomplete.")
+    
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = scenarioDbId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.CLICK, // Default to CLICK type for DumbAll
+        repeatCount = repeatCount,
+        isRepeatInfinite = isRepeatInfinite,
+        repeatDelay = repeatDelayMs,
+        pressDuration = pressDurationMs,
+        x = position.x,
+        y = position.y,
+        swipeDuration = swipeDurationMs,
+        fromX = fromPosition.x,
+        fromY = fromPosition.y,
+        toX = toPosition.x,
+        toY = toPosition.y,
+        pauseDuration = pauseDurationMs,
+        urlValue = urlValue,
+        textCopy = textCopy,
+        linkUrl = urlValue
+    )
+}
+
+private fun DumbAction.DumbClick.toClickEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Click is incomplete.")
+    
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = scenarioDbId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.CLICK,
+        repeatCount = repeatCount,
+        isRepeatInfinite = isRepeatInfinite,
+        repeatDelay = repeatDelayMs,
+        pressDuration = pressDurationMs,
+        x = position.x,
+        y = position.y
+    )
+}
+
+private fun DumbAction.DumbSwipe.toSwipeEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Swipe is incomplete.")
+    
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = scenarioDbId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.SWIPE,
+        repeatCount = repeatCount,
+        isRepeatInfinite = isRepeatInfinite,
+        repeatDelay = repeatDelayMs,
+        swipeDuration = swipeDurationMs,
+        fromX = fromPosition.x,
+        fromY = fromPosition.y,
+        toX = toPosition.x,
+        toY = toPosition.y
+    )
+}
+
+private fun DumbAction.DumbPause.toPauseEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Pause is incomplete.")
+    
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = scenarioDbId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.PAUSE,
+        pauseDuration = pauseDurationMs
+    )
+}
+
+private fun DumbAction.DumbApi.toApiEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Api is incomplete.")
+    
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = scenarioDbId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.API,
+        urlValue = urlValue
+    )
+}
+
+private fun DumbAction.DumbTextCopy.toCopyEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Copy is incomplete.")
+    
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = scenarioDbId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.COPY,
+        textCopy = textCopy
+    )
+}
+
+private fun DumbAction.DumbLink.toLinkEntity(scenarioDbId: Long): DumbActionEntity {
+    if (!isValid()) throw IllegalStateException("Can't transform to entity, Link is incomplete.")
+    
+    return DumbActionEntity(
+        id = id.databaseId,
+        dumbScenarioId = scenarioDbId,
+        name = name,
+        priority = priority,
+        type = DumbActionType.LINK,
+        linkUrl = urlValue,
+        pauseDuration = linkDurationMs
+    )
+}

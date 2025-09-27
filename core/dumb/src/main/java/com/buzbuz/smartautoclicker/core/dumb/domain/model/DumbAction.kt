@@ -41,6 +41,7 @@ sealed class DumbAction : Identifiable {
             is DumbApi -> copy(scenarioId = scenarioId)
             is DumbTextCopy -> copy(scenarioId = scenarioId)
             is DumbLink -> copy(scenarioId = scenarioId)
+            is DumbAll -> copy(scenarioId = scenarioId)
         }
 
     fun copyWithNewPriority(priority: Int): DumbAction =
@@ -51,6 +52,7 @@ sealed class DumbAction : Identifiable {
             is DumbApi -> copy(priority = priority)
             is DumbTextCopy -> copy(priority = priority)
             is DumbLink -> copy(priority = priority)
+            is DumbAll -> copy(scenarioId = scenarioId)
         }
 
     data class DumbClick(
@@ -123,6 +125,27 @@ sealed class DumbAction : Identifiable {
         val linkDurationMs: Long,
         val urlValue: String = ""
     ) : DumbAction() {
+        override fun isValid(): Boolean = name.isNotEmpty()
+    }
+
+    data class DumbAll(
+        override val id: Identifier,
+        override val scenarioId: Identifier,
+        override val priority: Int = 0,
+        override val name: String,
+        override val repeatCount: Int,
+        override val isRepeatInfinite: Boolean,
+        override val repeatDelayMs: Long,
+        val position: Point,
+        val pressDurationMs: Long,
+        val fromPosition: Point,
+        val toPosition: Point,
+        val swipeDurationMs: Long,
+        val pauseDurationMs: Long,
+        val textCopy: String,
+        val linkDurationMs: Long,
+        val urlValue: String = ""
+    ) : DumbAction(), RepeatableWithDelay {
         override fun isValid(): Boolean = name.isNotEmpty()
     }
 }

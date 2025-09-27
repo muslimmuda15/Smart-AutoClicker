@@ -23,6 +23,17 @@ plugins {
 android {
     namespace = "com.buzbuz.smartautoclicker.feature.dumb.config"
     buildFeatures.viewBinding = true
+
+    // Specifies one flavor dimension.
+    flavorDimensions += "version"
+    productFlavors {
+        create("fDroid") {
+            dimension = "version"
+        }
+        create("playStore") {
+            dimension = "version"
+        }
+    }
 }
 
 dependencies {
@@ -41,4 +52,7 @@ dependencies {
     implementation(project(":core:common:ui"))
     implementation(project(":core:dumb"))
     implementation(project(":feature:tutorial"))
+    implementation(project(":feature:smart-config"))
+
+    implementation(libs.kotlinx.serialization.json)
 }
