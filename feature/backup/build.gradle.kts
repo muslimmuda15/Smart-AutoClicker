@@ -25,6 +25,17 @@ plugins {
 android {
     namespace = "com.buzbuz.smartautoclicker.feature.backup"
     buildFeatures.viewBinding = true
+
+    // Specifies one flavor dimension.
+    flavorDimensions += "version"
+    productFlavors {
+        create("fDroid") {
+            dimension = "version"
+        }
+        create("playStore") {
+            dimension = "version"
+        }
+    }
 }
 
 dependencies {

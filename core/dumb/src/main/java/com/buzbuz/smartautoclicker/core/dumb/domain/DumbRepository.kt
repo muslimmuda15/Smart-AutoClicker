@@ -46,6 +46,9 @@ class DumbRepository @Inject constructor(
         dumbScenarioDataSource.addDumbScenario(scenario)
     }
 
+    override suspend fun addDumbScenarioGetId(scenario: DumbScenario): Long =
+        dumbScenarioDataSource.addDumbScenarioGetId(scenario)
+
     override suspend fun addDumbScenarioCopy(scenario: DumbScenarioWithActions): Long? =
         dumbScenarioDataSource.addDumbScenarioCopy(scenario)
 

@@ -121,7 +121,7 @@ class ScenarioCreationViewModel @Inject constructor(
         }
     }
 
-    private suspend fun createScenarioDB(): Boolean {
+    private suspend fun createScenarioDB(insertId: Long): Boolean {
         val scenario = CreateScenario(
             device = CreateDeviceInfo(
                 deviceId = Build.ID,
@@ -130,7 +130,7 @@ class ScenarioCreationViewModel @Inject constructor(
                 mobileType = Build.MODEL
             ),
             scenario = com.buzbuz.smartautoclicker.core.dumb.domain.model.Scenario(
-                id = DATABASE_ID_INSERTION,
+                id = insertId,
                 deviceId = Build.ID,
                 name = _name.value!!,
                 repeatCount = 1,
@@ -197,21 +197,21 @@ class ScenarioCreationViewModel @Inject constructor(
     }
 
     private suspend fun createDumbScenario(context: Context) {
-        val createScenarioDB = createScenarioDB()
-        if(createScenarioDB) {
-            dumbRepository.addDumbScenario(
-                DumbScenario(
-                    id = Identifier(databaseId = DATABASE_ID_INSERTION, tempId = 0L),
-                    name = _name.value!!,
-                    dumbActions = emptyList(),
-                    repeatCount = 1,
-                    isRepeatInfinite = false,
-                    maxDurationMin = 1,
-                    isDurationInfinite = true,
-                    randomize = false,
-                )
+        val insertId = dumbRepository.addDumbScenarioGetId(
+            DumbScenario(
+                id = Identifier(databaseId = DATABASE_ID_INSERTION, tempId = 0L),
+                name = _name.value!!,
+                dumbActions = emptyList(),
+                repeatCount = 1,
+                isRepeatInfinite = false,
+                maxDurationMin = 1,
+                isDurationInfinite = true,
+                randomize = false,
             )
-        } else {
+        )
+
+        val createScenarioDB = createScenarioDB(insertId)
+        if(!createScenarioDB) {
             withContext(Dispatchers.Main) {
                 Toast.makeText(
                     context,

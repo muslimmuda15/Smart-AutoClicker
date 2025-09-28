@@ -42,6 +42,7 @@ class SyncRepository @Inject constructor(
             mobileBrand = Build.MANUFACTURER,
             mobileType = Build.MODEL,
             scenarios = dumbScenario.map { sc ->
+                Log.d("sync", "Request Scenario : ${sc.scenario.id} - ${sc.scenario.name}")
                 DeviceScenarioWithActions(
                     scenario = Scenario(
                         id = sc.scenario.id,
@@ -96,7 +97,7 @@ class SyncRepository @Inject constructor(
 //                        }
                         CoroutineScope(Dispatchers.IO).launch {
                             parseData.data.forEach { data ->
-                                Log.d("API", "Scenario Res : ${data.scenario.name}")
+                                Log.d("sync", "Scenario Res : ${data.scenario.id} - ${data.scenario.name}")
                                 dumbDatabase.dumbScenarioDao().addDumbOrReplaceScenario(
                                     data.scenario
                                 )

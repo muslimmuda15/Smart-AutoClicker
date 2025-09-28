@@ -24,6 +24,16 @@ plugins {
 android {
     namespace = "com.smartautoclicker.core.dumb"
 
+    flavorDimensions += "version"
+    productFlavors {
+        create("fDroid") {
+            dimension = "version"
+        }
+        create("playStore") {
+            dimension = "version"
+        }
+    }
+
     sourceSets {
         getByName("test") {
             // Adds exported schema location as test app assets.
@@ -35,4 +45,5 @@ android {
 dependencies {
     implementation(project(":core:common:base"))
     implementation(project(":core:common:ui"))
+    implementation(project(":feature:smart-config"))
 }
