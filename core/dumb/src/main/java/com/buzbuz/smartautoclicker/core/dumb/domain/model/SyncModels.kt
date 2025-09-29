@@ -25,9 +25,9 @@ import kotlinx.serialization.Serializable
  * Response model for dumb scenario sync operations.
  */
 @Serializable
-data class DumbResponse(
+data class DumbResponse<T>(
     val success: Boolean,
-    val data: List<DumbScenarioWithActions>,
+    val data: List<T>,
     val message: String,
     val statusCode: Int
 )

@@ -89,7 +89,7 @@ class SyncRepository @Inject constructor(
 
                 try {
                     Log.d("API", "Response : $response")
-                    val parseData = json.decodeFromString<DumbResponse>(response)
+                    val parseData = json.decodeFromString<DumbResponse<DumbScenarioWithActions>>(response)
 //                    Log.d("API", "Response : $parseData")
                     if (parseData.success) {
 //                        CoroutineScope(Dispatchers.Main).launch {

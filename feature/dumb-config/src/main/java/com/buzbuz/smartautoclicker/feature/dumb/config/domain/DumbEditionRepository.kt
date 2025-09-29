@@ -23,6 +23,7 @@ import android.widget.Toast
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DeviceScenarioWithActions
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbActionEntity
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbActionType
+import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbResponse
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.Scenario
 
@@ -169,7 +170,7 @@ class DumbEditionRepository @Inject constructor(
 
             Log.d("json", "RESPONSE SCENARIO JSON : $response")
             // parsing tetap di Main thread
-            val parseData = json.decodeFromString<DumbResponse>(response)
+            val parseData = json.decodeFromString<DumbResponse<DumbScenarioWithActions>>(response)
             if (parseData.success) {
                 Log.d("API", "Success: $parseData")
                 return true

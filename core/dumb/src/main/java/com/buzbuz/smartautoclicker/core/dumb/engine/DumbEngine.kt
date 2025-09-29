@@ -11,12 +11,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received  r a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.buzbuz.smartautoclicker.core.dumb.engine
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Point
 import android.util.Log
 import android.widget.Toast
@@ -28,6 +29,9 @@ import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
 import com.buzbuz.smartautoclicker.core.dumb.domain.IDumbRepository
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
+import com.buzbuz.smartautoclicker.core.dumb.util.isValidUrl
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPreferences
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getLastSyncUrl
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +78,8 @@ class DumbEngine @Inject constructor(
     /** Completion listener on dumb actions tries.*/
     private var onTryCompletedListener: (() -> Unit)? = null
 
+    private lateinit var _url: MutableStateFlow<String?>
+
     private val dumbScenarioDbId: MutableStateFlow<Long?> = MutableStateFlow(null)
     val dumbScenario: Flow<DumbScenario?> =
         dumbScenarioDbId.flatMapLatest { dbId ->
@@ -85,9 +91,14 @@ class DumbEngine @Inject constructor(
     val isRunning: StateFlow<Boolean> = _isRunning
 
     private fun downloadJsonTask(urlString: String): String? {
+        val finalURL = if(isValidUrl(urlString)) {
+            urlString
+        } else {
+            "${_url.value}?scenario=$urlString}"
+        }
         try {
             val stringBuilder = StringBuilder()
-            URL(urlString).openStream().use {
+            URL(finalURL).openStream().use {
                 BufferedReader(InputStreamReader(it)).use { reader ->
                     var line: String?
                     while (reader.readLine().also { read -> line = read } != null) {
@@ -121,6 +132,9 @@ class DumbEngine @Inject constructor(
 
         processingScope = CoroutineScope(Dispatchers.IO)
         mainScope = CoroutineScope(Dispatchers.Main)
+
+        val sharedPreferences: SharedPreferences = context.getEventConfigPreferences()
+        _url = MutableStateFlow(sharedPreferences.getLastSyncUrl(context))
     }
 
     private fun getTypeJsonToDumbAction(

@@ -192,7 +192,7 @@ class DumbScenarioDataSource @Inject constructor(
 
             Log.d("json", "RESPONSE SCENARIO JSON : $response")
             // parsing tetap di Main thread
-            val parseData = json.decodeFromString<DumbResponse>(response)
+            val parseData = json.decodeFromString<DumbResponse<DumbScenarioWithActions>>(response)
             if (parseData.success) {
                 Log.d("API", "Success: $parseData")
                 return true

@@ -33,6 +33,7 @@ import com.buzbuz.smartautoclicker.core.base.identifier.DATABASE_ID_INSERTION
 import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
 import com.buzbuz.smartautoclicker.core.domain.IRepository
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
+import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
 import com.buzbuz.smartautoclicker.core.dumb.domain.IDumbRepository
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbResponse
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
@@ -176,7 +177,7 @@ class ScenarioCreationViewModel @Inject constructor(
 
             Log.d("json", "RESPONSE SCENARIO JSON : $response")
             // parsing tetap di Main thread
-            val parseData = json.decodeFromString<DumbResponse>(response)
+            val parseData = json.decodeFromString<DumbResponse<DumbScenarioWithActions>>(response)
             if (parseData.success) {
                 Log.d("API", "Success: $parseData")
                 return true
