@@ -97,7 +97,7 @@ enum class DumbActionType {
     /** A copy, copy text */
     COPY,
     /** A link, run another app */
-    LINK
+    LINK,
 }
 
 /** Type converter to read/write the [DumbActionType] into the database. */
