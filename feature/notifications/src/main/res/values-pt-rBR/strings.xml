@@ -17,7 +17,7 @@
 -->
 <resources>
 
-    <string name="notification_scenario_channel_group_name">Cenários do Klick\'r</string>
+    <string name="notification_scenario_channel_group_name">Cenários do AMB</string>
     <string name="notification_scenario_channel_low_name">Baixa</string>
     <string name="notification_scenario_channel_default_name">Normal</string>
     <string name="notification_scenario_channel_high_name">Alta</string>

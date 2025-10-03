@@ -16,14 +16,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string name="dialog_title_billing" translatable="false">Klick\'r Pro</string>
+    <string name="dialog_title_billing" translatable="false">AMB Pro</string>
 
-    <string name="header_billing" translatable="false">Klick\'r Pro</string>
+    <string name="header_billing" translatable="false">AMB Pro</string>
     <string name="header_starting_detection">Iniciando detecção</string>
 
     <string name="message_billing">Este aplicativo é de código aberto e criado com amor por pessoas que trabalham em seu tempo livre.\n\n
-        Apoie o desenvolvimento assistindo a um anúncio ou compre Klick\'r Pro para remover os anúncios para sempre!</string>
-    <string name="message_billing_success">Obrigado por comprar\nKlick\'r Pro!</string>
+        Apoie o desenvolvimento assistindo a um anúncio ou compre AMB Pro para remover os anúncios para sempre!</string>
+    <string name="message_billing_success">Obrigado por comprar\nAMB Pro!</string>
 
     <string name="button_text_watch_ad_loading">Carregando anúncio</string>
     <string name="button_text_watch_ad">Assistir a um anúncio</string>

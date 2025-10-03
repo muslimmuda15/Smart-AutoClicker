@@ -26,8 +26,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-import com.buzbuz.smartautoclicker.R
-import com.buzbuz.smartautoclicker.databinding.ItemEventCardBinding
+import app.amb.autoclick.R
+import app.amb.autoclick.databinding.ItemEventCardBinding
 import com.buzbuz.smartautoclicker.core.domain.model.condition.ImageCondition
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioListUiState.Item.Valid.Smart.EventItem
 

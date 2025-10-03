@@ -24,12 +24,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-import com.buzbuz.smartautoclicker.R
+import app.amb.autoclick.R
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioListUiState
 import com.buzbuz.smartautoclicker.core.domain.model.condition.ImageCondition
-import com.buzbuz.smartautoclicker.databinding.ItemDumbScenarioBinding
-import com.buzbuz.smartautoclicker.databinding.ItemEmptyScenarioBinding
-import com.buzbuz.smartautoclicker.databinding.ItemSmartScenarioBinding
+import app.amb.autoclick.databinding.ItemDumbScenarioBinding
+import app.amb.autoclick.databinding.ItemEmptyScenarioBinding
+import app.amb.autoclick.databinding.ItemSmartScenarioBinding
 
 import kotlinx.coroutines.Job
 

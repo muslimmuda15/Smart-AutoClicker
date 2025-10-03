@@ -23,17 +23,17 @@ plugins {
 }
 
 android {
-    namespace = "com.buzbuz.smartautoclicker"
+    namespace = "app.amb.autoclick"
     buildFeatures {
         viewBinding = true
         buildConfig = true
     }
 
     defaultConfig {
-        applicationId = "com.buzbuz.smartautoclicker"
+        applicationId = "app.amb.autoclick"
 
         versionCode = 59
-        versionName = "3.1.7"
+        versionName = "3.1.8"
     }
 
     flavorDimensions += listOf("version")

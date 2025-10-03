@@ -23,7 +23,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
-import com.buzbuz.smartautoclicker.R
+import app.amb.autoclick.R
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioBackupSelection
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioListUiState
 import com.buzbuz.smartautoclicker.activity.list.model.isEmpty

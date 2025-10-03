@@ -1,6 +1,6 @@
 <p align="center">  
   <img src="https://github.com/Nain57/SmartAutoClicker/blob/master/smartautoclicker/src/main/ic_smart_auto_clicker-playstore.png?raw=true" height="64">  
-  <h3 align="center">Klick'r - Smart AutoClicker</h3>  
+  <h3 align="center">AMB - Smart AutoClicker</h3>  
   <p align="center">An Autoclicker Based On Image Detection  
   </p>
 </p>  
@@ -18,9 +18,9 @@
 
 <br>  
 
-<p>Klick'r is an open-source Android application designed to automate repetitive tasks effortlessly. Formerly known as Smart AutoClicker, Klick'r offers unique image detection capabilities alongside traditional auto-clicking functionalities, providing a versatile solution for all your automation needs.  
+<p>AMB is an open-source Android application designed to automate repetitive tasks effortlessly. Formerly known as Smart AutoClicker, AMB offers unique image detection capabilities alongside traditional auto-clicking functionalities, providing a versatile solution for all your automation needs.  
 </p>  
-<p>Whether you’re a gamer automating in-game actions, a tester simulating user interactions, or anyone performing repetitive clicking tasks, Klick'r offers both image detection for sophisticated automation and a Regular Mode for straightforward auto-clicking.  
+<p>Whether you’re a gamer automating in-game actions, a tester simulating user interactions, or anyone performing repetitive clicking tasks, AMB offers both image detection for sophisticated automation and a Regular Mode for straightforward auto-clicking.  
 </p>  
 
 <br>  
@@ -33,8 +33,8 @@
 * **Advanced Automation**: Enhance your automation scripts with advanced features like counters operations, Android Intents, and flow control, giving you unparalleled flexibility.
 * **Triggers**: Set up sophisticated triggers based on image detection, timers, counters, and Android broadcast receivers to perfectly tailor your automation tasks.
 * **Regular Mode**: Enjoy a straightforward auto-clicking experience with our Regular Mode, designed for easy configuration and ideal for simpler, repetitive tasks.
-* **Tutorials**: Learn to master Klick'r with our interactive game tutorials, which provide step-by-step instructions to help you automate tasks and beat the game using Klick'r's powerful features.
-* **Open Source**: As an open-source project, Klick'r is continuously improved by a dedicated community.
+* **Tutorials**: Learn to master AMB with our interactive game tutorials, which provide step-by-step instructions to help you automate tasks and beat the game using AMB's powerful features.
+* **Open Source**: As an open-source project, AMB is continuously improved by a dedicated community.
 
 ## JSON Api Feature
 When you like to using API to load the actions, you need to create a scenario by JSON

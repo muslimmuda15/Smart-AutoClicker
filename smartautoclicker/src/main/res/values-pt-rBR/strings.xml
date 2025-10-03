@@ -17,8 +17,8 @@
 -->
 <resources>
 
-    <string name="app_name" translatable="false">Klick\'r</string>
-    <string name="notification_channel_name" translatable="false">Klick\'r</string>
+    <string name="app_name" translatable="false">AMB</string>
+    <string name="notification_channel_name" translatable="false">AMB</string>
 
     <!-- Application wide texts. -->
     <string name="notification_title">Cenário: %1$s</string>
@@ -80,7 +80,7 @@
       -->
     <string name="message_delete_scenario">Isso irá excluir %1$s. Você tem certeza?</string>
     <string name="message_error_screen_capture_permission_dialog_not_found">Seu dispositivo não fornece o padrão
-        diálogo de permissão de captura de tela do Android. O Klick\'r não conseguirá rodar nele.</string>
+        diálogo de permissão de captura de tela do Android. O AMB não conseguirá rodar nele.</string>
 
 
     <!--

@@ -17,7 +17,7 @@
 -->
 <resources>
 
-    <string name="notification_scenario_channel_group_name">Klick\'r scenarios</string>
+    <string name="notification_scenario_channel_group_name">AMB scenarios</string>
     <string name="notification_scenario_channel_low_name">Basse</string>
     <string name="notification_scenario_channel_default_name">Normale</string>
     <string name="notification_scenario_channel_high_name">Haute</string>

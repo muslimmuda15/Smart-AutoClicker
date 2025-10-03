@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string name="tile_label_start_scenario">启动 Klick\'r</string>
-    <string name="tile_label_stop_scenario">停止 Klick\'r</string>
+    <string name="tile_label_start_scenario">启动 AMB</string>
+    <string name="tile_label_stop_scenario">停止 AMB</string>
     <string name="tile_subtext_unavailable">未定义情景</string>
 </resources>

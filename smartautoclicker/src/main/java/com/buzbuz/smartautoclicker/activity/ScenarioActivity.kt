@@ -31,7 +31,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
-import com.buzbuz.smartautoclicker.R
+import app.amb.autoclick.R
 import com.buzbuz.smartautoclicker.activity.list.ScenarioListFragment
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioListUiState
 import com.buzbuz.smartautoclicker.core.base.extensions.delayDrawUntil

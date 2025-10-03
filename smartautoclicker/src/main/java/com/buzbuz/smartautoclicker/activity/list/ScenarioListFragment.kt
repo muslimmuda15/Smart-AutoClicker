@@ -34,7 +34,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 
-import com.buzbuz.smartautoclicker.R
+import app.amb.autoclick.R
 import com.buzbuz.smartautoclicker.activity.creation.ScenarioCreationDialog
 import com.buzbuz.smartautoclicker.activity.list.adapter.ScenarioAdapter
 import com.buzbuz.smartautoclicker.activity.list.copy.ScenarioCopyDialog
@@ -43,7 +43,7 @@ import com.buzbuz.smartautoclicker.activity.list.model.ScenarioListUiState
 import com.buzbuz.smartautoclicker.activity.list.sync.SyncDialog
 import com.buzbuz.smartautoclicker.activity.list.upload.UploadDialog
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment.Companion.FRAGMENT_TAG_BACKUP_DIALOG
-import com.buzbuz.smartautoclicker.databinding.FragmentScenariosBinding
+import app.amb.autoclick.databinding.FragmentScenariosBinding
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

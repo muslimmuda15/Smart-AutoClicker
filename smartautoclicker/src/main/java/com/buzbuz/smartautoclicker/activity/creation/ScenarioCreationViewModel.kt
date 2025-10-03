@@ -24,9 +24,9 @@ import android.widget.Toast
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.buzbuz.smartautoclicker.BuildConfig
+import app.amb.autoclick.BuildConfig
 
-import com.buzbuz.smartautoclicker.R
+import app.amb.autoclick.R
 import com.buzbuz.smartautoclicker.activity.list.model.CreateDeviceInfo
 import com.buzbuz.smartautoclicker.activity.list.model.CreateScenario
 import com.buzbuz.smartautoclicker.core.base.identifier.DATABASE_ID_INSERTION

@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import com.buzbuz.smartautoclicker.BuildConfig
+import app.amb.autoclick.BuildConfig
 import com.buzbuz.smartautoclicker.activity.list.model.DumbAction
 import com.buzbuz.smartautoclicker.activity.list.model.ScenarioJson
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbDatabase

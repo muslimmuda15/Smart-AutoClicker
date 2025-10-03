@@ -130,7 +130,7 @@
     <string name="field_show_debug_report_desc_not_available">No debug report available</string>
 
     <string name="field_tutorial_title">Tutorial</string>
-    <string name="field_tutorial_desc">Learn how to use Klick\'r</string>
+    <string name="field_tutorial_desc">Learn how to use AMB</string>
 
     <string name="field_legacy_action_ui_title">Legacy UI</string>
     <string name="field_legacy_action_ui_desc">Change the action display by a list. Useful for complex scenarios.</string>
@@ -378,7 +378,7 @@
 
 
     <string name="error_dialog_message_scenario_saving">Your scenario can\'t be saved due to an internal error.\nDo you want to modify it or cancel all your modifications ?</string>
-    <string name="error_dialog_message_error_native_lib">Klick\'r is incorrectly installed and can\'t start the detection.\n\nIf you have installed it from a legitimate application store, please contact us on GitHub, as it will help us fix this issue.</string>
+    <string name="error_dialog_message_error_native_lib">AMB is incorrectly installed and can\'t start the detection.\n\nIf you have installed it from a legitimate application store, please contact us on GitHub, as it will help us fix this issue.</string>
 
 
     <!-- Content description ======================================================================================= -->

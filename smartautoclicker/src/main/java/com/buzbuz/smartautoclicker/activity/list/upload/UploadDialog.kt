@@ -11,11 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.buzbuz.smartautoclicker.R
+import app.amb.autoclick.R
 import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setLabel
 import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setOnTextChangedListener
 import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setText
-import com.buzbuz.smartautoclicker.databinding.DialogUploadBinding
+import app.amb.autoclick.databinding.DialogUploadBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

@@ -1,6 +1,7 @@
 package com.buzbuz.smartautoclicker
 
 import android.util.Log
+import app.amb.autoclick.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
