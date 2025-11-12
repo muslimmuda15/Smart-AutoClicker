@@ -38,8 +38,6 @@ import com.buzbuz.smartautoclicker.core.common.permissions.PermissionsController
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionAccessibilityService
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionOverlay
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionPostNotification
-import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
-import com.buzbuz.smartautoclicker.feature.revenue.UserConsentState
 import com.buzbuz.smartautoclicker.localservice.ILocalService
 
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,7 +51,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ScenarioViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    private val revenueRepository: IRevenueRepository,
     private val qualityRepository: QualityRepository,
     private val permissionController: PermissionsController,
 ) : ViewModel() {
@@ -71,8 +68,6 @@ class ScenarioViewModel @Inject constructor(
     /** The Android notification manager. Initialized only if needed.*/
     private val notificationManager: NotificationManager?
 
-    val userConsentState: StateFlow<UserConsentState> = revenueRepository.userConsentState
-        .stateIn(viewModelScope, SharingStarted.Eagerly, UserConsentState.UNKNOWN)
 
     init {
         SmartAutoClickerService.getLocalService(serviceConnection)
@@ -89,12 +84,11 @@ class ScenarioViewModel @Inject constructor(
     }
 
     fun requestUserConsentIfNeeded(activity: Activity) {
-        revenueRepository.refreshPurchases()
-        revenueRepository.startUserConsentRequestUiFlowIfNeeded(activity)
+        // No ads - consent not needed
     }
 
     fun refreshPurchaseState() {
-        revenueRepository.refreshPurchases()
+        // No ads - purchase state not needed
     }
 
     fun startPermissionFlowIfNeeded(activity: AppCompatActivity, onAllGranted: () -> Unit) {

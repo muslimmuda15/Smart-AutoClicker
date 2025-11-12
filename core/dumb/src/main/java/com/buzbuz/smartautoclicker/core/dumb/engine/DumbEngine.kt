@@ -99,7 +99,7 @@ class DumbEngine @Inject constructor(
         val finalURL = if (isValidUrl(urlString)) {
             urlString
         } else {
-            "${_url.value}/api/actions?scenario=${urlString.replace(" ", "%20")}"
+            "${_url.value}/android/scenarios-action?keyword=${urlString.replace(" ", "%20")}"
         }
         Log.d("API", "URL String : $urlString")
         Log.d("API", "Final URL : $finalURL")
@@ -176,9 +176,11 @@ class DumbEngine @Inject constructor(
         try {
             val json = Json { ignoreUnknownKeys = true }
             Log.d(TAG, "jsonData : $jsonData")
-            val parseData = json.decodeFromString<DumbResponse<DumbActionEntity>>(jsonData)
-            if(parseData.success) {
-                val dumbActions = parseData.data
+//            val parseData = json.decodeFromString<DumbResponse<DumbActionEntity>>(jsonData)
+            val jsonObject = JSONObject(jsonData)
+            val success = jsonObject.getBoolean("success")
+            if(success) {
+                val dumbActions = jsonObject.getJSONArray("data")
 
                 val actions = ArrayList<DumbAction>()
 
@@ -186,8 +188,9 @@ class DumbEngine @Inject constructor(
                 var mainTempId = id.tempId
                 var priority = currentPriority
 
-                dumbActions.forEachIndexed { index, actionObject ->
-                    val type = actionObject.type
+                for (i in 0 until dumbActions.length()) {
+                    val actionObject = dumbActions.getJSONObject(i)
+                    val type = actionObject.optString("type", "")
 
                     val newId = Identifier(
                         ++mainId,
@@ -201,78 +204,78 @@ class DumbEngine @Inject constructor(
                     Log.d("API", "type : $type")
 
                     when (type) {
-                        DumbActionType.SWIPE -> actions.add(
+                        "SWIPE" -> actions.add(
                             DumbAction.DumbSwipe(
                                 id = newId,
                                 scenarioId = scenarioId,
-                                name = actionObject.name,
+                                name = actionObject.optString("summary", type),
                                 priority = priority++,
-                                repeatCount = actionObject.repeatCount ?: 1,
+                                repeatCount = actionObject.optInt("repeat_count", 1),
                                 isRepeatInfinite = false,
-                                repeatDelayMs = actionObject.repeatDelay ?: 1000L,
+                                repeatDelayMs = actionObject.optLong("repeat_delay", 1000L),
                                 fromPosition = Point(
-                                    actionObject.fromX ?: 0,
-                                    actionObject.fromY ?: 0,
+                                    actionObject.optInt("from_x"),
+                                    actionObject.optInt("from_y"),
                                 ),
                                 toPosition = Point(
-                                    actionObject.toX ?: 0,
-                                    actionObject.toY ?: 0,
+                                    actionObject.optInt("to_x"),
+                                    actionObject.optInt("to_y"),
                                 ),
-                                swipeDurationMs = actionObject.swipeDuration ?: 500L,
+                                swipeDurationMs = actionObject.optLong("swipe_duration", 500L),
                             )
                         )
 
-                        DumbActionType.CLICK -> actions.add(
+                        "CLICK" -> actions.add(
                             DumbAction.DumbClick(
                                 id = newId,
                                 scenarioId = scenarioId,
-                                name = actionObject.name,
+                                name = actionObject.optString("summary", type),
                                 priority = priority++,
-                                repeatCount = actionObject.repeatCount ?: 1,
+                                repeatCount = actionObject.optInt("repeat_count", 1),
                                 isRepeatInfinite = false,
-                                repeatDelayMs = actionObject.repeatDelay ?: 1000L,
+                                repeatDelayMs = actionObject.optLong("repeat_delay", 1000L),
                                 position = Point(
-                                    actionObject.x ?: 0,
-                                    actionObject.y ?: 0,
+                                    actionObject.optInt("x"),
+                                    actionObject.optInt("y"),
                                 ),
-                                pressDurationMs = actionObject.pressDuration ?: 500,
+                                pressDurationMs = actionObject.optLong("press_duration"),
                             )
                         )
 
-                        DumbActionType.PAUSE -> actions.add(
+                        "WAIT", "PAUSE" -> actions.add(
                             DumbAction.DumbPause(
                                 id = newId,
                                 scenarioId = scenarioId,
-                                name = actionObject.name,
+                                name = actionObject.optString("summary", type),
                                 priority = priority++,
-                                pauseDurationMs = actionObject.pauseDuration ?: 1000L,
+                                pauseDurationMs = actionObject.optLong("pause_duration", 1000L),
                             )
                         )
 
-                        DumbActionType.COPY -> actions.add(
+                        "COPY" -> actions.add(
                             DumbAction.DumbTextCopy(
                                 id = newId,
                                 scenarioId = scenarioId,
-                                name = actionObject.name,
+                                name = actionObject.optString("summary"),
                                 priority = priority++,
-                                textCopy = actionObject.textCopy ?: ""
+                                textCopy = actionObject.optString("text")
                             )
                         )
 
-                        DumbActionType.LINK -> {
+                        "LINK" -> {
                             actions.add(
                                 DumbAction.DumbLink(
                                     id = newId,
                                     scenarioId = scenarioId,
-                                    name = actionObject.name,
+                                    name = actionObject.optString("summary", type),
                                     priority = priority++,
-                                    linkDurationMs = actionObject.pauseDuration ?: 1000L,
-                                    urlValue = actionObject.linkUrl ?: ""
+                                    linkDurationMs = actionObject.optLong("pause_duration", 1000L),
+                                    urlValue = actionObject.optString("link_url", "")
                                 )
                             )
                         }
 
-                        DumbActionType.API -> if (actionObject.urlValue == urlFrom) {
+                        "API" -> if (actionObject.optString("api_url") == urlFrom) {
                             /**
                              * When in url you have same url
                              * do not show anythink
@@ -281,28 +284,27 @@ class DumbEngine @Inject constructor(
                                 DumbAction.DumbApi(
                                     id = newId,
                                     scenarioId = scenarioId,
-                                    name = actionObject.name,
+                                    name = actionObject.optString("summary"),
                                     priority = priority++,
-                                    urlValue = actionObject.urlValue
+                                    urlValue = actionObject.optString("api_url")
                                 )
                             )
                         } else {
                             /**
                              * If different generate json into dumb action again
                              */
-                            downloadJsonTask(actionObject.urlValue ?: "")?.let { anotherJson ->
+                            downloadJsonTask(actionObject.optString("api_url"))?.let { anotherJson ->
                                 actions.addAll(
                                     getTypeJsonToDumbAction(
                                         id = newId,
                                         scenarioId = scenarioId,
                                         currentPriority = priority++,
-                                        urlFrom = actionObject.urlValue ?: "",
+                                        urlFrom = actionObject.optString("api_url"),
                                         jsonData = anotherJson
                                     )
                                 )
                             }
                         }
-
                         else -> {
                             throw IllegalArgumentException("Not supported yet")
                         }

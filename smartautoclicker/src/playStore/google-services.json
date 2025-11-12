@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "970153317973",
-    "project_id": "smart-autoclicker",
-    "storage_bucket": "smart-autoclicker.appspot.com"
+    "project_number": "608603725925",
+    "project_id": "ambtim-43ed6",
+    "storage_bucket": "ambtim-43ed6.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:970153317973:android:1d14db38d0ef2685e366dc",
+        "mobilesdk_app_id": "1:608603725925:android:0f261794d402f60e41e68c",
         "android_client_info": {
-          "package_name": "com.buzbuz.smartautoclicker"
+          "package_name": "app.amb.autoclick"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "970153317973-ljv4jeb9og9u0166bl1n7h1vq0rfrb6k.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDPEvDywy1kPdh8Ac7wR3r-wxUR6zcVqyo"
+          "current_key": "AIzaSyATm6e1f-Lw9PHbBlx6eHiQEbscLpNn0Jk"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "970153317973-ljv4jeb9og9u0166bl1n7h1vq0rfrb6k.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -37,8 +37,6 @@ import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActio
 import com.buzbuz.smartautoclicker.core.dumb.domain.IDumbRepository
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbResponse
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
-import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
-import com.buzbuz.smartautoclicker.feature.revenue.UserBillingState
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPreferences
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getLastSyncUrl
 import com.buzbuz.smartautoclicker.sendError
@@ -65,7 +63,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ScenarioCreationViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    revenueRepository: IRevenueRepository,
     private val smartRepository: IRepository,
     private val dumbRepository: IDumbRepository,
 ) : ViewModel() {
@@ -81,15 +78,14 @@ class ScenarioCreationViewModel @Inject constructor(
         .map { it.isNullOrEmpty() }
 
     private val _selectedType: MutableStateFlow<ScenarioTypeSelection> =
-        MutableStateFlow(ScenarioTypeSelection.SMART)
+        MutableStateFlow(ScenarioTypeSelection.DUMB)
     val scenarioTypeSelectionState: Flow<ScenarioTypeSelectionState> =
-        combine(_selectedType, revenueRepository.userBillingState) { selectedType, billingState ->
+        _selectedType.map { selectedType ->
             ScenarioTypeSelectionState(
                 dumbItem = ScenarioTypeItem.Dumb,
                 smartItem = ScenarioTypeItem.Smart,
                 selectedItem = selectedType,
-                showPaidLimitationWarning =
-                    billingState == UserBillingState.PURCHASED && selectedType == ScenarioTypeSelection.SMART
+                showPaidLimitationWarning = false
             )
         }
 
@@ -211,16 +207,16 @@ class ScenarioCreationViewModel @Inject constructor(
             )
         )
 
-        val createScenarioDB = createScenarioDB(insertId)
-        if(!createScenarioDB) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    context,
-                    "Error to insert scenario, check the internet",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
+//        val createScenarioDB = createScenarioDB(insertId)
+//        if(!createScenarioDB) {
+//            withContext(Dispatchers.Main) {
+//                Toast.makeText(
+//                    context,
+//                    "Error to insert scenario, check the internet",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            }
+//        }
     }
 
     /*

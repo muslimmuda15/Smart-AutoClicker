@@ -192,17 +192,17 @@ class DumbEditionRepository @Inject constructor(
         val scenarioToSave = _editedDumbScenario.value ?: return
         Log.d("DumbScenarioDataSource", "Save editions  in dumb edition repository line 83 : $scenarioToSave")
 
-        if(updateScenarioDB()) {
+//        if(updateScenarioDB()) {
             dumbRepository.updateDumbScenario(scenarioToSave)
-        } else {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    context,
-                    "Error to update scenario, check the internet",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
+//        } else {
+//            withContext(Dispatchers.Main) {
+//                Toast.makeText(
+//                    context,
+//                    "Error to update scenario, check the internet",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            }
+//        }
         stopEdition()
     }
 

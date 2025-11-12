@@ -38,7 +38,6 @@
         android:usesCleartextTraffic="true"
         tools:ignore="DataExtractionRules">
 
-
         <activity
             android:name="com.buzbuz.smartautoclicker.activity.ScenarioActivity"
             android:screenOrientation="locked"

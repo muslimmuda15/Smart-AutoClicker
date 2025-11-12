@@ -28,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 
 import com.buzbuz.smartautoclicker.core.base.extensions.showAsOverlay
+import com.buzbuz.smartautoclicker.feature.smart.config.ui.UiState
 import com.buzbuz.smartautoclicker.core.base.isStopScenarioKey
 import com.buzbuz.smartautoclicker.core.common.overlays.base.viewModels
 import com.buzbuz.smartautoclicker.core.common.overlays.menu.OverlayMenu
@@ -150,7 +151,8 @@ class MainMenu(private val onStopClicked: () -> Unit) : OverlayMenu() {
 
         when (keyEvent.action) {
             KeyEvent.ACTION_DOWN -> {
-                if (viewModel.stopDetection()) {
+                if (viewModel.detectionState.value == UiState.Detecting) {
+                    viewModel.toggleDetection(context)
                     keyDownHandled = true
                     return true
                 }

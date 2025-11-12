@@ -75,6 +75,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_horizontal_default"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="@id/scenario_type_dumb"
                 app:layout_constraintBottom_toBottomOf="@id/scenario_type_dumb"
                 app:layout_constraintStart_toEndOf="@id/scenario_type_dumb"

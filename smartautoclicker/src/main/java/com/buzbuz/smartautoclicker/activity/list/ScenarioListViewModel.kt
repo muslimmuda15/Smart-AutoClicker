@@ -38,8 +38,6 @@ import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.Repeatable
 import com.buzbuz.smartautoclicker.core.ui.utils.formatDuration
-import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
-import com.buzbuz.smartautoclicker.feature.revenue.UserBillingState
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getImageConditionBitmap
 
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,7 +60,6 @@ class ScenarioListViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val smartRepository: IRepository,
     private val dumbRepository: IDumbRepository,
-    private val revenueRepository: IRevenueRepository,
     private val qualityRepository: QualityRepository,
 ) : ViewModel() {
 
@@ -97,12 +94,10 @@ class ScenarioListViewModel @Inject constructor(
         uiStateType,
         filteredScenarios,
         combine(selectedForBackup, expandedItems, ::Pair),
-        revenueRepository.userBillingState,
-        revenueRepository.isPrivacySettingRequired,
-    ) { stateType, scenarios, (backupSelection, expanded), billingState, privacyRequired ->
+    ) { stateType, scenarios, (backupSelection, expanded) ->
         ScenarioListUiState(
             type = stateType,
-            menuUiState = stateType.toMenuUiState(scenarios, backupSelection, billingState, privacyRequired),
+            menuUiState = stateType.toMenuUiState(scenarios, backupSelection),
             listContent =
                 if (stateType != ScenarioListUiState.Type.EXPORT && stateType != ScenarioListUiState.Type.UPLOAD) scenarios.updateExpanded(expanded)
                 else scenarios.filterForBackupSelection(backupSelection),
@@ -209,13 +204,12 @@ class ScenarioListViewModel @Inject constructor(
         getImageConditionBitmap(smartRepository, condition, onBitmapLoaded)
 
     fun showPrivacySettings(activity: Activity) {
-        revenueRepository.startPrivacySettingUiFlow(activity)
+        // No ads - privacy settings not needed
     }
 
     fun showPurchaseActivity(context: Context) {
-        revenueRepository.startPurchaseUiFlow(context)
+        // No ads - purchase not needed
     }
-
     fun showTroubleshootingDialog(activity: FragmentActivity) {
         qualityRepository.startTroubleshootingUiFlow(activity)
     }
@@ -223,8 +217,6 @@ class ScenarioListViewModel @Inject constructor(
     private fun ScenarioListUiState.Type.toMenuUiState(
         scenarioItems: List<ScenarioListUiState.Item>,
         backupSelection: ScenarioBackupSelection,
-        billingState: UserBillingState,
-        isPrivacyRequired: Boolean,
     ): ScenarioListUiState.Menu = when (this) {
         ScenarioListUiState.Type.SEARCH -> ScenarioListUiState.Menu.Search
         ScenarioListUiState.Type.EXPORT -> ScenarioListUiState.Menu.Export(
@@ -233,8 +225,8 @@ class ScenarioListViewModel @Inject constructor(
         ScenarioListUiState.Type.SELECTION -> ScenarioListUiState.Menu.Selection(
             searchEnabled = scenarioItems.isNotEmpty(),
             exportEnabled = scenarioItems.firstOrNull { it is ScenarioListUiState.Item.Valid } != null,
-            privacyRequired = isPrivacyRequired,
-            canPurchase = billingState != UserBillingState.PURCHASED,
+            privacyRequired = false,
+            canPurchase = false,
         )
         ScenarioListUiState.Type.UPLOAD -> ScenarioListUiState.Menu.Upload(
             canUpload = !backupSelection.isEmpty(),

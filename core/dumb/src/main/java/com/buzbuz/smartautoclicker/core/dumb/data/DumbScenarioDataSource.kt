@@ -213,15 +213,15 @@ class DumbScenarioDataSource @Inject constructor(
     suspend fun deleteDumbScenario(scenario: DumbScenario) {
         Log.d(TAG, "Delete dumb scenario $scenario")
 
-        if (!deleteDumbScenarioDB(scenario.id.databaseId)) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    context,
-                    "Error to delete scenario",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
+//        if (!deleteDumbScenarioDB(scenario.id.databaseId)) {
+//            withContext(Dispatchers.Main) {
+//                Toast.makeText(
+//                    context,
+//                    "Error to delete scenario",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            }
+//        }
 
         dumbScenarioDao.deleteDumbScenario(scenario.id.databaseId)
     }

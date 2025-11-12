@@ -25,13 +25,11 @@ import androidx.lifecycle.viewModelScope
 
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionRepository
 import com.buzbuz.smartautoclicker.core.processing.domain.DetectionState
-import com.buzbuz.smartautoclicker.feature.revenue.IRevenueRepository
 import com.buzbuz.smartautoclicker.feature.smart.config.domain.EditionRepository
 import com.buzbuz.smartautoclicker.feature.smart.debugging.domain.DebuggingRepository
 import com.buzbuz.smartautoclicker.core.ui.monitoring.MonitoredViewsManager
 import com.buzbuz.smartautoclicker.core.ui.monitoring.ViewPositioningType
 import com.buzbuz.smartautoclicker.core.ui.monitoring.MonitoredViewType
-import com.buzbuz.smartautoclicker.feature.revenue.UserBillingState
 import com.buzbuz.smartautoclicker.feature.tutorial.domain.TutorialRepository
 
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +42,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -54,7 +53,6 @@ class MainMenuModel @Inject constructor(
     private val detectionRepository: DetectionRepository,
     private val editionRepository: EditionRepository,
     private val tutorialRepository: TutorialRepository,
-    private val revenueRepository: IRevenueRepository,
     private val monitoredViewsManager: MonitoredViewsManager,
     private val debugRepository: DebuggingRepository,
 ) : ViewModel() {
@@ -70,40 +68,33 @@ class MainMenuModel @Inject constructor(
     private var paywallResultJob: Job? = null
 
     /** Tells if the paywall is currently displayed. */
-    val paywallIsVisible: Flow<Boolean> =
-        revenueRepository.isBillingFlowInProgress
+    val paywallIsVisible: Flow<Boolean> = flowOf(false)
 
     /** The current of the detection. */
     val detectionState: StateFlow<UiState> = detectionRepository.detectionState
         .map { if (it == DetectionState.DETECTING) UiState.Detecting else UiState.Idle }
         .distinctUntilChanged()
         .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            UiState.Idle,
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = UiState.Idle,
         )
 
-    val isMediaProjectionStarted: StateFlow<Boolean> = detectionRepository.detectionState
-        .map { it == DetectionState.RECORDING || it == DetectionState.DETECTING }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
-
-    /** Tells if the scenario can be started. Edited scenario must be synchronized and engine should allow it. */
-    val isStartButtonEnabled: Flow<Boolean> = combine(
-        detectionRepository.canStartDetection,
-        editionRepository.isEditionSynchronized,
-        isMediaProjectionStarted
-    ) { canStartDetection, isSynchronized, isProjectionStarted ->
-        (canStartDetection || !isProjectionStarted) && isSynchronized
-    }
-
-    /** Tells if the detector can't work due to a native library load error. */
     val nativeLibError: Flow<Boolean> = detectionRepository.detectionState
         .map { it == DetectionState.ERROR_NO_NATIVE_LIB }
         .distinctUntilChanged()
 
+    val isStartButtonEnabled: Flow<Boolean> = detectionRepository.detectionState
+        .map { it != DetectionState.ERROR_NO_NATIVE_LIB }
+        .distinctUntilChanged()
+
+    val isMediaProjectionStarted: Flow<Boolean> = detectionRepository.detectionState
+        .map { it == DetectionState.DETECTING || it == DetectionState.RECORDING }
+        .distinctUntilChanged()
+
     /** Load an advertisement, if needed. Should be called before showing the paywall to reduce user waiting time. */
     fun loadAdIfNeeded(context: Context) {
-        revenueRepository.loadAdIfNeeded(context)
+        // No ads - loading not needed
     }
 
     /** Start/Stop the detection. */
@@ -111,32 +102,15 @@ class MainMenuModel @Inject constructor(
         when (detectionState.value) {
             UiState.Detecting -> stopDetection()
             UiState.Idle -> {
-                if (revenueRepository.userBillingState.value.isAdRequested()) startPaywall(context)
-                else startDetection(context)
+                startDetection(context)
             }
         }
     }
 
-    /** Stop the detection. Returns true if it was started, false if not. */
-    fun stopDetection(): Boolean {
-        if (detectionState.value !is UiState.Detecting) return false
-
-        detectionRepository.stopDetection()
-        return true
-    }
-
-    private fun startPaywall(context: Context) {
-        revenueRepository.startPaywallUiFlow(context)
-
-        paywallResultJob = combine(revenueRepository.isBillingFlowInProgress, revenueRepository.userBillingState) { inProgress, state ->
-            if (inProgress) return@combine
-
-            Log.d(TAG, "onPaywall finished")
-
-            if (!state.isAdRequested()) startDetection(context)
-            paywallResultJob?.cancel()
-            paywallResultJob = null
-        }.launchIn(viewModelScope)
+    private fun stopDetection() {
+        viewModelScope.launch {
+            detectionRepository.stopDetection()
+        }
     }
 
     private fun startDetection(context: Context) {
@@ -144,7 +118,7 @@ class MainMenuModel @Inject constructor(
             detectionRepository.startDetection(
                 context,
                 debugRepository.getDebugDetectionListenerIfNeeded(context),
-                revenueRepository.consumeTrial(),
+                null,
             )
         }
     }
@@ -192,7 +166,7 @@ class MainMenuModel @Inject constructor(
     }
 
     fun shouldRestartMediaProjection(): Boolean =
-        !isMediaProjectionStarted.value
+        detectionState.value != UiState.Detecting
 
     fun shouldShowStopVolumeDownTutorialDialog(): Boolean =
         detectionState.value == UiState.Idle && tutorialRepository.shouldShowStopWithVolumeDownTutorialDialog()
@@ -200,8 +174,6 @@ class MainMenuModel @Inject constructor(
     fun setStopWithVolumeDownDontShowAgain(): Unit =
         tutorialRepository.setStopWithVolumeDownDontShowAgain()
 
-    private fun UserBillingState.isAdRequested(): Boolean =
-        this == UserBillingState.AD_REQUESTED
 }
 
 sealed class UiState {

@@ -32,8 +32,8 @@ android {
     defaultConfig {
         applicationId = "app.amb.autoclick"
 
-        versionCode = 59
-        versionName = "3.1.8"
+        versionCode = 61
+        versionName = "3.1.9"
     }
 
     flavorDimensions += listOf("version")
@@ -107,7 +107,6 @@ dependencies {
     implementation(project(":feature:notifications"))
     implementation(project(":core:common:permissions"))
     implementation(project(":feature:quick-settings-tile"))
-    implementation(project(":feature:revenue"))
     implementation(project(":feature:smart-config"))
     implementation(project(":feature:smart-debugging"))
     implementation(project(":feature:dumb-config"))

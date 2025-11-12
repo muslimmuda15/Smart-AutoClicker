@@ -1,13 +1,13 @@
 [versions]
 
 # Android SDK
-androidCompileSdk = "34"
+androidCompileSdk = "35"
 androidMinSdk = "24"
 
 # Build script
 googleFirebaseCrashlyticsGradle = "3.0.2"
 googleServices = "4.4.2"
-androidGradlePlugin = "8.5.2"
+androidGradlePlugin = "8.7.2"
 kotlin = "1.9.24"
 kotlinxCoroutines = "1.8.0"
 ksp = "1.9.24-1.0.20"
@@ -36,11 +36,8 @@ openCv = "4.9.0"
 googleDaggerHilt = "2.51"
 
 # PlayStore only
-androidBillingClient = "7.1.1"
 googleFirebaseBom = "33.6.0"
 googleFirebaseCrashlytics = "19.2.1"
-googleUserMessaging = "3.1.0"
-googleGmsAds = "23.3.0" # Next version needs Android SDK 35
 
 # Tests only
 androidxArchCoreTesting = "2.2.0"
@@ -105,14 +102,10 @@ google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-androi
 google-dagger-hilt-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "googleDaggerHilt" }
 
 # PlayStore only. Might seem unused but check in files if that is the case
-android-billingClient = { group = "com.android.billingclient", name = "billing", version.ref = "androidBillingClient" }
-android-billingClient-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "androidBillingClient" }
 google-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "googleFirebaseBom" }
 google-firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "googleFirebaseCrashlytics" }
 google-firebase-crashlytics-ndk = { group = "com.google.firebase", name = "firebase-crashlytics-ndk", version.ref = "googleFirebaseCrashlytics" }
 google-dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "googleDaggerHilt" }
-google-userMessaging = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "googleUserMessaging" }
-google-gms-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "googleGmsAds" }
 
 # Tests only
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCoreTesting" }
