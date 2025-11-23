@@ -256,9 +256,9 @@ class DumbEngine @Inject constructor(
                             DumbAction.DumbTextCopy(
                                 id = newId,
                                 scenarioId = scenarioId,
-                                name = actionObject.optString("summary"),
+                                name = actionObject.optString("name"),
                                 priority = priority++,
-                                textCopy = actionObject.optString("text")
+                                textCopy = actionObject.optString("text_copy")
                             )
                         )
 

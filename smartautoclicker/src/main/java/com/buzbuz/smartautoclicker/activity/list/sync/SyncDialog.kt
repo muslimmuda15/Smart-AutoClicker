@@ -59,48 +59,48 @@ class SyncDialog: DialogFragment() {
             }
             .create()
 
-//        lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel.getStateUI.collect { state ->
-//
-//                    when(state.status) {
-//                        StatusSyncStateUI.READY -> {
-//                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = true
-//                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
-//                        }
-//                        StatusSyncStateUI.UPLOADING -> {
-//                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
-//                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
-//
-//                            viewBinding.fieldUrlName.textField.isEnabled = false
-////                            viewBinding.buttonSync.isEnabled = false
-//                        }
-//                        StatusSyncStateUI.COMPLETE -> {
-//                            viewBinding.inputLayout.visibility = View.GONE
-////                            viewBinding.buttonSync.visibility = View.GONE
-//                            viewBinding.layoutCompatWarning.visibility = View.GONE
-//                            viewBinding.iconStatus.apply {
-//                                setImageResource(R.drawable.img_success)
-//                                drawable.setTint(Color.GREEN)
-//                            }
-//                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
-//                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
-//                        }
-//                        StatusSyncStateUI.FAILED -> {
-//                            viewBinding.inputLayout.visibility = View.GONE
-////                            viewBinding.buttonSync.visibility = View.GONE
-//                            viewBinding.layoutCompatWarning.visibility = View.GONE
-//                            viewBinding.iconStatus.apply {
-//                                setImageResource(R.drawable.img_error)
-//                                drawable.setTint(Color.RED)
-//                            }
-//                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
-//                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getStateUI.collect { state ->
+
+                    when(state.status) {
+                        StatusSyncStateUI.READY -> {
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = true
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+                        }
+                        StatusSyncStateUI.UPLOADING -> {
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+
+                            viewBinding.fieldUrlName.textField.isEnabled = false
+                            viewBinding.buttonSync.isEnabled = false
+                        }
+                        StatusSyncStateUI.COMPLETE -> {
+                            viewBinding.inputLayout.visibility = View.GONE
+                            viewBinding.buttonSync.visibility = View.GONE
+                            viewBinding.layoutCompatWarning.visibility = View.GONE
+                            viewBinding.iconStatus.apply {
+                                setImageResource(R.drawable.img_success)
+                                drawable.setTint(Color.GREEN)
+                            }
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
+                        }
+                        StatusSyncStateUI.FAILED -> {
+                            viewBinding.inputLayout.visibility = View.GONE
+                            viewBinding.buttonSync.visibility = View.GONE
+                            viewBinding.layoutCompatWarning.visibility = View.GONE
+                            viewBinding.iconStatus.apply {
+                                setImageResource(R.drawable.img_error)
+                                drawable.setTint(Color.RED)
+                            }
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
+                        }
+                    }
+                }
+            }
+        }
 
         return dialog
     }

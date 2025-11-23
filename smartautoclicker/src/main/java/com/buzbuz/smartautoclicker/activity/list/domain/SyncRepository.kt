@@ -19,6 +19,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.json.JSONException
+import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -62,25 +63,28 @@ class SyncRepository @Inject constructor(
         return Json.encodeToString(fixedDumbScenario)
     }
 
-    fun sendUrl(scenarios: String, url: String?): Boolean {
+    fun sendUrl(url: String?): Boolean {
         try {
             val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-                requestMethod = "POST"
-                doOutput = true
+                requestMethod = "GET"
+                doOutput = false
                 useCaches = false
                 setRequestProperty("Content-Type", "application/json; charset=utf-8")
                 setRequestProperty("Cache-Control", "no-cache")
                 setRequestProperty("Pragma", "no-cache")
+                connectTimeout = 10000  // Added timeout
+                readTimeout = 10000     // Added timeout
             }
 
-            OutputStreamWriter(connection.outputStream).apply {
-                write(scenarios)
-                flush()
-                close()
-            }
+//            OutputStreamWriter(connection.outputStream).apply {
+//                write(scenarios)
+//                flush()
+//                close()
+//            }
 
             val responseCode = connection.responseCode
-            val json = Json { ignoreUnknownKeys = true }
+            Log.d("API", "Response code : $url - $responseCode")
+//            val json = Json { ignoreUnknownKeys = true }
             if (responseCode == HttpURLConnection.HTTP_OK) {
 //                CoroutineScope(Dispatchers.Main).launch {
 //                    Toast.makeText(context, "Success send to URL", Toast.LENGTH_SHORT).show()
@@ -89,26 +93,29 @@ class SyncRepository @Inject constructor(
 
                 try {
                     Log.d("API", "Response : $response")
-                    val parseData = json.decodeFromString<DumbResponse<DumbScenarioWithActions>>(response)
+//                    val parseData = json.decodeFromString<DumbResponse<DumbScenarioWithActions>>(response)
+                    val success = JSONObject(response).getBoolean("success")
+                    return success
+
 //                    Log.d("API", "Response : $parseData")
-                    if (parseData.success) {
+//                    if (parseData) {
 //                        CoroutineScope(Dispatchers.Main).launch {
 //                            Toast.makeText(context, "Success send to URL", Toast.LENGTH_SHORT).show()
 //                        }
-                        CoroutineScope(Dispatchers.IO).launch {
-                            parseData.data.forEach { data ->
-                                Log.d("sync", "Scenario Res : ${data.scenario.id} - ${data.scenario.name}")
-                                dumbDatabase.dumbScenarioDao().addDumbOrReplaceScenario(
-                                    data.scenario
-                                )
-                                dumbDatabase.dumbScenarioDao().addDumbOrReplaceActions(
-                                    data.dumbActions
-                                )
-                            }
-                        }
-                        return true
-                    }
-                    return false
+//                        CoroutineScope(Dispatchers.IO).launch {
+//                            parseData.data.forEach { data ->
+//                                Log.d("sync", "Scenario Res : ${data.scenario.id} - ${data.scenario.name}")
+//                                dumbDatabase.dumbScenarioDao().addDumbOrReplaceScenario(
+//                                    data.scenario
+//                                )
+//                                dumbDatabase.dumbScenarioDao().addDumbOrReplaceActions(
+//                                    data.dumbActions
+//                                )
+//                            }
+//                        }
+//                        return true
+//                    }
+//                    return false
                 } catch (e: JSONException){
                     Log.e("JSON", "Uncaught exception of JSON", e)
                     CoroutineScope(Dispatchers.Main).launch {

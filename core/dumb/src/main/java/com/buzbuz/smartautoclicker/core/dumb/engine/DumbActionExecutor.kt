@@ -18,15 +18,13 @@ package com.buzbuz.smartautoclicker.core.dumb.engine
 
 import ToastManager
 import android.accessibilityservice.GestureDescription
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Path
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.buzbuz.smartautoclicker.core.base.AndroidExecutor
 import com.buzbuz.smartautoclicker.core.base.extensions.buildSingleStroke
 import com.buzbuz.smartautoclicker.core.base.extensions.nextIntInOffset
@@ -36,13 +34,11 @@ import com.buzbuz.smartautoclicker.core.base.extensions.safeMoveTo
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.Repeatable
 import com.buzbuz.smartautoclicker.core.dumb.util.isValidUrl
-import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.AppTypeDropDownItem
-import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.toAppTypeDropDown
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import kotlin.random.Random
-
 
 internal class DumbActionExecutor(private val context: Context, private val androidExecutor: AndroidExecutor) {
 
@@ -77,7 +73,7 @@ internal class DumbActionExecutor(private val context: Context, private val andr
 //        withContext(Dispatchers.Main) {
 //            showToast(dumbClick.name)
 //        }
-        Log.d("action", "Click : ${dumbClick.name}")
+        Log.d("action", "Click : ${dumbClick}")
 
         executeRepeatableGesture(clickGesture, dumbClick)
     }
@@ -122,13 +118,13 @@ internal class DumbActionExecutor(private val context: Context, private val andr
     }
 
     private suspend fun executeDumbLink(dumbLink: DumbAction.DumbLink) {
-        Log.d("action", "Link : ${dumbLink.name}")
+        Log.d("action", "Link : ${dumbLink}")
         withContext(Dispatchers.Main) {
             if(isValidUrl(dumbLink.urlValue)){
                 Log.d("action", "URL is valid")
                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(dumbLink.urlValue)
-                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    data = dumbLink.urlValue.toUri()
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
 
                 if (intent.resolveActivity(context.packageManager) != null) {
