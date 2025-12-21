@@ -18,7 +18,9 @@ package com.buzbuz.smartautoclicker.feature.dumb.config.ui.scenario.actionlist
 
 import android.content.Context
 import android.graphics.Point
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
@@ -27,9 +29,11 @@ import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.copy.DumbActio
 import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.copy.toDumbActionDetails
 
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DumbActionListViewModel @Inject constructor(
@@ -94,6 +98,13 @@ class DumbActionListViewModel @Inject constructor(
             }
         )?.let {
             dumbEditionRepository.updateDumbScenario(it)
+        }
+    }
+
+    fun sendDumbAction(action: DumbAction) {
+        Log.d("action", "Sending dumb action listView: $action")
+        viewModelScope.launch(Dispatchers.IO) {
+            dumbEditionRepository.sendDumbAction(action)
         }
     }
 }

@@ -51,6 +51,7 @@ class DumbPauseDialog(
     private val dumbPause: DumbAction.DumbPause,
     private val onConfirmClicked: (DumbAction.DumbPause) -> Unit,
     private val onDeleteClicked: (DumbAction.DumbPause) -> Unit,
+    private val onSendActionClicked: (DumbAction.DumbPause) -> Unit,
     private val onDismissClicked: () -> Unit,
 ) : OverlayDialog(R.style.AppTheme) {
 
@@ -77,6 +78,10 @@ class DumbPauseDialog(
                 buttonDelete.apply {
                     visibility = View.VISIBLE
                     setDebouncedOnClickListener { onDeleteButtonClicked() }
+                }
+                buttonSendAction.apply {
+                    visibility = View.VISIBLE
+                    setDebouncedOnClickListener { onSendActionButtonClicked() }
                 }
             }
 
@@ -132,6 +137,13 @@ class DumbPauseDialog(
     private fun onDeleteButtonClicked() {
         viewModel.getEditedDumbPause()?.let { editedAction ->
             onDeleteClicked(editedAction)
+            back()
+        }
+    }
+
+    private fun onSendActionButtonClicked() {
+        viewModel.getEditedDumbPause()?.let { editedAction ->
+            onSendActionClicked(editedAction)
             back()
         }
     }

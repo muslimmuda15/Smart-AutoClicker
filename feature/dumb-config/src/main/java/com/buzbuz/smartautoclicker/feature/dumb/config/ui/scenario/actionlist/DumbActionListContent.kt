@@ -98,11 +98,13 @@ class DumbActionListContent(appContext: Context) : NavBarDialogContent(appContex
         createCopyActionUiFlowListener = DumbActionUiFlowListener(
             onDumbActionSaved = viewModel::addNewDumbAction,
             onDumbActionDeleted = {},
+            onDumbActionSend = viewModel::sendDumbAction,
             onDumbActionCreationCancelled = {},
         )
         updateActionUiFlowListener = DumbActionUiFlowListener(
             onDumbActionSaved = viewModel::updateDumbAction,
             onDumbActionDeleted = viewModel::deleteDumbAction,
+            onDumbActionSend = viewModel::sendDumbAction,
             onDumbActionCreationCancelled = {},
         )
 

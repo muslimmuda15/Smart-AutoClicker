@@ -63,7 +63,7 @@ class DumbApiDialog(
             hideSoftInputOnFocusLoss(urlName.textField)
 
             urlValue.apply {
-                setLabel(R.string.input_field_label_url)
+                setLabel(R.string.job_label)
                 setOnTextChangedListener { viewModel.setUrl(it.toString()) }
                 textField.filters = arrayOf<InputFilter>(
                     InputFilter.LengthFilter(255)

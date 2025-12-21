@@ -18,6 +18,7 @@ package com.buzbuz.smartautoclicker.feature.dumb.config.ui.brief
 
 import android.content.Context
 import android.graphics.Point
+import android.util.Log
 import androidx.core.graphics.toPoint
 
 import androidx.core.graphics.toPointF
@@ -41,6 +42,7 @@ import com.buzbuz.smartautoclicker.feature.dumb.config.ui.actions.copy.toDumbAct
 
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -195,6 +197,13 @@ class DumbScenarioBriefViewModel @Inject constructor(
 
     fun deleteDumbAction(action: DumbAction) {
         dumbEditionRepository.deleteDumbAction(action)
+    }
+
+    fun sendDumbAction(action: DumbAction) {
+        Log.d("action", "Sending dumb action briefView: $action")
+        viewModelScope.launch(Dispatchers.IO) {
+            dumbEditionRepository.sendDumbAction(action)
+        }
     }
 
     private fun ItemBriefDescription.toDumbAction(context: Context): DumbAction? =

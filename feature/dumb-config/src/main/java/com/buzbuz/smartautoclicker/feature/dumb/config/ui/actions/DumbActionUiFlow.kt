@@ -122,6 +122,7 @@ private fun OverlayManager.startDumbClickEditionUiFlow(
             dumbClick = dumbClick,
             onConfirmClicked = listener.onDumbActionSaved,
             onDeleteClicked = listener.onDumbActionDeleted,
+            onSendActionClicked = listener.onDumbActionSend,
             onDismissClicked = listener.onDumbActionCreationCancelled,
         ),
         hideCurrent = true,
@@ -195,6 +196,7 @@ private fun OverlayManager.startDumbSwipeEditionFlow(
             dumbSwipe = dumbSwipe,
             onConfirmClicked = listener.onDumbActionSaved,
             onDeleteClicked = listener.onDumbActionDeleted,
+            onSendActionClicked = listener.onDumbActionSend,
             onDismissClicked = listener.onDumbActionCreationCancelled,
         ),
         hideCurrent = true,
@@ -248,6 +250,7 @@ private fun OverlayManager.startDumbPauseEditionFlow(
             dumbPause = dumbPause,
             onConfirmClicked = listener.onDumbActionSaved,
             onDeleteClicked = listener.onDumbActionDeleted,
+            onSendActionClicked = listener.onDumbActionSend,
             onDismissClicked = listener.onDumbActionCreationCancelled,
         ),
         hideCurrent = true,
@@ -314,6 +317,7 @@ private fun OverlayManager.startDumbTextCopyEditionFlow(
 internal class DumbActionUiFlowListener(
     val onDumbActionSaved: (dumbAction: DumbAction) -> Unit,
     val onDumbActionDeleted: (dumbAction: DumbAction) -> Unit,
+    val onDumbActionSend: (dumbAction: DumbAction) -> Unit,
     val onDumbActionCreationCancelled: () -> Unit,
 )
 

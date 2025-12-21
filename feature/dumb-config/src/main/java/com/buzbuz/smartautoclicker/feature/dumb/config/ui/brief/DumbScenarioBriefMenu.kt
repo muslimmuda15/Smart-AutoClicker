@@ -93,11 +93,13 @@ class DumbScenarioBriefMenu(
         createCopyActionUiFlowListener = DumbActionUiFlowListener(
             onDumbActionSaved = { action -> viewModel.addNewDumbAction(action, getFocusedItemIndex() + 1) },
             onDumbActionDeleted = {},
+            onDumbActionSend = viewModel::sendDumbAction,
             onDumbActionCreationCancelled = {},
         )
         updateActionUiFlowListener = DumbActionUiFlowListener(
             onDumbActionSaved = viewModel::updateDumbAction,
             onDumbActionDeleted = viewModel::deleteDumbAction,
+            onDumbActionSend = viewModel::sendDumbAction,
             onDumbActionCreationCancelled = {},
         )
 

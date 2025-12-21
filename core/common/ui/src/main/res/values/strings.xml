@@ -68,6 +68,7 @@
     <string name="input_field_label_click_press_duration">Press duration (ms)</string>
     <string name="input_field_label_name">Name</string>
     <string name="input_field_label_url">URL</string>
+    <string name="job_label" translatable="false">Get job or Scenario name or URL</string>
     <string name="input_field_label_pause_duration">Pause duration</string>
     <string name="input_field_label_link_duration">Link duration</string>
     <string name="input_field_label_scenario_name">Scenario name</string>

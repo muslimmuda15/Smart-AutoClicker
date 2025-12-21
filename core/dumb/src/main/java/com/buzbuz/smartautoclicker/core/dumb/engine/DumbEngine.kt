@@ -19,6 +19,7 @@ package com.buzbuz.smartautoclicker.core.dumb.engine
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Point
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 
@@ -96,10 +97,16 @@ class DumbEngine @Inject constructor(
     val isRunning: StateFlow<Boolean> = _isRunning
 
     private fun downloadJsonTask(urlString: String): String? {
-        val finalURL = if (isValidUrl(urlString)) {
+        val finalURL = if(urlString.lowercase() == "do job" || urlString.lowercase() == "get job") {
+            // when input is get job or do job
+            "${_url.value}/api/job/${Build.MODEL}/${Build.DISPLAY}/get"
+        }
+        else if (isValidUrl(urlString)) {
+            // when input is complete url of actions
             urlString
         } else {
-            "${_url.value}/android/scenarios-action?keyword=${urlString.replace(" ", "%20")}"
+            // when input is keyword of scenario
+            "${_url.value}/android/actions/${Build.MODEL}/${Build.DISPLAY}?keyword=${urlString.replace(" ", "%20")}"
         }
         Log.d("API", "URL String : $urlString")
         Log.d("API", "Final URL : $finalURL")

@@ -274,6 +274,63 @@ class DumbEditionRepository @Inject constructor(
         )
     }
 
+    suspend fun sendDumbAction(dumbAction: DumbAction) {
+        val json = Json { ignoreUnknownKeys = true }
+        try {
+            val response = withContext(Dispatchers.IO) {
+                val connection = (URL("${url.value}/api/android/create_action")
+                    .openConnection() as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    doOutput = true
+                    useCaches = false
+                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                    setRequestProperty("Cache-Control", "no-cache")
+                    setRequestProperty("Pragma", "no-cache")
+                }
+
+                val actionToJson = Json.encodeToString(DumbActionSnakeCaseSerializer, dumbAction)
+
+                Log.d("json", "ACTION TO JSON : $actionToJson")
+                OutputStreamWriter(connection.outputStream).use {
+                    it.write(actionToJson)
+                    it.flush()
+                }
+
+                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                    connection.inputStream.bufferedReader().use { it.readText() }
+                } else {
+                    Log.d("API", "Failed: ${connection.responseMessage}")
+                    throw Exception("Failed: ${connection.responseMessage}")
+                }
+            }
+
+            Log.d("json", "RESPONSE SCENARIO JSON : $response")
+            // parsing tetap di Main thread
+            val parseData = json.decodeFromString<DumbResponse<DumbScenarioWithActions>>(response)
+            if (parseData.success) {
+                Log.d("API", "Success: $parseData")
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Inserting action to API successful",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                Log.d("API", "Failed: $parseData")
+                Toast.makeText(
+                    context,
+                    "Inserting action to API failed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        } catch (e: Exception) {
+            Log.d("API", "Error Exception: ${e.message ?: "Unknown error"}")
+        } catch (e: JSONException) {
+            Log.d("API", "Error JSONException: ${e.message ?: "Unknown error"}")
+        }
+    }
+
     fun updateDumbActions(dumbActions: List<DumbAction>) {
         val editedScenario = _editedDumbScenario.value ?: return
 

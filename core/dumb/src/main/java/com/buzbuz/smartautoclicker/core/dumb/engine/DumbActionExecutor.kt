@@ -114,7 +114,12 @@ internal class DumbActionExecutor(private val context: Context, private val andr
 //        withContext(Dispatchers.Main) {
 //            showToast(dumbCopy.name)
 //        }
-        Log.d("action", "Copy : ${dumbCopy.name}")
+        val copiedText = clipboard.primaryClip
+            ?.getItemAt(0)
+            ?.coerceToText(context)
+            ?.toString()
+        Log.d("action", "Copy : ${dumbCopy.name} = ${dumbCopy.textCopy}")
+        Log.d("action", "Clipboard content: $copiedText")
     }
 
     private suspend fun executeDumbLink(dumbLink: DumbAction.DumbLink) {

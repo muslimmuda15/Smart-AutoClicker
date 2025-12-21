@@ -66,6 +66,7 @@ class DumbClickDialog(
     private val dumbClick: DumbAction.DumbClick,
     private val onConfirmClicked: (DumbAction.DumbClick) -> Unit,
     private val onDeleteClicked: (DumbAction.DumbClick) -> Unit,
+    private val onSendActionClicked: (DumbAction.DumbClick) -> Unit,
     private val onDismissClicked: () -> Unit,
 ) : OverlayDialog(R.style.AppTheme) {
 
@@ -92,6 +93,10 @@ class DumbClickDialog(
                 buttonDelete.apply {
                     visibility = View.VISIBLE
                     setDebouncedOnClickListener { onDeleteButtonClicked() }
+                }
+                buttonSendAction.apply {
+                    visibility = View.VISIBLE
+                    setDebouncedOnClickListener { onSendActionButtonClicked() }
                 }
             }
 
@@ -176,6 +181,13 @@ class DumbClickDialog(
     private fun onDeleteButtonClicked() {
         viewModel.getEditedDumbClick()?.let { editedAction ->
             onDeleteClicked(editedAction)
+            back()
+        }
+    }
+
+    private fun onSendActionButtonClicked() {
+        viewModel.getEditedDumbClick()?.let { editedAction ->
+            onSendActionClicked(editedAction)
             back()
         }
     }

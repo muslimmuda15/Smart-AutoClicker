@@ -66,6 +66,7 @@ class DumbSwipeDialog(
     private val dumbSwipe: DumbAction.DumbSwipe,
     private val onConfirmClicked: (DumbAction.DumbSwipe) -> Unit,
     private val onDeleteClicked: (DumbAction.DumbSwipe) -> Unit,
+    private val onSendActionClicked: (DumbAction.DumbSwipe) -> Unit,
     private val onDismissClicked: () -> Unit,
 ) : OverlayDialog(R.style.AppTheme) {
 
@@ -92,6 +93,10 @@ class DumbSwipeDialog(
                 buttonDelete.apply {
                     visibility = View.VISIBLE
                     setDebouncedOnClickListener { onDeleteButtonClicked() }
+                }
+                buttonSendAction.apply {
+                    visibility = View.VISIBLE
+                    setDebouncedOnClickListener { onSendActionButtonClicked() }
                 }
             }
 
@@ -168,6 +173,13 @@ class DumbSwipeDialog(
         viewModel.getEditedDumbSwipe()?.let { editedDumbSwipe ->
             viewModel.saveLastConfig(context)
             onConfirmClicked(editedDumbSwipe)
+            back()
+        }
+    }
+
+    private fun onSendActionButtonClicked() {
+        viewModel.getEditedDumbSwipe()?.let { editedDumbSwipe ->
+            onSendActionClicked(editedDumbSwipe)
             back()
         }
     }
