@@ -22,6 +22,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Path
 import android.util.Log
 import androidx.core.net.toUri
@@ -38,6 +39,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
 import kotlin.random.Random
 
 internal class DumbActionExecutor(private val context: Context, private val androidExecutor: AndroidExecutor) {
@@ -122,24 +125,73 @@ internal class DumbActionExecutor(private val context: Context, private val andr
         Log.d("action", "Clipboard content: $copiedText")
     }
 
-    private suspend fun executeDumbLink(dumbLink: DumbAction.DumbLink) {
-        Log.d("action", "Link : ${dumbLink}")
-        withContext(Dispatchers.Main) {
-            if(isValidUrl(dumbLink.urlValue)){
-                Log.d("action", "URL is valid")
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = dumbLink.urlValue.toUri()
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+    private fun willOpenInApp(context: Context, url: String): Boolean {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = url.toUri()
+        }
 
-                if (intent.resolveActivity(context.packageManager) != null) {
-                    context.startActivity(intent)
-                } else {
-                    showToast("No application can be accessed")
+        val packageManager = context.packageManager
+        val activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+
+        // Filter out browser apps
+        return activities.any { resolveInfo ->
+            val packageName = resolveInfo.activityInfo.packageName
+            // Exclude common browsers
+            !packageName.contains("browser", ignoreCase = true) &&
+                    !packageName.contains("chrome", ignoreCase = true) &&
+                    !packageName.contains("firefox", ignoreCase = true) &&
+                    !packageName.contains("opera", ignoreCase = true) &&
+                    !packageName.contains("samsung", ignoreCase = true) &&
+                    packageName != "com.android.htmlviewer"
+        }
+    }
+
+    // Menggunakan Coroutine
+    suspend fun sendRequestWithoutOpening(url: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                val connection = URL(url).openConnection() as HttpURLConnection
+                connection.apply {
+                    requestMethod = "GET"
+                    connectTimeout = 5000
+                    readTimeout = 5000
+                    instanceFollowRedirects = true
+                    // Tidak perlu baca response
                 }
-                delay(dumbLink.linkDurationMs.randomizeDurationIfNeeded())
-            } else {
-                Log.d("action", "URL is not valid")
+                connection.connect()
+                val responseCode = connection.responseCode
+                Log.d("action", "Request sent, response code: $responseCode")
+                withContext(Dispatchers.Main) {
+                    showToast("Link is sent to server")
+                }
+                connection.disconnect()
+            } catch (e: Exception) {
+                Log.e("action", "Error sending request: ${e.message}")
+            }
+        }
+    }
+
+    private suspend fun executeDumbLink(dumbLink: DumbAction.DumbLink) {
+        val willOpenApp = willOpenInApp(context, dumbLink.urlValue)
+        Log.d("action", "Will open in app: $willOpenApp")
+        if(willOpenApp) {
+            Log.d("action", "Link : ${dumbLink}")
+            withContext(Dispatchers.Main) {
+                if (isValidUrl(dumbLink.urlValue)) {
+                    Log.d("action", "URL is valid")
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = dumbLink.urlValue.toUri()
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        context.startActivity(intent)
+                    } else {
+                        showToast("No application can be accessed")
+                    }
+                    delay(dumbLink.linkDurationMs.randomizeDurationIfNeeded())
+                } else {
+                    Log.d("action", "URL is not valid")
 //                when (dumbLink.name.toAppTypeDropDown()) {
 //                    is AppTypeDropDownItem.Whatsapp -> {
 //                        if (isAppInstalled("com.whatsapp")) {
@@ -201,11 +253,14 @@ internal class DumbActionExecutor(private val context: Context, private val andr
 //
 //                    else -> throw IllegalArgumentException("Not yet supported in base smart action link app")
 //                }
-                withContext(Dispatchers.Main) {
-                    showToast(dumbLink.name)
+                    withContext(Dispatchers.Main) {
+                        showToast(dumbLink.name)
+                    }
+                    delay(dumbLink.linkDurationMs.randomizeDurationIfNeeded())
                 }
-                delay(dumbLink.linkDurationMs.randomizeDurationIfNeeded())
             }
+        } else {
+            sendRequestWithoutOpening(dumbLink.urlValue)
         }
     }
 

@@ -61,6 +61,7 @@ import java.io.InputStreamReader
 import kotlin.time.Duration.Companion.minutes
 
 import java.io.PrintWriter
+import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -380,6 +381,8 @@ class DumbEngine @Inject constructor(
         if (!isRunning.value) return
         _isRunning.value = false
 
+        val finalURL = "${_url.value}/api/job/${Build.MODEL}/${Build.DISPLAY}/done"
+
         Log.d(TAG, "stopDumbScenario")
 
         timeoutJob?.cancel()
@@ -389,6 +392,49 @@ class DumbEngine @Inject constructor(
 
         onTryCompletedListener?.invoke()
         onTryCompletedListener = null
+
+        try {
+            val connection = (URL(finalURL).openConnection() as HttpURLConnection).apply {
+                requestMethod = "PUT"
+                doOutput = true
+                useCaches = false
+                setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                setRequestProperty("Cache-Control", "no-cache")
+                setRequestProperty("Pragma", "no-cache")
+            }
+            Log.e("API", "Connection : ${connection.responseCode}")
+        } catch (e: FileNotFoundException) {
+            Log.e("API", "Json file not found", e)
+            mainScope?.launch {
+                Toast.makeText(_context, "Unable to retrieve action data. Please check the URL.", Toast.LENGTH_LONG)
+                    .show()
+            }
+        } catch (e: java.net.UnknownHostException) {
+            Log.e("API", "Host not found", e)
+            mainScope?.launch {
+                Toast.makeText(
+                    _context,
+                    "URL host tidak dapat diakses. Cek koneksi atau alamat URL.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        } catch (e: java.net.ConnectException) {
+            Log.e("API", "Failed to connect to server", e)
+            mainScope?.launch {
+                Toast.makeText(_context, "Gagal konek ke server.", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: java.net.SocketTimeoutException) {
+            Log.e("API", "Connection timeout", e)
+            mainScope?.launch {
+                Toast.makeText(_context, "Koneksi timeout, coba lagi.", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            Log.e("API", "Common error", e)
+            mainScope?.launch {
+                Toast.makeText(_context, "Unable to retrieve action data. No internet connection.", Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
     }
 
     fun release() {
