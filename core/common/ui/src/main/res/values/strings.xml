@@ -20,6 +20,7 @@
     <string name="no">No</string>
     <string name="close" translatable="false">Close</string>
     <string name="loading" translatable="false">Loading</string>
+    <string name="screenshot" translatable="false">Screenshot</string>
 
     <!--
       - Titles for the dialogs displayed as overlay.

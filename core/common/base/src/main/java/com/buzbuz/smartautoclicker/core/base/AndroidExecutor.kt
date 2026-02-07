@@ -23,6 +23,12 @@ interface AndroidExecutor {
 
     /** Execute the provided gesture. */
     suspend fun executeGesture(gestureDescription: GestureDescription)
+
+    /**
+     * Take a screenshot.
+     * @return true if the screenshot has been taken, false otherwise.
+     */
+    suspend fun executeTakeScreenshot(): Boolean
 }
 
 /** The maximum supported duration for a gesture. This limitation comes from Android GestureStroke API.  */

@@ -156,6 +156,7 @@ class DumbMainMenu(
             R.id.btn_stop -> onStopClicked()
             R.id.btn_show_actions -> onShowBriefClicked()
             R.id.btn_action_list -> onDumbScenarioConfigClicked()
+            R.id.btn_screenshot -> onScreenshot()
         }
     }
 
@@ -166,6 +167,10 @@ class DumbMainMenu(
         }
 
         viewModel.toggleScenarioPlay()
+    }
+
+    private fun onScreenshot() {
+        viewModel.onScreenshot()
     }
 
     private fun onShowBriefClicked() {

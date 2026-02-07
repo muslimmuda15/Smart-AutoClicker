@@ -344,6 +344,8 @@ internal class DumbActionExecutor(private val context: Context, private val andr
     private fun Long.randomizeDurationIfNeeded(): Long =
         if (randomize) random.nextLongInOffset(this, RANDOMIZATION_DURATION_MAX_OFFSET_MS)
         else this
+
+    suspend fun takeScreenshot(): Boolean = androidExecutor.executeTakeScreenshot()
 }
 
 

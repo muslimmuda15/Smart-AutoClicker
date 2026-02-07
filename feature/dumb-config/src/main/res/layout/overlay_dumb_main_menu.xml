@@ -68,6 +68,12 @@
                     android:contentDescription="@string/content_desc_open_action_list" />
 
                 <ImageButton
+                    android:id="@+id/btn_screenshot"
+                    style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
+                    android:src="@drawable/ic_screenshot"
+                    android:contentDescription="@string/screenshot" />
+
+                <ImageButton
                     android:id="@+id/btn_move"
                     style="@style/AppTheme.Overlay.FloatingMenu.Buttons"
                     android:src="@drawable/ic_move"

@@ -437,6 +437,8 @@ class DumbEngine @Inject constructor(
         }
     }
 
+    suspend fun takeScreenshot(): Boolean = dumbActionExecutor?.takeScreenshot() ?: false
+
     fun release() {
         if (isRunning.value) stopDumbScenario()
 

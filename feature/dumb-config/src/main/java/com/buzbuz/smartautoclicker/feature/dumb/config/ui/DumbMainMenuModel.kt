@@ -93,4 +93,10 @@ class DumbMainMenuModel @Inject constructor(
 
     fun setStopWithVolumeDownDontShowAgain(): Unit =
         tutorialRepository.setStopWithVolumeDownDontShowAgain()
+
+    fun onScreenshot() {
+        viewModelScope.launch {
+            dumbEngine.takeScreenshot()
+        }
+    }
 }

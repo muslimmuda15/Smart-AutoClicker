@@ -20,6 +20,7 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.os.Build
 import android.util.AndroidRuntimeException
 import android.util.Log
 import android.view.KeyEvent
@@ -192,6 +193,13 @@ class SmartAutoClickerService : AccessibilityService(), SmartActionExecutor {
                 continuation.resume(null)
             }
         }
+    }
+
+    override suspend fun executeTakeScreenshot(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
+        }
+        return false
     }
 
     override fun executeStartActivity(intent: Intent) {
