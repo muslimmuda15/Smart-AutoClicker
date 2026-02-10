@@ -16,10 +16,14 @@
  */
 package com.buzbuz.smartautoclicker.core.dumb.engine
 
+import android.content.ContentUris
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 
@@ -437,7 +441,176 @@ class DumbEngine @Inject constructor(
         }
     }
 
-    suspend fun takeScreenshot(): Boolean = dumbActionExecutor?.takeScreenshot() ?: false
+    suspend fun takeScreenshot(completion: suspend (android.graphics.Bitmap?) -> Unit) {
+        // Check permissions first before taking screenshot
+        val hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+
+            _context.checkSelfPermission(android.Manifest.permission.READ_MEDIA_IMAGES) == 
+                android.content.pm.PackageManager.PERMISSION_GRANTED
+        } else {
+            // Android 6-12
+            _context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == 
+                android.content.pm.PackageManager.PERMISSION_GRANTED
+        }
+        
+        if (!hasPermission) {
+            Log.e(TAG, "Cannot take screenshot: Storage/Media permission not granted")
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    _context, 
+                    "Storage permission required to save screenshots. Please grant permission in app settings.", 
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            completion(null)
+            return
+        }
+        
+        // Trigger system screenshot
+        val screenshotTaken = dumbActionExecutor?.takeScreenshot() ?: false
+        
+        if (!screenshotTaken) {
+            completion(null)
+            return
+        }
+        
+        // Wait for screenshot to be saved
+        delay(1500)
+        
+        // Try to get the latest screenshot from MediaStore
+        try {
+            val bitmap = getLatestScreenshotFromMediaStore()
+            completion(bitmap)
+        } catch (e: Exception) {
+            android.util.Log.e("DumbEngine", "Failed to get screenshot from MediaStore", e)
+            completion(null)
+        }
+    }
+
+    suspend fun uploadScreenshotToServer(bitmap: Bitmap, onResult: (Boolean, String) -> Unit) {
+        withContext(Dispatchers.IO) {
+            try {
+                // TODO: Replace with your actual server URL
+                val serverUrl = "${_url.value}/api/upload?model=${Build.MODEL}&firmware=${Build.DISPLAY}"
+
+                // Upload using multipart/form-data
+                val result = ScreenshotUploader.uploadScreenshot(
+                    serverUrl = serverUrl,
+                    bitmap = bitmap,
+                    fieldName = "image",
+                    fileName = "screenshot_${System.currentTimeMillis()}.png",
+                    additionalHeaders = mapOf(
+                        // Add authentication headers if needed
+                        // "Authorization" to "Bearer YOUR_TOKEN"
+                    )
+                )
+
+                withContext(Dispatchers.Main) {
+                    result.fold(
+                        onSuccess = { response ->
+                            Log.d(TAG, "Server response: $response")
+                            onResult(true, "Screenshot uploaded successfully!")
+                        },
+                        onFailure = { error ->
+                            Log.e(TAG, "Upload error", error)
+                            onResult(false, "Upload failed: ${error.message}")
+                        }
+                    )
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e(TAG, "Error uploading screenshot", e)
+                    onResult(false, "Error: ${e.message}")
+                }
+            }
+        }
+    }
+
+    private suspend fun getLatestScreenshotFromMediaStore(): Bitmap? = withContext(Dispatchers.IO) {
+        try {
+            val projection = arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.RELATIVE_PATH,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            )
+
+            val selection = """
+            (
+                ${MediaStore.Images.Media.RELATIVE_PATH} LIKE ? OR
+                ${MediaStore.Images.Media.BUCKET_DISPLAY_NAME} = ? OR
+                ${MediaStore.Images.Media.DISPLAY_NAME} LIKE ?
+            )
+            """.trimIndent()
+
+            val selectionArgs = arrayOf(
+                "%Screenshots%",
+                "Screenshots",
+                "%Screenshot%"
+            )
+
+            val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+
+            Log.d(TAG, "Querying MediaStore with selection: $selection")
+            Log.d(TAG, "Selection args: ${selectionArgs.joinToString()}")
+
+            _context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder
+            )?.use { cursor ->
+                Log.d(TAG, "Query returned cursor with ${cursor.count} items")
+
+                if (cursor.moveToFirst()) {
+                    // Log first few results for debugging
+                    do {
+                        val displayName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME))
+                        val relativePath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH))
+                        } else {
+                            "N/A"
+                        }
+                        val bucketName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
+                        val dateAdded = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED))
+                        
+                        Log.d(TAG, "Image found - Name: $displayName, Path: $relativePath, Bucket: $bucketName, Date: $dateAdded")
+                        
+                        // Only process the first (latest) one
+                        if (cursor.position == 0) {
+                            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                            val id = cursor.getLong(idColumn)
+
+                            val contentUri = ContentUris.withAppendedId(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                id
+                            )
+
+                            Log.d(TAG, "Found screenshot contentUri = $contentUri")
+
+                            _context.contentResolver.openInputStream(contentUri)?.use { inputStream ->
+                                return@withContext BitmapFactory.decodeStream(inputStream)
+                            }
+                        }
+                    } while (cursor.moveToNext() && cursor.position < 3) // Log max 3 items
+                } else {
+                    Log.d(TAG, "No screenshot found in MediaStore (cursor is empty)")
+                }
+            } ?: run {
+                Log.e(TAG, "Query returned null cursor")
+            }
+
+            null
+        } catch (e: SecurityException) {
+            Log.e(TAG, "SecurityException: No permission to read MediaStore", e)
+            null
+        } catch (e: Exception) {
+            Log.e(TAG, "Error reading screenshot from MediaStore: ${e.javaClass.simpleName} - ${e.message}", e)
+            null
+        }
+    }
 
     fun release() {
         if (isRunning.value) stopDumbScenario()

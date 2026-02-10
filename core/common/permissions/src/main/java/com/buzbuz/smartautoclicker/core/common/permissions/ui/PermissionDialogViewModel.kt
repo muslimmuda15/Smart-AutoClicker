@@ -29,6 +29,8 @@ import com.buzbuz.smartautoclicker.core.common.permissions.model.Permission
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionAccessibilityService
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionOverlay
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionPostNotification
+import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionReadMediaImages
+import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionReadExternalStorage
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -94,5 +96,17 @@ private fun Permission.toPermissionDialogUiState(): PermissionDialogUiState =
             permission = this,
             titleRes = R.string.dialog_title_permission_accessibility,
             descriptionRes = R.string.message_permission_desc_accessibility,
+        )
+
+        is PermissionReadMediaImages -> PermissionDialogUiState(
+            permission = this,
+            titleRes = R.string.dialog_title_permission_read_media_images,
+            descriptionRes = R.string.message_permission_desc_read_media_images,
+        )
+
+        is PermissionReadExternalStorage -> PermissionDialogUiState(
+            permission = this,
+            titleRes = R.string.dialog_title_permission_read_external_storage,
+            descriptionRes = R.string.message_permission_desc_read_external_storage,
         )
     }

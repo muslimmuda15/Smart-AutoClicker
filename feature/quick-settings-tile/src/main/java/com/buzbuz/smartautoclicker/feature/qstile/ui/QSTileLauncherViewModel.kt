@@ -30,6 +30,8 @@ import com.buzbuz.smartautoclicker.core.common.permissions.PermissionsController
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionAccessibilityService
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionOverlay
 import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionPostNotification
+import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionReadMediaImages
+import com.buzbuz.smartautoclicker.core.common.permissions.model.PermissionReadExternalStorage
 import com.buzbuz.smartautoclicker.feature.qstile.domain.QSTileRepository
 
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +60,8 @@ class QSTileLauncherViewModel @Inject constructor(
                     isServiceRunning = { qsTileRepository.isAccessibilityServiceStarted() },
                 ),
                 PermissionPostNotification(optional = true),
+                PermissionReadMediaImages(optional = true),
+                PermissionReadExternalStorage(optional = true),
             ),
             onAllGranted = onAllGranted,
             onMandatoryDenied = onMandatoryDenied,

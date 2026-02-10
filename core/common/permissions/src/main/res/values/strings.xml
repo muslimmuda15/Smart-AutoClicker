@@ -25,6 +25,8 @@
     <string name="dialog_title_permission_notification">Notification</string>
     <string name="dialog_title_permission_mandatory_denied">Permission denied</string>
     <string name="dialog_title_permission_overlay">Overlay</string>
+    <string name="dialog_title_permission_read_media_images">Media Access</string>
+    <string name="dialog_title_permission_read_external_storage">Storage Access</string>
 
     <!--
       - Messages.
@@ -39,6 +41,10 @@
         service permission, click on the button bellow.</string>
     <string name="message_permission_desc_notification">Optional: Shows the notification while the application is running in order
         to easily return to the scenario selection screen.</string>
+    <string name="message_permission_desc_read_media_images">Optional: Allows AMB to access screenshots saved in your device gallery.
+        This permission is used for the screenshot feature to retrieve and upload captured images.</string>
+    <string name="message_permission_desc_read_external_storage">Optional: Allows AMB to access screenshots saved in your device storage.
+        This permission is used for the screenshot feature to retrieve and upload captured images.</string>
     <string name="message_permission_mandatory_denied">This permission is mandatory for AMB.
         It won\'t be able to work correctly without it.</string>
 

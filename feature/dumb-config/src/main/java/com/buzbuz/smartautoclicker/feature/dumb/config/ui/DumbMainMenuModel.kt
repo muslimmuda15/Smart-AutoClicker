@@ -19,6 +19,7 @@ package com.buzbuz.smartautoclicker.feature.dumb.config.ui
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 
 import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
@@ -28,6 +29,7 @@ import com.buzbuz.smartautoclicker.feature.dumb.config.domain.DumbEditionReposit
 import com.buzbuz.smartautoclicker.feature.tutorial.domain.TutorialRepository
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -94,9 +96,19 @@ class DumbMainMenuModel @Inject constructor(
     fun setStopWithVolumeDownDontShowAgain(): Unit =
         tutorialRepository.setStopWithVolumeDownDontShowAgain()
 
-    fun onScreenshot() {
+    fun onScreenshot(onComplete: (android.graphics.Bitmap?) -> Unit) {
         viewModelScope.launch {
-            dumbEngine.takeScreenshot()
+            dumbEngine.takeScreenshot { bitmap ->
+                withContext(Dispatchers.Main) {
+                    onComplete(bitmap)
+                }
+            }
+        }
+    }
+
+    fun uploadScreenshotToServer(bitmap: android.graphics.Bitmap, onResult: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            dumbEngine.uploadScreenshotToServer(bitmap, onResult)
         }
     }
 }

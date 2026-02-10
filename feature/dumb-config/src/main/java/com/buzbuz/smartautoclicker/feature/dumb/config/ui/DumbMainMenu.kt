@@ -170,7 +170,31 @@ class DumbMainMenu(
     }
 
     private fun onScreenshot() {
-        viewModel.onScreenshot()
+        // Hide menu before taking screenshot
+        setMenuVisibility(android.view.View.GONE)
+        
+        // Take screenshot and get the bitmap
+        viewModel.onScreenshot { bitmap ->
+            // Show menu again after screenshot
+            setMenuVisibility(android.view.View.VISIBLE)
+            
+            if (bitmap != null) {
+                // Upload bitmap to server
+                viewModel.uploadScreenshotToServer(bitmap) { success, message ->
+                    android.widget.Toast.makeText(
+                        context,
+                        message,
+                        if (success) android.widget.Toast.LENGTH_SHORT else android.widget.Toast.LENGTH_LONG
+                    ).show()
+                }
+            } else {
+                android.widget.Toast.makeText(
+                    context,
+                    "Failed to capture screenshot",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun onShowBriefClicked() {
