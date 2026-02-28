@@ -32,8 +32,8 @@ android {
     defaultConfig {
         applicationId = "app.amb.autoclick"
 
-        versionCode = 66
-        versionName = "3.2.0"
+        versionCode = 68
+        versionName = "3.3.0"
     }
 
     flavorDimensions += listOf("version")
