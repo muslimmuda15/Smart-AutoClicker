@@ -347,23 +347,46 @@ class DumbEngine @Inject constructor(
                      * Process scenario when found API
                      */
                     val dumbActions = ArrayList<DumbAction>()
-                    scenario.dumbActions.forEach { dumbAction ->
-                        if(dumbAction is DumbAction.DumbApi) {
-                            Log.d(TAG, "Dumb action is API : $dumbAction")
-                           downloadJsonTask(dumbAction.urlValue)?.let { json ->
-                               Log.d(TAG, "Dumb action JSON : $json")
-                               dumbActions.addAll(
-                                   getTypeJsonToDumbAction(
-                                       id = dumbAction.id,
-                                       scenarioId = dumbAction.scenarioId,
-                                       currentPriority = dumbAction.priority,
-                                       urlFrom = dumbAction.urlValue,
-                                       jsonData = json
-                                   )
-                               )
-                           }
-                        } else {
-                            dumbActions.add(dumbAction.copyWithNewPriority(dumbActions.size))
+                    if(scenario.dumbActions.isNotEmpty()) {
+                        scenario.dumbActions.forEach { dumbAction ->
+                            if (dumbAction is DumbAction.DumbApi) {
+                                Log.d(TAG, "Dumb action is API : $dumbAction")
+                                downloadJsonTask(dumbAction.urlValue)?.let { json ->
+                                    Log.d(TAG, "Dumb action JSON : $json")
+                                    dumbActions.addAll(
+                                        getTypeJsonToDumbAction(
+                                            id = dumbAction.id,
+                                            scenarioId = dumbAction.scenarioId,
+                                            currentPriority = dumbAction.priority,
+                                            urlFrom = dumbAction.urlValue,
+                                            jsonData = json
+                                        )
+                                    )
+                                }
+                            } else {
+                                dumbActions.add(dumbAction.copyWithNewPriority(dumbActions.size))
+                            }
+                        }
+                    } else {
+                        val dumbApi = DumbAction.DumbApi(
+                            id = Identifier(databaseId = 1L),
+                            scenarioId = scenario.id,
+                            name = "get job",
+                            priority = 1,
+                            urlValue = "get job"
+                        )
+                        dumbActions.add(dumbApi)
+                        downloadJsonTask(dumbApi.urlValue)?.let { json ->
+                            Log.d(TAG, "Dumb action JSON : $json")
+                            dumbActions.addAll(
+                                getTypeJsonToDumbAction(
+                                    id = dumbApi.id,
+                                    scenarioId = dumbApi.scenarioId,
+                                    currentPriority = dumbApi.priority,
+                                    urlFrom = dumbApi.urlValue,
+                                    jsonData = json
+                                )
+                            )
                         }
                     }
                     val newScenario = scenario.copy(dumbActions = dumbActions)

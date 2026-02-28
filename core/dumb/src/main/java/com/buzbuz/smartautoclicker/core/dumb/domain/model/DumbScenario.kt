@@ -32,7 +32,8 @@ data class DumbScenario(
     val randomize: Boolean,
 ) : Identifiable, Repeatable {
 
-    fun isValid(): Boolean = name.isNotEmpty() && dumbActions.isNotEmpty()
+//    fun isValid(): Boolean = name.isNotEmpty() && dumbActions.isNotEmpty()
+    fun isValid(): Boolean = name.isNotEmpty()
 }
 
 const val DUMB_SCENARIO_MIN_DURATION_MINUTES = 1
