@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.min
+import androidx.core.content.edit
 
 @HiltViewModel
 class SyncViewModel @Inject constructor(
@@ -48,8 +49,10 @@ class SyncViewModel @Inject constructor(
 //            val scenarios = repository.createScenarioSync()
             withContext(Dispatchers.IO) {
 //                Log.d("sync", "Scenario Req : $scenarios")
-                val status = repository.sendUrl("${url.value}")
-                if(status){
+                val deviceIdData = sharedPreferences.getString("device_id", null)
+                val deviceId = repository.sendUrl(deviceIdData, "${url.value}")
+                if(deviceId != null){
+                    sharedPreferences.edit { putString("device_id", deviceId) }
                     stateSyncUI.value = BaseSyncStateUI(loading = false, status = StatusSyncStateUI.COMPLETE)
                 } else {
                     stateSyncUI.value = BaseSyncStateUI(loading = false, status = StatusSyncStateUI.FAILED)
