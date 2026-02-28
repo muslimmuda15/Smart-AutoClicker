@@ -85,6 +85,11 @@ class SyncDialog: DialogFragment() {
                             }
                             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
+
+                            // Notify ScenarioListFragment to hide badge
+                            parentFragmentManager.setFragmentResult(SYNC_RESULT_KEY, Bundle().apply {
+                                putBoolean(SYNC_SUCCESS_KEY, true)
+                            })
                         }
                         StatusSyncStateUI.FAILED -> {
                             viewBinding.inputLayout.visibility = View.GONE
@@ -108,6 +113,8 @@ class SyncDialog: DialogFragment() {
     companion object {
         private const val FRAGMENT_ARG_KEY_SCENARIO_LIST_SYNC = ":backup:fragment_args_key_scenario_list_sync"
         private const val FRAGMENT_ARG_KEY_DUMB_SCENARIO_LIST_SYNC = ":backup:fragment_args_key_dumb_scenario_list_sync"
+        const val SYNC_RESULT_KEY = "sync_result_key"
+        const val SYNC_SUCCESS_KEY = "sync_success_key"
 
         fun newInstance(): SyncDialog {
             Log.d("sync", "Show sync dialog")

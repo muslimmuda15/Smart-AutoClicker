@@ -45,6 +45,9 @@ import com.buzbuz.smartautoclicker.activity.list.upload.UploadDialog
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment.Companion.FRAGMENT_TAG_BACKUP_DIALOG
 import app.amb.autoclick.databinding.FragmentScenariosBinding
 import com.buzbuz.smartautoclicker.feature.backup.ui.BackupDialogFragment
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPreferences
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getLastSyncUrl
+import kotlinx.coroutines.Dispatchers
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -109,6 +112,32 @@ class ScenarioListFragment : Fragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { scenarioListViewModel.uiState.collect(::updateUiState) }
+            }
+        }
+
+        // Setup sync action layout with badge
+        val syncItem = viewBinding.topAppBar.menu.findItem(R.id.action_sync)
+        val syncActionView = syncItem?.actionView
+        syncActionView?.setOnClickListener { showSyncDialog() }
+        val badgeView = syncActionView?.findViewById<View>(R.id.sync_badge)
+
+        val sharedPref = requireContext().getEventConfigPreferences()
+        val url = sharedPref.getLastSyncUrl(requireContext())
+        scenarioListViewModel.checkDeviceOnServer(url) { isSuccess ->
+            lifecycleScope.launch(Dispatchers.Main) {
+                if (isSuccess) {
+                    badgeView?.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50"))
+                } else {
+                    badgeView?.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#F44336"))
+                }
+            }
+        }
+
+        // Listen for sync complete from SyncDialog
+        parentFragmentManager.setFragmentResultListener(SyncDialog.SYNC_RESULT_KEY, viewLifecycleOwner) { _, bundle ->
+            val success = bundle.getBoolean(SyncDialog.SYNC_SUCCESS_KEY, false)
+            if (success) {
+                badgeView?.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#4CAF50"))
             }
         }
     }

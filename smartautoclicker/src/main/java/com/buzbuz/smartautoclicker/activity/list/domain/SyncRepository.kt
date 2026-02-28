@@ -61,6 +61,45 @@ class SyncRepository @Inject constructor(
         return Json.encodeToString(fixedDumbScenario)
     }
 
+    suspend fun checkDevice(baseUrl: String?): Boolean = kotlinx.coroutines.withContext(Dispatchers.IO) {
+        if (baseUrl.isNullOrEmpty()) return@withContext false
+        try {
+            val urlString = "${baseUrl}/api/devices/check"
+
+            val model = java.net.URLEncoder.encode(Build.MODEL, "UTF-8")
+            val firmware = java.net.URLEncoder.encode(Build.DISPLAY, "UTF-8")
+            val url = "$urlString?model=$model&firmware=$firmware"
+
+            val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+                requestMethod = "GET"
+                useCaches = false
+                setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                connectTimeout = 10000
+                readTimeout = 10000
+            }
+
+            val responseCode = connection.responseCode
+            Log.d("API", "Response check device code : $url - $responseCode")
+            
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val responseString = connection.inputStream.bufferedReader().use { it.readText() }
+                Log.d("API", "Response Check Device : $responseString")
+                try {
+                    val jsonObject = JSONObject(responseString)
+                    return@withContext jsonObject.optBoolean("success", false)
+                } catch (e: JSONException) {
+                    Log.e("JSON", "Uncaught exception of JSON", e)
+                    return@withContext false
+                }
+            }
+            return@withContext false
+        } catch (e: Exception) {
+            e.sendError()
+            Log.e("API", "Exception Check Device", e)
+            return@withContext false
+        }
+    }
+
     fun sendUrl(deviceId: String?, url: String?): String? {
         val deviceInfo = mapOf(
             "device_name" to Build.DEVICE,

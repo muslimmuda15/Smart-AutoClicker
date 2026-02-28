@@ -37,6 +37,7 @@
         android:id="@+id/action_sync"
         android:icon="@drawable/ic_link"
         app:showAsAction="always"
+        app:actionLayout="@layout/action_sync_badge"
         android:title="@string/menu_item_title_synchronized"
         tools:ignore="AlwaysShowAction" />
 

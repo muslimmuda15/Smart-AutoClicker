@@ -38,6 +38,7 @@ import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.Repeatable
 import com.buzbuz.smartautoclicker.core.ui.utils.formatDuration
+import com.buzbuz.smartautoclicker.activity.list.domain.SyncRepository
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getImageConditionBitmap
 
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -61,6 +62,7 @@ class ScenarioListViewModel @Inject constructor(
     private val smartRepository: IRepository,
     private val dumbRepository: IDumbRepository,
     private val qualityRepository: QualityRepository,
+    private val syncRepository: SyncRepository,
 ) : ViewModel() {
 
     /** Current state type of the ui. */
@@ -212,6 +214,13 @@ class ScenarioListViewModel @Inject constructor(
     }
     fun showTroubleshootingDialog(activity: FragmentActivity) {
         qualityRepository.startTroubleshootingUiFlow(activity)
+    }
+
+    fun checkDeviceOnServer(baseUrl: String?, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = syncRepository.checkDevice(baseUrl)
+            onResult(result)
+        }
     }
 
     private fun ScenarioListUiState.Type.toMenuUiState(
