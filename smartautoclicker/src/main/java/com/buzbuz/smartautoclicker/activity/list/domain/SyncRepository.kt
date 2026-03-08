@@ -2,7 +2,6 @@ package com.buzbuz.smartautoclicker.activity.list.domain
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import app.amb.autoclick.BuildConfig
 import com.buzbuz.smartautoclicker.activity.list.model.DeviceInfo
 import com.buzbuz.smartautoclicker.activity.list.model.DeviceScenarioWithActions
@@ -11,18 +10,23 @@ import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbDatabase
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
 import com.buzbuz.smartautoclicker.sendError
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
+
+data class SyncResult(
+    val deviceId: String? = null,
+    val message: String? = null,
+    val error: String? = null
+) {
+    val isSuccess: Boolean get() = deviceId != null && error == null
+}
 
 @Singleton
 class SyncRepository @Inject constructor(
@@ -70,7 +74,12 @@ class SyncRepository @Inject constructor(
             val firmware = java.net.URLEncoder.encode(Build.DISPLAY, "UTF-8")
             val url = "$urlString?model=$model&firmware=$firmware"
 
-            val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+            val fixedUrl = if (url != null && !url.startsWith("http://") && !url.startsWith("https://")) {
+                val prefix = if (url.startsWith("localhost") || url.startsWith("192.168.")) "http" else "https"
+                "$prefix://$url"
+            } else url
+
+            val connection = (URL(fixedUrl).openConnection() as HttpURLConnection).apply {
                 requestMethod = "GET"
                 useCaches = false
                 setRequestProperty("Content-Type", "application/json; charset=utf-8")
@@ -100,8 +109,9 @@ class SyncRepository @Inject constructor(
         }
     }
 
-    fun sendUrl(deviceId: String?, url: String?): String? {
+    fun sendUrl(deviceId: String?, username: String, url: String?): SyncResult {
         val deviceInfo = mapOf(
+            "name" to username,
             "device_name" to Build.DEVICE,
             "brand" to Build.BRAND,
             "model" to Build.MODEL,
@@ -119,7 +129,14 @@ class SyncRepository @Inject constructor(
         }.toString()
 
         try {
-            val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+            val fixedUrl = if (url != null && !url.startsWith("http://") && !url.startsWith("https://")) {
+                val prefix = if (url.startsWith("localhost") || url.startsWith("192.168.")) "http" else "https"
+                "$prefix://$url"
+            } else url
+
+            Log.d("API", "URL is in sync in sendUrl: $fixedUrl")
+
+            val connection = (URL(fixedUrl).openConnection() as HttpURLConnection).apply {
                 requestMethod = "POST"
                 doOutput = false
                 useCaches = false
@@ -150,18 +167,19 @@ class SyncRepository @Inject constructor(
                 try {
                     val jsonObject = JSONObject(responseString)
                     val success = jsonObject.optBoolean("success", false)
+                    val message = jsonObject.optString("message", null)
+                    val error = jsonObject.optString("error", null)
 
                     if (success) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            Toast.makeText(context, "Success send to URL", Toast.LENGTH_SHORT).show()
-                        }
-                        return jsonObject.optJSONObject("data")?.optJSONObject("device")?.optString("id")
+                        val returnDeviceId = jsonObject.optJSONObject("data")?.optJSONObject("device")?.optString("id")
+                        return SyncResult(deviceId = returnDeviceId, message = message)
+                    } else {
+                        return SyncResult(error = error ?: "Unknown error")
                     }
                 } catch (e: JSONException) {
                     Log.e("JSON", "Uncaught exception of JSON", e)
+                    return SyncResult(error = "Invalid JSON response")
                 }
-                
-                return null
                 // val responseKeyboardType = connection.inputStream.bufferedReader().use { it.readText() }
 
                 // try {
@@ -217,15 +235,19 @@ class SyncRepository @Inject constructor(
                 //     return false
                 // }
             } else {
-                Log.i("slack", "Failed send to webhook : ${connection.responseMessage}")
-//                CoroutineScope(Dispatchers.Main).launch {
-//                    Toast.makeText(context, "Failed send to URL", Toast.LENGTH_SHORT).show()
-//                }
-                return null
+                val errorStream = connection.errorStream?.bufferedReader()?.use { it.readText() }
+                val errorMessage = try {
+                    errorStream?.let { JSONObject(it).optString("error", connection.responseMessage) }
+                        ?: connection.responseMessage
+                } catch (_: JSONException) {
+                    connection.responseMessage
+                }
+                Log.i("slack", "Failed send to webhook : $errorMessage")
+                return SyncResult(error = errorMessage)
             }
         } catch (e: Exception) {
             e.sendError()
-            return null
+            return SyncResult(error = e.message ?: "Unknown error")
         }
     }
 }

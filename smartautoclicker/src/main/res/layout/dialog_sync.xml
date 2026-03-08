@@ -54,6 +54,21 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                layout="@layout/include_field_text_input"
+                android:id="@+id/field_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_default"
+                android:layout_marginVertical="@dimen/margin_vertical_extra_large"
+                android:background="@color/listBackground" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -67,6 +82,17 @@
                 android:layout_marginVertical="@dimen/margin_vertical_extra_large"
                 android:background="@color/listBackground" />
         </FrameLayout>
+
+        <TextView
+            android:id="@+id/text_response"
+            style="@style/AppTheme.TextAppearance.BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_horizontal_default"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/margin_horizontal_default"
+            android:text="@string/message_backup_create_progress"
+            android:visibility="gone"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_sync"

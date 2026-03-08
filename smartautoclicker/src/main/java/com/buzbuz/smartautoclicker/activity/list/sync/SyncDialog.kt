@@ -2,9 +2,12 @@ package com.buzbuz.smartautoclicker.activity.list.sync
 
 import android.app.Dialog
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -37,11 +40,18 @@ class SyncDialog: DialogFragment() {
             fieldUrlName.apply {
                 setLabel(R.string.input_field_label_url)
                 setText(viewModel.getLastUrl)
-                setOnTextChangedListener { viewModel.setUrl(it.toString()) }
+//                setOnTextChangedListener { viewModel.setUrl(it.toString()) }
+            }
+            fieldName.apply {
+                setLabel(R.string.device_name)
+                setText(viewModel.getDeviceName)
+//                setOnTextChangedListener { viewModel.setDeviceName(it.toString()) }
             }
             buttonSync.setOnClickListener {
                 Log.d("sync", "Dumb scenario")
-                viewModel.createScenarioSync()
+                viewModel.setUrl(viewBinding.fieldUrlName.textField.text.toString())
+                viewModel.setDeviceName(viewBinding.fieldName.textField.text.toString())
+                viewModel.createScenarioSync(viewBinding.fieldName.textField.text.toString())
                 viewModel.saveLastUrl(true)
             }
         }
@@ -67,15 +77,20 @@ class SyncDialog: DialogFragment() {
                         StatusSyncStateUI.READY -> {
                             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = true
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+
+                            viewBinding.textResponse.visibility = View.GONE
                         }
                         StatusSyncStateUI.UPLOADING -> {
                             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
 
                             viewBinding.fieldUrlName.textField.isEnabled = false
+                            viewBinding.fieldName.textField.isEnabled = false
                             viewBinding.buttonSync.isEnabled = false
+                            viewBinding.textResponse.visibility = View.GONE
                         }
                         StatusSyncStateUI.COMPLETE -> {
+                            viewBinding.nameLayout.visibility = View.GONE
                             viewBinding.inputLayout.visibility = View.GONE
                             viewBinding.buttonSync.visibility = View.GONE
                             viewBinding.layoutCompatWarning.visibility = View.GONE
@@ -83,6 +98,7 @@ class SyncDialog: DialogFragment() {
                                 setImageResource(R.drawable.img_success)
                                 drawable.setTint(Color.GREEN)
                             }
+                            viewBinding.textResponse.visibility = View.GONE
                             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
 
@@ -92,13 +108,21 @@ class SyncDialog: DialogFragment() {
                             })
                         }
                         StatusSyncStateUI.FAILED -> {
+                            viewBinding.textResponse.text = ""
+                            viewBinding.nameLayout.visibility = View.GONE
                             viewBinding.inputLayout.visibility = View.GONE
                             viewBinding.buttonSync.visibility = View.GONE
                             viewBinding.layoutCompatWarning.visibility = View.GONE
+                            viewBinding.textResponse.visibility = View.VISIBLE
                             viewBinding.iconStatus.apply {
                                 setImageResource(R.drawable.img_error)
                                 drawable.setTint(Color.RED)
                             }
+                            viewBinding.textResponse.text = state.message
+
+                            viewModel.setUrl(viewBinding.fieldUrlName.textField.text.toString())
+                            viewModel.setDeviceName(viewBinding.fieldName.textField.text.toString())
+
                             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = false
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
                         }

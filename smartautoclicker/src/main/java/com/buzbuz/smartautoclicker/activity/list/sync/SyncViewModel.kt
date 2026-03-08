@@ -2,10 +2,14 @@ package com.buzbuz.smartautoclicker.activity.list.sync
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
+import android.provider.Settings
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.buzbuz.smartautoclicker.activity.list.domain.SyncRepository
+import com.buzbuz.smartautoclicker.activity.list.domain.SyncResult
 import com.buzbuz.smartautoclicker.feature.smart.config.R
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPreferences
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getLastSyncUrl
@@ -20,6 +24,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.min
 import androidx.core.content.edit
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getDeviceName
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.putSyncDeviceNameConfig
 
 @HiltViewModel
 class SyncViewModel @Inject constructor(
@@ -29,6 +35,7 @@ class SyncViewModel @Inject constructor(
     private val stateSyncUI: MutableStateFlow<BaseSyncStateUI> = MutableStateFlow(BaseSyncStateUI(loading = false, status = StatusSyncStateUI.READY))
     private val sharedPreferences: SharedPreferences = context.getEventConfigPreferences()
     private val url: MutableStateFlow<String?> = MutableStateFlow(sharedPreferences.getLastSyncUrl(context))
+    private val deviceName: MutableStateFlow<String?> = MutableStateFlow(sharedPreferences.getDeviceName(context))
 
     val getStateUI: Flow<BaseSyncStateUI> = stateSyncUI
 
@@ -37,25 +44,42 @@ class SyncViewModel @Inject constructor(
         url.value = urlName
     }
 
+    val getDeviceName: String? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+        sharedPreferences.getDeviceName(context) ?: Settings.Global.getString(
+            context.contentResolver, Settings.Global.DEVICE_NAME.replace(" ", "")
+        )
+    } else {
+        ""
+    }
+
+    fun setDeviceName(deviceName: String) {
+        this.deviceName.value = deviceName
+    }
+
     fun saveLastUrl(isLoading: Boolean) {
         stateSyncUI.value = BaseSyncStateUI(loading = isLoading, status = StatusSyncStateUI.READY)
 //        Log.d("url", "Url : ${url.value}")
-        sharedPreferences.edit().putSyncUrlConfig(url.value ?: context.resources.getString(R.string.default_sync_url_server)).apply()
+        val rawUrl = url.value ?: context.resources.getString(R.string.default_sync_url_server)
+        val rawDeviceName = deviceName.value ?: ""
+        sharedPreferences.edit {
+            putSyncUrlConfig(rawUrl)
+        }
+        sharedPreferences.edit { putSyncDeviceNameConfig(rawDeviceName) }
     }
 
-    fun createScenarioSync(){
+    fun createScenarioSync(username: String){
         stateSyncUI.value = BaseSyncStateUI(loading = true, status = StatusSyncStateUI.UPLOADING)
         viewModelScope.launch {
 //            val scenarios = repository.createScenarioSync()
             withContext(Dispatchers.IO) {
 //                Log.d("sync", "Scenario Req : $scenarios")
                 val deviceIdData = sharedPreferences.getString("device_id", null)
-                val deviceId = repository.sendUrl(deviceIdData, "${url.value}")
-                if(deviceId != null){
-                    sharedPreferences.edit { putString("device_id", deviceId) }
-                    stateSyncUI.value = BaseSyncStateUI(loading = false, status = StatusSyncStateUI.COMPLETE)
+                val result = repository.sendUrl(deviceIdData, username, url.value)
+                if(result.isSuccess){
+                    sharedPreferences.edit { putString("device_id", result.deviceId) }
+                    stateSyncUI.value = BaseSyncStateUI(loading = false, status = StatusSyncStateUI.COMPLETE, message = result.message)
                 } else {
-                    stateSyncUI.value = BaseSyncStateUI(loading = false, status = StatusSyncStateUI.FAILED)
+                    stateSyncUI.value = BaseSyncStateUI(loading = false, status = StatusSyncStateUI.FAILED, message = result.error)
                 }
             }
 
@@ -65,7 +89,8 @@ class SyncViewModel @Inject constructor(
 
 data class BaseSyncStateUI (
     val loading: Boolean,
-    val status: StatusSyncStateUI
+    val status: StatusSyncStateUI,
+    val message: String? = null
 )
 
 enum class StatusSyncStateUI {

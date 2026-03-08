@@ -36,7 +36,7 @@
     <string name="item_title_backup_create_select_file">Select output file</string>
     <string name="item_title_backup_import_select_file">Select backup file</string>
     <string name="item_title_upload_scenario" translatable="false">Upload scenario</string>
-    <string name="item_title_sync_scenario" translatable="false">Test</string>
+    <string name="item_title_sync_scenario" translatable="false">Sync now</string>
 
     <!--
       - Messages.

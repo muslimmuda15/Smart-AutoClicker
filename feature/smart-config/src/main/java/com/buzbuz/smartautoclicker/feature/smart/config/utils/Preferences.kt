@@ -79,9 +79,16 @@ fun SharedPreferences.getLastUploadUrl(context: Context) : String? = getString(
 fun SharedPreferences.Editor.putSyncUrlConfig(url: String): SharedPreferences.Editor =
     putString(PREF_LAST_SYNC_URL, url)
 
+fun SharedPreferences.Editor.putSyncDeviceNameConfig(deviceName: String): SharedPreferences.Editor =
+    putString(PREF_DEVICE_NAME, deviceName)
+
 fun SharedPreferences.getLastSyncUrl(context: Context) : String? = getString(
     PREF_LAST_SYNC_URL,
     context.resources.getString(R.string.default_sync_url_server))
+
+fun SharedPreferences.getDeviceName(context: Context): String? = getString(
+    PREF_DEVICE_NAME, null
+)
 
 /** Event default configuration SharedPreference name. */
 private const val EVENT_CONFIG_PREFERENCES_NAME = "EventConfigPreferences"
@@ -97,3 +104,5 @@ private const val PREF_LAST_INTENT_IS_ADVANCED = "Last_Intent_IsAdvanced"
 private const val PREF_LAST_UPLOAD_URL = "Last_Upload_Url"
 /** Sync url key in SharedPreferences */
 private const val PREF_LAST_SYNC_URL = "Last_Sync_Url"
+
+private const val PREF_DEVICE_NAME = "Device_Name"
