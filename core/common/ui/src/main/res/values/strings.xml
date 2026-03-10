@@ -77,6 +77,7 @@
     <string name="input_field_label_swipe_duration">Swipe duration (ms)</string>
     <string name="input_field_error_required">Required</string>
     <string name="input_field_label_text_copy">Text to copy</string>
+    <string name="device_name_required" translatable="false">Device name is required</string>
 
 
     <!--

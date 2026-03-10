@@ -49,10 +49,14 @@ class SyncDialog: DialogFragment() {
             }
             buttonSync.setOnClickListener {
                 Log.d("sync", "Dumb scenario")
-                viewModel.setUrl(viewBinding.fieldUrlName.textField.text.toString())
-                viewModel.setDeviceName(viewBinding.fieldName.textField.text.toString())
-                viewModel.createScenarioSync(viewBinding.fieldName.textField.text.toString())
-                viewModel.saveLastUrl(true)
+                if(viewBinding.fieldName.textField.text.toString().isNotBlank()) {
+                    viewModel.setUrl(viewBinding.fieldUrlName.textField.text.toString())
+                    viewModel.setDeviceName(viewBinding.fieldName.textField.text.toString())
+                    viewModel.createScenarioSync(viewBinding.fieldName.textField.text.toString())
+                    viewModel.saveLastUrl(true)
+                } else {
+                    viewBinding.fieldName.textField.error = getString(R.string.device_name_required)
+                }
             }
         }
 

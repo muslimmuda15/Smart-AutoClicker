@@ -95,10 +95,12 @@ object ScreenshotUploader {
                 outputStream.flush()
             }
 
+//            Log.d(TAG, "Upload response: ${connection.responseCode} - ${connection.responseMessage}")
+
             val responseCode = connection.responseCode
             val responseMessage = connection.responseMessage
 
-            Log.d(TAG, "Upload response: $responseCode - $responseMessage")
+//            Log.d(TAG, "Upload response: $responseCode - $responseMessage")
 
             if (responseCode in 200..299) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
@@ -110,7 +112,7 @@ object ScreenshotUploader {
                 Result.failure(Exception("Upload failed: $responseCode - $errorResponse"))
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error uploading screenshot", e)
+            Log.e(TAG, "Error upload screenshot", e)
             Result.failure(e)
         }
     }

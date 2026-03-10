@@ -26,6 +26,7 @@ import kotlin.math.min
 import androidx.core.content.edit
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getDeviceName
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.putSyncDeviceNameConfig
+import kotlin.text.startsWith
 
 @HiltViewModel
 class SyncViewModel @Inject constructor(
@@ -41,7 +42,11 @@ class SyncViewModel @Inject constructor(
 
     val getLastUrl: String? = sharedPreferences.getLastSyncUrl(context)
     fun setUrl(urlName: String){
-        url.value = urlName
+        val fixedUrl = if (!urlName.startsWith("http://") && !urlName.startsWith("https://")) {
+            val prefix = if (urlName.startsWith("localhost") || urlName.startsWith("192.168.")) "http" else "https"
+            "$prefix://$urlName"
+        } else urlName
+        url.value = fixedUrl
     }
 
     val getDeviceName: String? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {

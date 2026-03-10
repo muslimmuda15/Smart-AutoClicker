@@ -1,5 +1,6 @@
 package com.buzbuz.smartautoclicker.activity.list.domain
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import app.amb.autoclick.BuildConfig
@@ -8,6 +9,8 @@ import com.buzbuz.smartautoclicker.activity.list.model.DeviceScenarioWithActions
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.Scenario
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbDatabase
 import com.buzbuz.smartautoclicker.core.dumb.data.database.DumbScenarioWithActions
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getDeviceName
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPreferences
 import com.buzbuz.smartautoclicker.sendError
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -68,13 +71,15 @@ class SyncRepository @Inject constructor(
     suspend fun checkDevice(baseUrl: String?): Boolean = kotlinx.coroutines.withContext(Dispatchers.IO) {
         if (baseUrl.isNullOrEmpty()) return@withContext false
         try {
+            val sharedPreferences: SharedPreferences = context.getEventConfigPreferences()
+            val username = sharedPreferences.getDeviceName(context)
+
             val urlString = "${baseUrl}/api/devices/check"
 
-            val model = java.net.URLEncoder.encode(Build.MODEL, "UTF-8")
-            val firmware = java.net.URLEncoder.encode(Build.DISPLAY, "UTF-8")
-            val url = "$urlString?model=$model&firmware=$firmware"
+            val url = "$urlString?name=$username"
+//            Log.d("sync", "Sync URL : $url")
 
-            val fixedUrl = if (url != null && !url.startsWith("http://") && !url.startsWith("https://")) {
+            val fixedUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 val prefix = if (url.startsWith("localhost") || url.startsWith("192.168.")) "http" else "https"
                 "$prefix://$url"
             } else url
@@ -129,14 +134,14 @@ class SyncRepository @Inject constructor(
         }.toString()
 
         try {
-            val fixedUrl = if (url != null && !url.startsWith("http://") && !url.startsWith("https://")) {
-                val prefix = if (url.startsWith("localhost") || url.startsWith("192.168.")) "http" else "https"
-                "$prefix://$url"
-            } else url
+//            val fixedUrl = if (url != null && !url.startsWith("http://") && !url.startsWith("https://")) {
+//                val prefix = if (url.startsWith("localhost") || url.startsWith("192.168.")) "http" else "https"
+//                "$prefix://$url"
+//            } else url
 
-            Log.d("API", "URL is in sync in sendUrl: $fixedUrl")
+            Log.d("API", "URL is in sync in sendUrl: $url")
 
-            val connection = (URL(fixedUrl).openConnection() as HttpURLConnection).apply {
+            val connection = (URL(url).openConnection() as HttpURLConnection).apply {
                 requestMethod = "POST"
                 doOutput = false
                 useCaches = false

@@ -76,7 +76,7 @@ internal class DumbActionExecutor(private val context: Context, private val andr
 //        withContext(Dispatchers.Main) {
 //            showToast(dumbClick.name)
 //        }
-        Log.d("action", "Click : ${dumbClick}")
+//        Log.d("action", "Click : ${dumbClick}")
 
         executeRepeatableGesture(clickGesture, dumbClick)
     }

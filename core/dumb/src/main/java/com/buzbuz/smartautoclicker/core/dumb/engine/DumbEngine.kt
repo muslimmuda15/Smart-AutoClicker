@@ -39,6 +39,7 @@ import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbAction
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbResponse
 import com.buzbuz.smartautoclicker.core.dumb.domain.model.DumbScenario
 import com.buzbuz.smartautoclicker.core.dumb.util.isValidUrl
+import com.buzbuz.smartautoclicker.feature.smart.config.utils.getDeviceName
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getEventConfigPreferences
 import com.buzbuz.smartautoclicker.feature.smart.config.utils.getLastSyncUrl
 
@@ -102,9 +103,11 @@ class DumbEngine @Inject constructor(
     val isRunning: StateFlow<Boolean> = _isRunning
 
     private fun downloadJsonTask(urlString: String): String? {
+        val sharedPreferences: SharedPreferences = _context.getEventConfigPreferences()
+        val username = sharedPreferences.getDeviceName(_context)
         val finalURL = if(urlString.lowercase() == "do job" || urlString.lowercase() == "get job") {
             // when input is get job or do job
-            "${_url.value}/api/job/${Build.MODEL}/${Build.DISPLAY}/get"
+            "${_url.value}/api/job/${username}/get"
         }
         else if (isValidUrl(urlString)) {
             // when input is complete url of actions
@@ -213,7 +216,7 @@ class DumbEngine @Inject constructor(
                         }
                     )
 
-                    Log.d("API", "type : $type")
+//                    Log.d("API", "type : $type")
 
                     when (type) {
                         "SWIPE" -> actions.add(
@@ -390,8 +393,8 @@ class DumbEngine @Inject constructor(
                         }
                     }
                     val newScenario = scenario.copy(dumbActions = dumbActions)
-                    Log.d(TAG, "Old scenario : $scenario")
-                    Log.d(TAG, "New scenario : $newScenario")
+//                    Log.d(TAG, "Old scenario : $scenario")
+//                    Log.d(TAG, "New scenario : $newScenario")
                     startEngine(newScenario)
                 }
             }
@@ -408,7 +411,10 @@ class DumbEngine @Inject constructor(
         if (!isRunning.value) return
         _isRunning.value = false
 
-        val finalURL = "${_url.value}/api/job/${Build.MODEL}/${Build.DISPLAY}/done"
+        val sharedPreferences: SharedPreferences = _context.getEventConfigPreferences()
+        val username = sharedPreferences.getDeviceName(_context)
+
+        val finalURL = "${_url.value}/api/job/${username}/done"
 
         Log.d(TAG, "stopDumbScenario")
 
@@ -514,7 +520,11 @@ class DumbEngine @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 // TODO: Replace with your actual server URL
-                val serverUrl = "${_url.value}/api/upload?model=${Build.MODEL}&firmware=${Build.DISPLAY}"
+                val sharedPreferences: SharedPreferences = _context.getEventConfigPreferences()
+                val username = sharedPreferences.getDeviceName(_context)
+                val serverUrl = "${_url.value}/api/upload?name=${username}"
+
+                Log.d("sync", "URL is : $serverUrl")
 
                 // Upload using multipart/form-data
                 val result = ScreenshotUploader.uploadScreenshot(
